@@ -51,10 +51,11 @@ namespace RegionServer.Model
 				return -1;
 			}
 		}
-		public bool IsTeleporting {get; set;}
+		public bool IsTeleporting {get; private set;}
 		public bool IsDead {get; set;}
 		public Position Destination {get; set;}
-		public IList<ICharacter> StatusListeners {get;}
+		public int Facing {get; set;}
+		public IList<ICharacter> StatusListeners {get; private set;}
 		public delegate void DeathListener(ICharacter killer);
 
 		public DeathListener DeathListeners; //so spawner can remove it from its list and respawn the NPC after timer

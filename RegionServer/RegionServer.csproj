@@ -101,6 +101,8 @@
     <Compile Include="BackgroundThreads\PlayerUpdateBackgroundThread.cs" />
     <Compile Include="Model\Interfaces\IPhysics.cs" />
     <Compile Include="Model\BulletPhysics.cs" />
+    <Compile Include="Handlers\PlayerMovementHandler.cs" />
+    <Compile Include="Operations\PlayerMovementOperation.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -131,6 +133,7 @@
     <Folder Include="Model\KnownList\" />
     <Folder Include="Model\ServerEvents\" />
     <Folder Include="BackgroundThreads\" />
+    <Folder Include="Operations\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
