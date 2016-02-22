@@ -1,0 +1,11 @@
+#Os Junk
+[Tt]humbs.db
+*.DS_Store
+
+#Proj files
+*.dll
+*.mdb
+*.config
+[Pp]ackages*/
+*.userprefs
+*.sln

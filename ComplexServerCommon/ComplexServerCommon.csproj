@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{97B1F704-8FCF-409B-A321-CA1EADC5CB9E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>ComplexServerCommon</RootNamespace>
+    <AssemblyName>ComplexServerCommon</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="ClientEventCode.cs" />
+    <Compile Include="ClientOperationCode.cs" />
+    <Compile Include="ClientParameterCode.cs" />
+    <Compile Include="ErrorCode.cs" />
+    <Compile Include="MessageSubCode.cs" />
+    <Compile Include="ClientReturnCode.cs" />
+    <Compile Include="MessageObjects\CharacterListItem.cs" />
+    <Compile Include="MessageObjects\CharacterCreateDetails.cs" />
+    <Compile Include="MessageObjects\ChatItem.cs" />
+    <Compile Include="MessageObjects\ChatType.cs" />
+    <Compile Include="SystemMessageId.cs" />
+    <Compile Include="Xml.cs" />
+    <Compile Include="MessageObjects\MoveTo.cs" />
+    <Compile Include="MessageObjects\PositionData.cs" />
+    <Compile Include="MessageObjects\CharInfo.cs" />
+    <Compile Include="MessageObjects\da.cs" />
+    <Compile Include="MessageObjects\UserInfo.cs" />
+    <Compile Include="MessageObjects\PlayerMovement.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="MessageObjects\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\MMO.Photon\MMO.Framework\MMO.Framework.csproj">
+      <Project>{95138A0A-E80C-436F-A2E5-F56DFBD5A65F}</Project>
+      <Name>MMO.Framework</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MMO.Photon\MMO.Photon.csproj">
+      <Project>{2D944662-3067-4449-9F5F-B703238BF0EF}</Project>
+      <Name>MMO.Photon</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

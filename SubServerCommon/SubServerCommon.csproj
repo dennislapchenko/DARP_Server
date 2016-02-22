@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{57B25880-46D3-4F43-A4B7-7F3107F0C9BA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>SubServerCommon</RootNamespace>
+    <AssemblyName>SubServerCommon</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="ExitGames.Logging.Log4Net">
+      <HintPath>..\..\..\lib\ExitGames.Logging.Log4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="ExitGamesLibs">
+      <HintPath>..\..\..\lib\ExitGamesLibs.dll</HintPath>
+    </Reference>
+    <Reference Include="Photon.SocketServer">
+      <HintPath>..\..\..\lib\Photon.SocketServer.dll</HintPath>
+    </Reference>
+    <Reference Include="PhotonHostRuntimeInterfaces">
+      <HintPath>..\..\..\lib\PhotonHostRuntimeInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\..\..\lib\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections">
+      <HintPath>..\packages\Iesi.Collections.4.0.0.4000\lib\net40\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate">
+      <HintPath>..\packages\NHibernate.4.0.0.4000\lib\net40\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentNHibernate">
+      <HintPath>..\packages\FluentNHibernate.2.0.3.0\lib\net40\FluentNHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data">
+      <HintPath>..\packages\MySql.Data.6.9.8\lib\net40\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="ServerEventCode.cs" />
+    <Compile Include="ServerOperationCode.cs" />
+    <Compile Include="ServerParameterCode.cs" />
+    <Compile Include="Handlers\ErrorEventForwardHandler.cs" />
+    <Compile Include="Handlers\ErrorRequestForwardHandler.cs" />
+    <Compile Include="Handlers\ErrorResponseForwardHandler.cs" />
+    <Compile Include="ServerType.cs" />
+    <Compile Include="Operations\RegisterSubServer.cs" />
+    <Compile Include="Data\RegisterSubServerData.cs" />
+    <Compile Include="NHibernateHelper.cs" />
+    <Compile Include="Data\NHibernate\User.cs" />
+    <Compile Include="Data\Mapping\UserMap.cs" />
+    <Compile Include="Data\NHibernate\UserProfile.cs" />
+    <Compile Include="Data\Mapping\UserProfileMap.cs" />
+    <Compile Include="Data\ClientData\CharacterData.cs" />
+    <Compile Include="Data\NHibernate\ComplexCharacter.cs" />
+    <Compile Include="Data\Mapping\ComplexCharacterMap.cs" />
+    <Compile Include="Data\ClientData\ChatPlayer.cs" />
+    <Compile Include="Data\ClientData\ServerData.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Handlers\" />
+    <Folder Include="Operations\" />
+    <Folder Include="Data\" />
+    <Folder Include="Data\NHibernate\" />
+    <Folder Include="Data\Mapping\" />
+    <Folder Include="Data\ClientData\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ComplexServerCommon\ComplexServerCommon.csproj">
+      <Project>{97B1F704-8FCF-409B-A321-CA1EADC5CB9E}</Project>
+      <Name>ComplexServerCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MMO.Photon\MMO.Framework\MMO.Framework.csproj">
+      <Project>{95138A0A-E80C-436F-A2E5-F56DFBD5A65F}</Project>
+      <Name>MMO.Framework</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MMO.Photon\MMO.Photon.csproj">
+      <Project>{2D944662-3067-4449-9F5F-B703238BF0EF}</Project>
+      <Name>MMO.Photon</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="app.config" />
+  </ItemGroup>
+</Project>
