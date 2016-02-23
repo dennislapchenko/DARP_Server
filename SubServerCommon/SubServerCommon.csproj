@@ -81,6 +81,8 @@
     <Compile Include="Data\Mapping\ComplexCharacterMap.cs" />
     <Compile Include="Data\ClientData\ChatPlayer.cs" />
     <Compile Include="Data\ClientData\ServerData.cs" />
+    <Compile Include="Data\NHibernate\RegionRecord.cs" />
+    <Compile Include="Data\Mapping\RegionRecordMap.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

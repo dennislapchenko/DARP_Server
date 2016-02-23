@@ -61,7 +61,7 @@
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="BulletNoXna">
-      <HintPath>..\packages\BulletPhysics\BulletNoXNA.dll</HintPath>
+      <HintPath>..\packages\BulletPhysics\BulletNoXna.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

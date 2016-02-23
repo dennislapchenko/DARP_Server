@@ -10,6 +10,14 @@ using System.Threading;
 using RegionServer.Model.Interfaces;
 using BulletXNA.LinearMath;
 using BulletXNA;
+using System.IO;
+using MMO.Photon.Application;
+using SubServerCommon;
+using SubServerCommon.Data.NHibernate;
+using System.Linq;
+using ComplexServerCommon.SerializedPhysicsObjects;
+using ComplexServerCommon;
+using System.Xml.Serialization;
 
 namespace RegionServer.BackgroundThreads
 {
@@ -20,12 +28,13 @@ namespace RegionServer.BackgroundThreads
 		private bool isRunning;
 		private DiscreteDynamicsWorld dynamicsWorld;
 		private List<CollisionShape> collisionShapes;
-
+		protected PhotonApplication Server {get; set;}
 		public float characterHeight = 1.75f;
 		public float characterWidth = 0.75f;
 
-		public PhysicsBackgroundThread(Region region, IEnumerable<IPlayerListener> playerListeners)
+		public PhysicsBackgroundThread(Region region, IEnumerable<IPlayerListener> playerListeners, PhotonApplication application)
 		{
+			Server = application;
 			collisionShapes = new List<CollisionShape>();
 			Region = region;
 			Region.OnAddPlayer += OnAddPlayer;
@@ -81,16 +90,91 @@ namespace RegionServer.BackgroundThreads
 			overlappingPairCache.GetOverlappingPairCache().SetInternalGhostPairCallback(new GhostPairCallback()); //when object collide they handle themselves
 			dynamicsWorld.SetGravity(new Vector3(0, -10, 0)); //-10 metres per second (9.8 is earth)
 
-			CollisionShape groundShape = new BoxShape(new Vector3(50,50,50)); //earth shape
-			Matrix groundTransform = Matrix.CreateTranslation(0, -56, 0); //
+			string FilePath = Path.Combine(Server.BinaryPath, "default.xml");
+			try
+			{
+				using(var session = NHibernateHelper.OpenSession())
+				{
+					using(var transaction = session.BeginTransaction())
+					{
+						var region = session.QueryOver<RegionRecord>().Where(rr => rr.Name == Server.ApplicationName).SingleOrDefault();
+						if(region != null)
+						{
+							FilePath = Path.Combine(Server.BinaryPath, region.ColliderPath);
+						}
+					}
+				}
+			}
+			finally {}
 
-			DefaultMotionState motionState = new DefaultMotionState(groundTransform, Matrix.Identity); //what does when in motion, where moved to, where center is
-			RigidBodyConstructionInfo rbInfo = new RigidBodyConstructionInfo(0, motionState, groundShape, new Vector3(0,0,0));
-			RigidBody body = new RigidBody(rbInfo);
+			XmlSerializer serializer = new XmlSerializer(typeof(BPColliders));
+			FileStream f = File.OpenRead(FilePath);
+			BPColliders colliders = (BPColliders)serializer.Deserialize(f);
+			
+			//Box Colliders
+			foreach (var bpBox in colliders.Boxes)
+			{
+				CollisionShape groundShape = new BoxShape(bpBox.HalfExtents);
+				Matrix groundTransform = Matrix.CreateTranslation(bpBox.Center);
+				DefaultMotionState motionState = new DefaultMotionState(groundTransform, Matrix.Identity);
+				RigidBodyConstructionInfo rbInfo = new RigidBodyConstructionInfo(0, motionState, groundShape, new Vector3(0,0,0));
+				RigidBody body = new RigidBody(rbInfo);
 
-			dynamicsWorld.AddRigidBody(body); //with automatic CollisionFilterGroups.DefaultFilter
+				dynamicsWorld.AddRigidBody(body);
+			}
 
+			//Capsule Colliders
+			foreach (var bpCapsule in colliders.Capsules)
+			{
+				CollisionShape groundShape = new CapsuleShape(bpCapsule.Radius, bpCapsule.Height);
+				Matrix groundTransform = Matrix.CreateTranslation(bpCapsule.Center);
+				DefaultMotionState motionState = new DefaultMotionState(groundTransform, Matrix.Identity);
+				RigidBodyConstructionInfo rbInfo = new RigidBodyConstructionInfo(0, motionState, groundShape, new Vector3(0,0,0));
+				RigidBody body = new RigidBody(rbInfo);
+				
+				dynamicsWorld.AddRigidBody(body);
+			}
 
+			//Sphere Colliders
+			foreach (var bpSphere in colliders.Spheres)
+			{
+				CollisionShape groundShape = new SphereShape(bpSphere.Radius);
+				Matrix groundTransform = Matrix.CreateTranslation(bpSphere.Center);
+				DefaultMotionState motionState = new DefaultMotionState(groundTransform, Matrix.Identity);
+				RigidBodyConstructionInfo rbInfo = new RigidBodyConstructionInfo(0, motionState, groundShape, new Vector3(0,0,0));
+				RigidBody body = new RigidBody(rbInfo);
+				
+				dynamicsWorld.AddRigidBody(body);
+			}
+
+			//Terrain Colliders
+			foreach (var bpTerrain in colliders.Terrains)
+			{
+				CollisionShape groundShape = new HeightfieldTerrainShape(bpTerrain.Width, bpTerrain.Height, bpTerrain.HeightData, 1f, 0f, bpTerrain.HeightScale, 1, false);
+				Vector3 localScale = bpTerrain.LocalScale;
+				groundShape.SetLocalScaling(ref localScale);
+				Matrix groundTransform = Matrix.CreateTranslation(bpTerrain.Center);
+				DefaultMotionState motionState = new DefaultMotionState(groundTransform, Matrix.Identity);
+				RigidBodyConstructionInfo rbInfo = new RigidBodyConstructionInfo(0, motionState, groundShape, new Vector3(0,0,0));
+				RigidBody body = new RigidBody(rbInfo);
+				
+				dynamicsWorld.AddRigidBody(body);
+			}
+			//Mesh colliders
+			foreach (var bpMesh in colliders.Meshes)
+			{
+				CollisionShape groundShape = new BvhTriangleMeshShape(new TriangleIndexVertexArray(bpMesh.NumTris/3, 
+				                                                      new ObjectArray<int>(bpMesh.Triangles), 3, bpMesh.NumVerts, 
+				                                                      new ObjectArray<Vector3>(bpMesh.Vertexes), 3), true, true);
+				Matrix groundTransform = Matrix.CreateTranslation(bpMesh.Center);
+				DefaultMotionState motionState = new DefaultMotionState(groundTransform, Matrix.Identity);
+				RigidBodyConstructionInfo rbInfo = new RigidBodyConstructionInfo(0, motionState, groundShape, new Vector3(0,0,0));
+				RigidBody body = new RigidBody(rbInfo);
+				
+				dynamicsWorld.AddRigidBody(body);
+			}
+
+			f.Close();
 		}
 
 		public void Run(object threadContext)
