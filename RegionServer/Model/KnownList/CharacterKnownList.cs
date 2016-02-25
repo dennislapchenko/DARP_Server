@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using RegionServer.Model.Interfaces;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
 
 namespace RegionServer.Model.KnownList
@@ -10,11 +11,11 @@ namespace RegionServer.Model.KnownList
 	//list that is owned by character
 	public class CharacterKnownList : ObjectKnownList
 	{
-		public Dictionary<int, IPlayer> KnownPlayers {get; set;}
+		public ConcurrentDictionary<int, IPlayer> KnownPlayers {get; set;}
 
 		public CharacterKnownList() : base()
 		{
-			KnownPlayers = new Dictionary<int, IPlayer>();
+			KnownPlayers = new ConcurrentDictionary<int, IPlayer>();
 		}
 
 		public override bool AddKnownObject(IObject obj)
@@ -27,7 +28,7 @@ namespace RegionServer.Model.KnownList
 			IPlayer player = obj as IPlayer;
 			if (player != null)
 			{
-				KnownPlayers.Add(obj.ObjectId, player);
+				return KnownPlayers.TryAdd(obj.ObjectId, player);
 			}
 			return true;
 		}
@@ -58,7 +59,7 @@ namespace RegionServer.Model.KnownList
 			IPlayer player = obj as IPlayer;
 			if(player != null)
 			{
-				KnownPlayers.Remove(obj.ObjectId);
+				KnownPlayers.TryRemove(obj.ObjectId, out player);
 			}
 			return true;
 		}
@@ -84,9 +85,11 @@ namespace RegionServer.Model.KnownList
 				if (!obj.IsVisible || !Util.IsInShortRange(DistanceToForgetObject(obj), Owner, obj, true))
 				{
 					RemoveKnownObject(obj);
+
 					if(obj is IPlayer)
 					{
-						KnownPlayers.Remove(obj.ObjectId);
+						IPlayer player;
+						KnownPlayers.TryRemove(obj.ObjectId, out player);
 					}
 				}
 			}

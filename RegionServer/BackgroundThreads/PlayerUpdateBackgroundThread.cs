@@ -41,9 +41,15 @@ namespace RegionServer.BackgroundThreads
 						if (Region.NumPlayers <= 0)
 						{
 							Thread.Sleep(1000);
+							timer.Restart();
+						}
+						if(100 - timer.Elapsed.Milliseconds > 0)
+						{
+							Thread.Sleep(100 - timer.Elapsed.Milliseconds);
 						}
 						continue;
 					}
+					
 					Update(timer.Elapsed);
 					timer.Restart();
 

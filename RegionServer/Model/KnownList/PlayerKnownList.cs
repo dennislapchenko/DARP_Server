@@ -40,38 +40,38 @@ namespace RegionServer.Model.KnownList
 		{
 			if(KnownObjects.Count <= 25)
 			{
-				return 4000;
+				return 400;
 			}
 
 			if(KnownObjects.Count <= 35)
 			{
-				return 3500;
+				return 350;
 			}
 			if(KnownObjects.Count <= 70)
 			{
-				return 2950;
+				return 295;
 			}
 
-			return 2350;
+			return 235;
 		}
 
 		public override int DistanceToWatchObject(IObject obj)
 		{
 			if(KnownObjects.Count <= 25)
 			{
-				return 3400;
+				return 340;
 			}
 
 			if(KnownObjects.Count <= 35)
 			{
-				return 2900;
+				return 290;
 			}
 
 			if(KnownObjects.Count <= 70)
 			{
-				return 2300;
+				return 230;
 			}
-			return 1700;
+			return 170;
 		}
 
 	}

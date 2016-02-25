@@ -61,6 +61,8 @@ namespace RegionServer.Handlers
 			};
 
 			var operation = new PlayerMovementOperation(serverPeer.Protocol, message);
+
+			//IF INCORRECT
 			if (!operation.IsValid)
 			{
 				Log.ErrorFormat(operation.GetErrorMessage());
@@ -72,6 +74,7 @@ namespace RegionServer.Handlers
 				}, new SendParameters());
 				return true;
 			}
+			//WHEN CORRECT
 			Guid peerId = new Guid((Byte[])message.Parameters[(byte)ClientParameterCode.PeerId]);
 			var clients = Server.ConnectionCollection<SubServerConnectionCollection>().Clients;
 			var instance = clients[peerId].ClientData<CPlayerInstance>();

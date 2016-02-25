@@ -103,6 +103,7 @@
     <Compile Include="Model\BulletPhysics.cs" />
     <Compile Include="Handlers\PlayerMovementHandler.cs" />
     <Compile Include="Operations\PlayerMovementOperation.cs" />
+    <Compile Include="BackgroundThreads\InterestManagementBackgroundThread.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

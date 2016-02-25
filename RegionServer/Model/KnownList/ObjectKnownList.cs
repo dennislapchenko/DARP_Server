@@ -2,19 +2,20 @@ using System;
 using RegionServer.Model.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Concurrent;
 
 
 namespace RegionServer.Model.KnownList
 {
 	public class ObjectKnownList : IKnownList
 	{
-		protected Dictionary<int, IObject> KnownObjects;
+		protected ConcurrentDictionary<int, IObject> KnownObjects;
 
 		public IObject Owner {get; set;}
 
 		public ObjectKnownList()
 		{
-			KnownObjects = new Dictionary<int, IObject>();
+			KnownObjects = new ConcurrentDictionary<int, IObject>();
 		}
 
 		public virtual bool AddKnownObject(IObject obj)
@@ -33,9 +34,12 @@ namespace RegionServer.Model.KnownList
 				return false;
 			}
 
-			KnownObjects.Add(obj.ObjectId, obj);
-			return true;
+			if(!Util.IsInShortRange(DistanceToWatchObject(obj), Owner, obj, true)) // Limiting aggro range
+			{
+				return false;
+			}
 
+			return KnownObjects.TryAdd(obj.ObjectId, obj);
 		}
 		public bool KnowsObject(IObject obj)
 		{
@@ -54,7 +58,7 @@ namespace RegionServer.Model.KnownList
 				return false;
 			}
 
-			return KnownObjects.Remove(obj.ObjectId);
+			return KnownObjects.TryRemove(obj.ObjectId, out obj);
 		}
 
 		public virtual void FindObjects() //to be used in other lists
@@ -83,10 +87,10 @@ namespace RegionServer.Model.KnownList
 					values.Remove(iter.Current);
 				}
 			}
-			Dictionary<int, IObject> newKnownObjects = new Dictionary<int, IObject>();
+			ConcurrentDictionary<int, IObject> newKnownObjects = new ConcurrentDictionary<int, IObject>();
 			foreach (var value in values)
 			{
-				newKnownObjects.Add(value.ObjectId, value);
+				newKnownObjects.TryAdd(value.ObjectId, value);
 			}
 			KnownObjects = newKnownObjects;
 		}

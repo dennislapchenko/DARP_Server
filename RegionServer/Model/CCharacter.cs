@@ -62,6 +62,10 @@ namespace RegionServer.Model
 		
 		public virtual void BroadcastMessage(ServerPacket packet)
 		{
+			foreach(CPlayerInstance player in KnownList.KnownPlayers.Values)
+			{
+				player.SendPacket(packet);
+			}
 		}
 
 		public virtual void SendMessage(string text)

@@ -81,7 +81,7 @@ namespace RegionServer.BackgroundThreads
 			DefaultCollisionConfiguration collisionConfiguration = new DefaultCollisionConfiguration();
 			CollisionDispatcher dispatcher = new CollisionDispatcher(collisionConfiguration);
 			Vector3 min = new Vector3(-1000, -1000, -1000), max = new Vector3(1000, 1000, 1000);
-			var overlappingPairCache = new AxisSweep3Internal(ref min, ref max, 0xfff3, 0xffff, 16384, null, false); //16384 max objects in Region
+			var overlappingPairCache = new AxisSweep3Internal(ref min, ref max, 0xfffe, 0xffff, 16384, null, false); //16384 max objects in Region)
 			SequentialImpulseConstraintSolver solver = new SequentialImpulseConstraintSolver();
 
 			dynamicsWorld = new DiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
@@ -115,7 +115,10 @@ namespace RegionServer.BackgroundThreads
 			foreach (var bpBox in colliders.Boxes)
 			{
 				CollisionShape groundShape = new BoxShape(bpBox.HalfExtents);
+				Vector3 localScale = bpBox.LocalScale;
+				groundShape.SetLocalScaling(ref localScale);
 				Matrix groundTransform = Matrix.CreateTranslation(bpBox.Center);
+				groundTransform.SetRotation(Quaternion.CreateFromYawPitchRoll(Util.DegToRad(bpBox.Rotation.X), Util.DegToRad(bpBox.Rotation.Y), Util.DegToRad(bpBox.Rotation.Z)));
 				DefaultMotionState motionState = new DefaultMotionState(groundTransform, Matrix.Identity);
 				RigidBodyConstructionInfo rbInfo = new RigidBodyConstructionInfo(0, motionState, groundShape, new Vector3(0,0,0));
 				RigidBody body = new RigidBody(rbInfo);
@@ -127,7 +130,10 @@ namespace RegionServer.BackgroundThreads
 			foreach (var bpCapsule in colliders.Capsules)
 			{
 				CollisionShape groundShape = new CapsuleShape(bpCapsule.Radius, bpCapsule.Height);
+				Vector3 localScale = bpCapsule.LocalScale;
+				groundShape.SetLocalScaling(ref localScale);
 				Matrix groundTransform = Matrix.CreateTranslation(bpCapsule.Center);
+				groundTransform.SetRotation(Quaternion.CreateFromYawPitchRoll(Util.DegToRad(bpCapsule.Rotation.X), Util.DegToRad(bpCapsule.Rotation.Y), Util.DegToRad(bpCapsule.Rotation.Z)));
 				DefaultMotionState motionState = new DefaultMotionState(groundTransform, Matrix.Identity);
 				RigidBodyConstructionInfo rbInfo = new RigidBodyConstructionInfo(0, motionState, groundShape, new Vector3(0,0,0));
 				RigidBody body = new RigidBody(rbInfo);
@@ -139,7 +145,10 @@ namespace RegionServer.BackgroundThreads
 			foreach (var bpSphere in colliders.Spheres)
 			{
 				CollisionShape groundShape = new SphereShape(bpSphere.Radius);
+				Vector3 localScale = bpSphere.LocalScale;
+				groundShape.SetLocalScaling(ref localScale);
 				Matrix groundTransform = Matrix.CreateTranslation(bpSphere.Center);
+				groundTransform.SetRotation(Quaternion.CreateFromYawPitchRoll(Util.DegToRad(bpSphere.Rotation.X), Util.DegToRad(bpSphere.Rotation.Y), Util.DegToRad(bpSphere.Rotation.Z)));
 				DefaultMotionState motionState = new DefaultMotionState(groundTransform, Matrix.Identity);
 				RigidBodyConstructionInfo rbInfo = new RigidBodyConstructionInfo(0, motionState, groundShape, new Vector3(0,0,0));
 				RigidBody body = new RigidBody(rbInfo);
@@ -154,6 +163,7 @@ namespace RegionServer.BackgroundThreads
 				Vector3 localScale = bpTerrain.LocalScale;
 				groundShape.SetLocalScaling(ref localScale);
 				Matrix groundTransform = Matrix.CreateTranslation(bpTerrain.Center);
+				groundTransform.SetRotation(Quaternion.CreateFromYawPitchRoll(Util.DegToRad(bpTerrain.Rotation.X), Util.DegToRad(bpTerrain.Rotation.Y), Util.DegToRad(bpTerrain.Rotation.Z)));
 				DefaultMotionState motionState = new DefaultMotionState(groundTransform, Matrix.Identity);
 				RigidBodyConstructionInfo rbInfo = new RigidBodyConstructionInfo(0, motionState, groundShape, new Vector3(0,0,0));
 				RigidBody body = new RigidBody(rbInfo);
@@ -166,7 +176,10 @@ namespace RegionServer.BackgroundThreads
 				CollisionShape groundShape = new BvhTriangleMeshShape(new TriangleIndexVertexArray(bpMesh.NumTris/3, 
 				                                                      new ObjectArray<int>(bpMesh.Triangles), 3, bpMesh.NumVerts, 
 				                                                      new ObjectArray<Vector3>(bpMesh.Vertexes), 3), true, true);
+				Vector3 localScale = bpMesh.LocalScale;
+				groundShape.SetLocalScaling(ref localScale);
 				Matrix groundTransform = Matrix.CreateTranslation(bpMesh.Center);
+				groundTransform.SetRotation(Quaternion.CreateFromYawPitchRoll(Util.DegToRad(bpMesh.Rotation.X), Util.DegToRad(bpMesh.Rotation.Y), Util.DegToRad(bpMesh.Rotation.Z)));
 				DefaultMotionState motionState = new DefaultMotionState(groundTransform, Matrix.Identity);
 				RigidBodyConstructionInfo rbInfo = new RigidBodyConstructionInfo(0, motionState, groundShape, new Vector3(0,0,0));
 				RigidBody body = new RigidBody(rbInfo);
@@ -185,14 +198,20 @@ namespace RegionServer.BackgroundThreads
 
 			while(isRunning)
 			{
-				if(timer.Elapsed < TimeSpan.FromSeconds(1/60f))
+				if(timer.Elapsed < TimeSpan.FromSeconds(1/30f))
 				{
 					if(Region.NumPlayers <= 0)
 					{
 						Thread.Sleep(1000);
+						timer.Restart();
+					}
+					if((int)(1000f/30f - timer.Elapsed.Milliseconds) > 0)
+					{
+						Thread.Sleep((int)(1000f/30f - timer.Elapsed.Milliseconds));
 					}
 					continue;
 				}
+				
 				Update(timer.Elapsed);
 				timer.Restart();
 			}
@@ -216,7 +235,6 @@ namespace RegionServer.BackgroundThreads
 			}
 			collisionShapes.Clear();
 		}
-	
 	}
 }
 
