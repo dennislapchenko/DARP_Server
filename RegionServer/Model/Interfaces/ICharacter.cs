@@ -12,7 +12,7 @@ namespace RegionServer.Model.Interfaces
 		bool IsDead {get;}
 		Position Destination {get; set;}
 		IList<ICharacter> StatusListeners {get;} //anyone who has this character targeted = will have characters things updated (hp etc)
-
+		IStatHolder Stats {get;}
 
 		void BroadcastMessage(ServerPacket packet); //take and send a message to everything that can receive inside character known list (HP updates)
 		void SendMessage(string text); //message to THIS class (Will wrap a packet and send it using SendPacket());

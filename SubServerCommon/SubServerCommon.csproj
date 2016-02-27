@@ -83,6 +83,7 @@
     <Compile Include="Data\ClientData\ServerData.cs" />
     <Compile Include="Data\NHibernate\RegionRecord.cs" />
     <Compile Include="Data\Mapping\RegionRecordMap.cs" />
+    <Compile Include="Math\RandomExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -92,6 +93,7 @@
     <Folder Include="Data\NHibernate\" />
     <Folder Include="Data\Mapping\" />
     <Folder Include="Data\ClientData\" />
+    <Folder Include="Math\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ComplexServerCommon\ComplexServerCommon.csproj">

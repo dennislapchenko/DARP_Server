@@ -10,8 +10,10 @@ namespace RegionServer.Model
 {
 	public class CCharacter : CObject, ICharacter
 	{
-		public CCharacter(Region region, CharacterKnownList objectKnownList) : base(region, objectKnownList)
+		public CCharacter(Region region, CharacterKnownList objectKnownList, IStatHolder stats) : base(region, objectKnownList)
 		{
+			Stats = stats;
+			Stats.Character = this;
 			StatusListeners = new List<ICharacter>();
 		}
 
@@ -57,6 +59,8 @@ namespace RegionServer.Model
 		public int Facing {get; set;}
 		public IList<ICharacter> StatusListeners {get; private set;}
 		public delegate void DeathListener(ICharacter killer);
+		public IStatHolder Stats {get; protected set;}
+		
 
 		public DeathListener DeathListeners; //so spawner can remove it from its list and respawn the NPC after timer
 		
@@ -157,6 +161,11 @@ namespace RegionServer.Model
 		public virtual void SendStateToPlayer(IObject owner)
 		{
 			owner.SendPacket(new MoveToLocation(this));
+		}
+
+		public virtual void DeleteMe() //deregister
+		{
+
 		}
 
 	}

@@ -2,6 +2,7 @@
 using ComplexServerCommon.MessageObjects;
 using BulletXNA.LinearMath;
 using System;
+using ComplexServerCommon;
 
 namespace RegionServer.Model
 {
@@ -91,6 +92,21 @@ namespace RegionServer.Model
 		public static implicit operator Position(Matrix pos)
 		{
 			return new Position(pos.Translation.X, pos.Translation.Y, pos.Translation.Z);
+		}
+	 
+		public static implicit operator Position(PositionData position)
+		{
+			return new Position(position.X, position.Y, position.Z) { Heading = position.Heading };
+		}
+
+		public string Serialize()
+		{
+			return Xml.Serialize<PositionData>((PositionData)this);
+		}
+
+		public static PositionData Deserialize(string value)
+		{
+			return Xml.Deserialize<PositionData>(value);
 		}
 
 

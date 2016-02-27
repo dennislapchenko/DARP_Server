@@ -27,18 +27,12 @@ namespace RegionServer.Handlers
 
 		public override MessageType Type
 		{
-			get
-			{
-				return MessageType.Async;
-			}
+			get	{ return MessageType.Async;	}
 		}
 
 		public override byte Code
 		{
-			get
-			{
-				return (byte) ServerEventCode.CharacterRegister; 
-			}
+			get	{ return (byte) ServerEventCode.CharacterRegister; }
 		}
 
 		public override int? SubCode
@@ -52,32 +46,14 @@ namespace RegionServer.Handlers
 			Guid peerId = new Guid((Byte[])message.Parameters[(byte)ClientParameterCode.PeerId]);
 			try
 			{
-				using (var session = NHibernateHelper.OpenSession())
-				{
-					using (var transaction = session.BeginTransaction())
-					{
+				var clients = Server.ConnectionCollection<SubServerConnectionCollection>().Clients;
+				clients.Add(peerId, _clientFactory(peerId));
+				var instance = clients[peerId].ClientData<CPlayerInstance>();
+				instance.UserID = Convert.ToInt32(message.Parameters[(byte)ClientParameterCode.UserId]);
+				instance.ServerPeer = serverPeer;
+				instance.Client = clients[peerId];
 
-						var character = session.QueryOver<ComplexCharacter>().Where(cc => cc.Id == characterId).List().FirstOrDefault();
-						if (character != null)
-						{
-							transaction.Commit();
-							var clients = Server.ConnectionCollection<SubServerConnectionCollection>().Clients;
-							clients.Add(peerId, _clientFactory(peerId));
-							var instance = clients[peerId].ClientData<CPlayerInstance>();
-							instance.ObjectId = characterId;
-							instance.Name = character.Name;
-							instance.UserID = Convert.ToInt32(message.Parameters[(byte)ClientParameterCode.UserId]);
-							instance.ServerPeer = serverPeer;
-							instance.Client = clients[peerId];
-						}
-						else
-						{
-							transaction.Commit();
-							Log.FatalFormat("[RegionServerRegisterEventHandler] - Should not reach - Character not found in database");
-						}
-
-					}
-				}
+				instance.Restore(characterId);
 			}
 			catch(Exception e)
 			{

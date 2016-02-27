@@ -63,6 +63,7 @@
     <Reference Include="BulletNoXna">
       <HintPath>..\packages\BulletPhysics\BulletNoXna.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -104,6 +105,26 @@
     <Compile Include="Handlers\PlayerMovementHandler.cs" />
     <Compile Include="Operations\PlayerMovementOperation.cs" />
     <Compile Include="BackgroundThreads\InterestManagementBackgroundThread.cs" />
+    <Compile Include="Model\Interfaces\IStatHolder.cs" />
+    <Compile Include="Model\Interfaces\IStat.cs" />
+    <Compile Include="Model\Interfaces\IFunction.cs" />
+    <Compile Include="Model\Interfaces\ICondition.cs" />
+    <Compile Include="Model\Interfaces\ILambda.cs" />
+    <Compile Include="Calculators\Environment.cs" />
+    <Compile Include="Calculators\Calculator.cs" />
+    <Compile Include="Calculators\Functions\FunctionAdd.cs" />
+    <Compile Include="Calculators\Functions\FunctionSubtract.cs" />
+    <Compile Include="Calculators\Functions\FunctionMultiply.cs" />
+    <Compile Include="Calculators\Functions\FunctionDivide.cs" />
+    <Compile Include="Calculators\Lambdas\LambdaConstant.cs" />
+    <Compile Include="Calculators\Lambdas\LambdaStat.cs" />
+    <Compile Include="Calculators\Lambdas\LambdaRandom.cs" />
+    <Compile Include="Calculators\Lambdas\LambdaCalculator.cs" />
+    <Compile Include="Model\Stats\StatHolder.cs" />
+    <Compile Include="Model\Interfaces\IDerivedStat.cs" />
+    <Compile Include="Model\Stats\MoveSpeed.cs" />
+    <Compile Include="Model\Stats\Level.cs" />
+    <Compile Include="Model\Stats\Level5HP.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -135,6 +156,10 @@
     <Folder Include="Model\ServerEvents\" />
     <Folder Include="BackgroundThreads\" />
     <Folder Include="Operations\" />
+    <Folder Include="Calculators\" />
+    <Folder Include="Calculators\Functions\" />
+    <Folder Include="Calculators\Lambdas\" />
+    <Folder Include="Model\Stats\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
