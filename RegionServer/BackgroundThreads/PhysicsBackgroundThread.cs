@@ -1,15 +1,11 @@
 
 using MMO.Framework;
-using BulletXNA.BulletCollision;
 using RegionServer.Model;
-using BulletXNA.BulletDynamics;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System;
 using System.Threading;
 using RegionServer.Model.Interfaces;
-using BulletXNA.LinearMath;
-using BulletXNA;
 using System.IO;
 using MMO.Photon.Application;
 using SubServerCommon;
@@ -18,6 +14,13 @@ using System.Linq;
 using ComplexServerCommon.SerializedPhysicsObjects;
 using ComplexServerCommon;
 using System.Xml.Serialization;
+using BEPUphysics;
+using BEPUutilities.Threading;
+using BEPUphysics.CollisionRuleManagement;
+using BEPUutilities;
+using BEPUphysicsDemos.AlternateMovement.Character;
+using BEPUphysics.Entities.Prefabs;
+using BEPUphysics.BroadPhaseEntries;
 
 namespace RegionServer.BackgroundThreads
 {
@@ -26,16 +29,17 @@ namespace RegionServer.BackgroundThreads
 		//run roughly at 60fps
 		public Region Region {get; set;}
 		private bool isRunning;
-		private DiscreteDynamicsWorld dynamicsWorld;
-		private List<CollisionShape> collisionShapes;
 		protected PhotonApplication Server {get; set;}
+		public Space Space {get; set;}
+		private ParallelLooper parallelLooper;
+		CollisionGroup characters = new CollisionGroup();
+
 		public float characterHeight = 1.75f;
 		public float characterWidth = 0.75f;
 
 		public PhysicsBackgroundThread(Region region, IEnumerable<IPlayerListener> playerListeners, PhotonApplication application)
 		{
 			Server = application;
-			collisionShapes = new List<CollisionShape>();
 			Region = region;
 			Region.OnAddPlayer += OnAddPlayer;
 			Region.OnRemovePlayer += OnRemovePlayer;
@@ -49,46 +53,37 @@ namespace RegionServer.BackgroundThreads
 		private void OnAddPlayer(IPlayer player)
 		{
 			var obj = player as IObject;
-			Matrix startTransform = obj != null 
-												? Matrix.CreateTranslation(obj.Position.X, obj.Position.Y, obj.Position.Z) 
-												: Matrix.CreateTranslation(0,0,0);
-			var ghostObject = new PairCachingGhostObject(); //generic collision shape (capsule)
-			ghostObject.SetWorldTransform(startTransform);
-			ConvexShape capsule = new CapsuleShape(characterWidth, characterHeight);
-			ghostObject.CollisionShape = capsule;
-			ghostObject.SetCollisionFlags(CollisionFlags.CharacterObject); //which objects can run past eachother (ignore collision)
 
-			float stepHeight = 0.35f; //max step up a foot(else have to jump)
-			var character = new KinematicCharacterController(ghostObject, capsule, stepHeight, 1); //1 is like unity, Y axis is up;
+			var cc = ((BepuPhysics)player.Physics).CharacterController = new CharacterController (new Vector3(obj.Position.X, obj.Position.Y, obj.Position.Z), characterHeight, characterHeight/2f, characterWidth, 10);
 
-			dynamicsWorld.AddCollisionObject(ghostObject, CollisionFilterGroups.CharacterFilter, CollisionFilterGroups.StaticFilter|CollisionFilterGroups.DefaultFilter);
-			dynamicsWorld.AddAction(character);
+			cc.Body.CollisionInformation.CollisionRules.Group = characters;
 
-			((BulletPhysics)player.Physics).CharacterController = character;
+			Space.Add(cc);
 		}
 
 		private void OnRemovePlayer(IPlayer player)
 		{
 			lock (this)
 			{
-				dynamicsWorld.RemoveAction(((BulletPhysics)player.Physics).CharacterController);
-				dynamicsWorld.RemoveCollisionObject(((KinematicCharacterController)((BulletPhysics)player.Physics).CharacterController).GetGhostObject());
+				Space.Remove(((BepuPhysics)player.Physics).CharacterController);
 			}
 		}
 
 		public void Setup()
 		{
-			DefaultCollisionConfiguration collisionConfiguration = new DefaultCollisionConfiguration();
-			CollisionDispatcher dispatcher = new CollisionDispatcher(collisionConfiguration);
-			Vector3 min = new Vector3(-1000, -1000, -1000), max = new Vector3(1000, 1000, 1000);
-			var overlappingPairCache = new AxisSweep3Internal(ref min, ref max, 0xfffe, 0xffff, 16384, null, false); //16384 max objects in Region)
-			SequentialImpulseConstraintSolver solver = new SequentialImpulseConstraintSolver();
+			parallelLooper.AddThread();
+			parallelLooper.AddThread();
+			parallelLooper.AddThread();
+			parallelLooper.AddThread();
 
-			dynamicsWorld = new DiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
-			dynamicsWorld.DispatchInfo.SetAllowedCcdPenetration(0.0001f);//how far object pass through the world before its reset
+			Space = new Space(parallelLooper);
 
-			overlappingPairCache.GetOverlappingPairCache().SetInternalGhostPairCallback(new GhostPairCallback()); //when object collide they handle themselves
-			dynamicsWorld.SetGravity(new Vector3(0, -10, 0)); //-10 metres per second (9.8 is earth)
+			Space.ForceUpdater.Gravity = new Vector3(0, -10, 0);
+			Space.TimeStepSettings.TimeStepDuration = 1f/30f; //step calculation time. 1f/30f = 30fps
+
+			var groupPair = new CollisionGroupPair(characters, characters);
+			CollisionRules.CollisionGroupRules.Add(groupPair, CollisionRule.NoBroadPhase); //passes right through other characters
+
 
 			string FilePath = Path.Combine(Server.BinaryPath, "default.xml");
 			try
@@ -114,77 +109,61 @@ namespace RegionServer.BackgroundThreads
 			//Box Colliders
 			foreach (var bpBox in colliders.Boxes)
 			{
-				CollisionShape groundShape = new BoxShape(bpBox.HalfExtents);
-				Vector3 localScale = bpBox.LocalScale;
-				groundShape.SetLocalScaling(ref localScale);
-				Matrix groundTransform = Matrix.CreateTranslation(bpBox.Center);
-				groundTransform.SetRotation(Quaternion.CreateFromYawPitchRoll(Util.DegToRad(bpBox.Rotation.X), Util.DegToRad(bpBox.Rotation.Y), Util.DegToRad(bpBox.Rotation.Z)));
-				DefaultMotionState motionState = new DefaultMotionState(groundTransform, Matrix.Identity);
-				RigidBodyConstructionInfo rbInfo = new RigidBodyConstructionInfo(0, motionState, groundShape, new Vector3(0,0,0));
-				RigidBody body = new RigidBody(rbInfo);
-
-				dynamicsWorld.AddRigidBody(body);
+				var groundShape = new Box(bpBox.Center, bpBox.LocalScale.X * bpBox.HalfExtents.X *2,
+				                          bpBox.LocalScale.Y * bpBox.HalfExtents.Y *2,
+				                          bpBox.LocalScale.Z * bpBox.HalfExtents.Z *2);
+				groundShape.Orientation = Quaternion.CreateFromYawPitchRoll(bpBox.Rotation.Y, bpBox.Rotation.X, bpBox.Rotation.Z);
+				groundShape.IsAffectedByGravity = false;
+				Space.Add(groundShape);
 			}
+
 
 			//Capsule Colliders
 			foreach (var bpCapsule in colliders.Capsules)
 			{
-				CollisionShape groundShape = new CapsuleShape(bpCapsule.Radius, bpCapsule.Height);
-				Vector3 localScale = bpCapsule.LocalScale;
-				groundShape.SetLocalScaling(ref localScale);
-				Matrix groundTransform = Matrix.CreateTranslation(bpCapsule.Center);
-				groundTransform.SetRotation(Quaternion.CreateFromYawPitchRoll(Util.DegToRad(bpCapsule.Rotation.X), Util.DegToRad(bpCapsule.Rotation.Y), Util.DegToRad(bpCapsule.Rotation.Z)));
-				DefaultMotionState motionState = new DefaultMotionState(groundTransform, Matrix.Identity);
-				RigidBodyConstructionInfo rbInfo = new RigidBodyConstructionInfo(0, motionState, groundShape, new Vector3(0,0,0));
-				RigidBody body = new RigidBody(rbInfo);
-				
-				dynamicsWorld.AddRigidBody(body);
+				var groundShape = new Capsule(bpCapsule.Center, bpCapsule.LocalScale.X * bpCapsule.Height,
+				                              bpCapsule.LocalScale.Z * bpCapsule.Radius);
+				groundShape.Orientation = Quaternion.CreateFromYawPitchRoll(bpCapsule.Rotation.Y, bpCapsule.Rotation.X, bpCapsule.Rotation.Z);
+				groundShape.IsAffectedByGravity = false;
+				Space.Add(groundShape);
 			}
 
 			//Sphere Colliders
 			foreach (var bpSphere in colliders.Spheres)
 			{
-				CollisionShape groundShape = new SphereShape(bpSphere.Radius);
-				Vector3 localScale = bpSphere.LocalScale;
-				groundShape.SetLocalScaling(ref localScale);
-				Matrix groundTransform = Matrix.CreateTranslation(bpSphere.Center);
-				groundTransform.SetRotation(Quaternion.CreateFromYawPitchRoll(Util.DegToRad(bpSphere.Rotation.X), Util.DegToRad(bpSphere.Rotation.Y), Util.DegToRad(bpSphere.Rotation.Z)));
-				DefaultMotionState motionState = new DefaultMotionState(groundTransform, Matrix.Identity);
-				RigidBodyConstructionInfo rbInfo = new RigidBodyConstructionInfo(0, motionState, groundShape, new Vector3(0,0,0));
-				RigidBody body = new RigidBody(rbInfo);
-				
-				dynamicsWorld.AddRigidBody(body);
+				var groundShape = new Sphere(bpSphere.Center, bpSphere.LocalScale.X * bpSphere.Radius);
+				groundShape.Orientation = Quaternion.CreateFromYawPitchRoll(bpSphere.Rotation.Y, bpSphere.Rotation.X, bpSphere.Rotation.Z);
+				groundShape.IsAffectedByGravity = false;
+				Space.Add(groundShape);
 			}
 
 			//Terrain Colliders
 			foreach (var bpTerrain in colliders.Terrains)
 			{
-				CollisionShape groundShape = new HeightfieldTerrainShape(bpTerrain.Width, bpTerrain.Height, bpTerrain.HeightData, 1f, 0f, bpTerrain.HeightScale, 1, false);
-				Vector3 localScale = bpTerrain.LocalScale;
-				groundShape.SetLocalScaling(ref localScale);
-				Matrix groundTransform = Matrix.CreateTranslation(bpTerrain.Center);
-				groundTransform.SetRotation(Quaternion.CreateFromYawPitchRoll(Util.DegToRad(bpTerrain.Rotation.X), Util.DegToRad(bpTerrain.Rotation.Y), Util.DegToRad(bpTerrain.Rotation.Z)));
-				DefaultMotionState motionState = new DefaultMotionState(groundTransform, Matrix.Identity);
-				RigidBodyConstructionInfo rbInfo = new RigidBodyConstructionInfo(0, motionState, groundShape, new Vector3(0,0,0));
-				RigidBody body = new RigidBody(rbInfo);
-				
-				dynamicsWorld.AddRigidBody(body);
+				var data = new float[bpTerrain.Width,bpTerrain.Height];
+				for (int y = 0; y < bpTerrain.Height; y++)
+				{
+					for (int x = 0; x < bpTerrain.Width; x++)
+					{
+						data[x,y] = bpTerrain.HeightData[y * bpTerrain.Width + x];
+					}
+				}
+
+				Terrain groundShape = new Terrain(data, 
+				                   new AffineTransform(bpTerrain.LocalScale, 
+				                   Quaternion.CreateFromYawPitchRoll(bpTerrain.Rotation.Y, bpTerrain.Rotation.X, bpTerrain.Rotation.Z), 
+				                   bpTerrain.Center));
+
+				groundShape.Shape.QuadTriangleOrganization = BEPUphysics.CollisionShapes.QuadTriangleOrganization.BottomRightUpperLeft;
+				Space.Add(groundShape);
 			}
 			//Mesh colliders
 			foreach (var bpMesh in colliders.Meshes)
 			{
-				CollisionShape groundShape = new BvhTriangleMeshShape(new TriangleIndexVertexArray(bpMesh.NumTris/3, 
-				                                                      new ObjectArray<int>(bpMesh.Triangles), 3, bpMesh.NumVerts, 
-				                                                      new ObjectArray<Vector3>(bpMesh.Vertexes), 3), true, true);
-				Vector3 localScale = bpMesh.LocalScale;
-				groundShape.SetLocalScaling(ref localScale);
-				Matrix groundTransform = Matrix.CreateTranslation(bpMesh.Center);
-				groundTransform.SetRotation(Quaternion.CreateFromYawPitchRoll(Util.DegToRad(bpMesh.Rotation.X), Util.DegToRad(bpMesh.Rotation.Y), Util.DegToRad(bpMesh.Rotation.Z)));
-				DefaultMotionState motionState = new DefaultMotionState(groundTransform, Matrix.Identity);
-				RigidBodyConstructionInfo rbInfo = new RigidBodyConstructionInfo(0, motionState, groundShape, new Vector3(0,0,0));
-				RigidBody body = new RigidBody(rbInfo);
-				
-				dynamicsWorld.AddRigidBody(body);
+				StaticMesh groundShape = new StaticMesh(bpMesh.Vertexes.ToArray(), bpMesh.Triangles.ToArray(),
+				                                        new AffineTransform(bpMesh.LocalScale,
+				                    Quaternion.CreateFromYawPitchRoll(bpMesh.Rotation.Y, bpMesh.Rotation.X, bpMesh.Rotation.Z), bpMesh.Center));
+				Space.Add(groundShape);
 			}
 
 			f.Close();
@@ -221,19 +200,13 @@ namespace RegionServer.BackgroundThreads
 		{
 			lock(this)
 			{
-				dynamicsWorld.StepSimulation(elapsed.Milliseconds/1000f, 1);
+				Space.Update();
 			}
 		}
 
 		public void Stop()
 		{
 			isRunning = false;
-			for(int i = dynamicsWorld.NumCollisionObjects; i >= 0; i--)
-			{
-				CollisionObject obj = dynamicsWorld.CollisionObjectArray[i];
-				dynamicsWorld.RemoveCollisionObject(obj);
-			}
-			collisionShapes.Clear();
 		}
 	}
 }

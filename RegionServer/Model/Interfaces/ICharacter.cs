@@ -1,6 +1,7 @@
 
 using System.Collections.Generic;
 using RegionServer.Model.ServerEvents;
+using ComplexServerCommon.MessageObjects;
 
 namespace RegionServer.Model.Interfaces
 {
@@ -10,7 +11,9 @@ namespace RegionServer.Model.Interfaces
 		int TargetId {get;}
 		bool IsTeleporting {get;}
 		bool IsDead {get;}
+		bool Moving {get; set;}
 		Position Destination {get; set;}
+		MoveDirection Direction {get; set;}
 		IList<ICharacter> StatusListeners {get;} //anyone who has this character targeted = will have characters things updated (hp etc)
 		IStatHolder Stats {get;}
 

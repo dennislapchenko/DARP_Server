@@ -4,6 +4,7 @@ using RegionServer.Model.KnownList;
 using RegionServer.Model.Interfaces;
 using System.Collections.Generic;
 using RegionServer.Model.ServerEvents;
+using ComplexServerCommon.MessageObjects;
 
 
 namespace RegionServer.Model
@@ -56,6 +57,8 @@ namespace RegionServer.Model
 		public bool IsTeleporting {get; private set;}
 		public bool IsDead {get; set;}
 		public Position Destination {get; set;}
+		public virtual MoveDirection Direction {get; set;}
+		public virtual bool Moving {get; set;}
 		public int Facing {get; set;}
 		public IList<ICharacter> StatusListeners {get; private set;}
 		public delegate void DeathListener(ICharacter killer);

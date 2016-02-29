@@ -12,6 +12,7 @@ using SubServerCommon;
 using SubServerCommon.Data.NHibernate;
 using RegionServer.Model.Stats;
 using System.Linq;
+using ComplexServerCommon.MessageObjects;
 
 
 namespace RegionServer.Model
@@ -22,6 +23,7 @@ namespace RegionServer.Model
 		public CPlayerInstance(Region region, PlayerKnownList objectKnownList, IStatHolder stats, IPhysics physics) : base (region, objectKnownList, stats)
 		{
 			Physics = physics;
+			Physics.MoveSpeed = Stats.GetStat<MoveSpeed>();
 			Destination = new Position();
 		}
 
@@ -38,6 +40,39 @@ namespace RegionServer.Model
 			{
 				base.Position = Physics.Position;
 				return base.Position;
+			}
+			set
+			{
+				base.Position = value;
+				if(Physics != null)
+				{
+					Physics.Position = value;
+				}
+			}
+		}
+
+		public override MoveDirection Direction
+		{
+			get
+			{
+				base.Direction = Physics.Direction;
+				return base.Direction;
+			}
+			set
+			{
+				base.Direction = value;
+			}
+		}
+		public override bool Moving
+		{
+			get
+			{
+				base.Moving = Physics.Moving;
+				return base.Moving;
+			}
+			set
+			{
+				base.Moving = value;
 			}
 		}
 

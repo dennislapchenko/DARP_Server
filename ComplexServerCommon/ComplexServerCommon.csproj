@@ -33,8 +33,11 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
-    <Reference Include="BulletNoXna">
-      <HintPath>..\packages\BulletPhysics\BulletNoXna.dll</HintPath>
+    <Reference Include="BEPUphysics">
+      <HintPath>..\packages\BEPUPhysics\BEPUphysics.dll</HintPath>
+    </Reference>
+    <Reference Include="BEPUutilities">
+      <HintPath>..\packages\BEPUPhysics\BEPUutilities.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -63,6 +66,7 @@
     <Compile Include="SerializedPhysicsObjects\BPCapsule.cs" />
     <Compile Include="SerializedPhysicsObjects\BPTerrain.cs" />
     <Compile Include="SerializedPhysicsObjects\BPMesh.cs" />
+    <Compile Include="MessageObjects\MoveDirection.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

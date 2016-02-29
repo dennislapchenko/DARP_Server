@@ -60,10 +60,13 @@
       <HintPath>..\..\..\lib\log4net.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
-    <Reference Include="BulletNoXna">
-      <HintPath>..\packages\BulletPhysics\BulletNoXna.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="BEPUphysics">
+      <HintPath>..\packages\BEPUPhysics\BEPUphysics.dll</HintPath>
+    </Reference>
+    <Reference Include="BEPUutilities">
+      <HintPath>..\packages\BEPUPhysics\BEPUutilities.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -125,6 +128,7 @@
     <Compile Include="Model\Stats\MoveSpeed.cs" />
     <Compile Include="Model\Stats\Level.cs" />
     <Compile Include="Model\Stats\Level5HP.cs" />
+    <Compile Include="Model\BepuPhysics.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

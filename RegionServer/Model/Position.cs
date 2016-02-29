@@ -1,8 +1,9 @@
 
 using ComplexServerCommon.MessageObjects;
-using BulletXNA.LinearMath;
 using System;
 using ComplexServerCommon;
+using ExitGames.Logging;
+using BEPUutilities;
 
 namespace RegionServer.Model
 {
@@ -61,11 +62,12 @@ namespace RegionServer.Model
 		public float Z {get { return Translation.Z; } }
 		
 		public short Heading {get;set;} //0 - 65535 0.00549deg per value (to save message size)
+		protected ILogger Log = LogManager.GetCurrentClassLogger();
 
 		public Position()
 			: this (0,0,0,0)
 		{
-
+			Log.DebugFormat("empty Position constructor called");
 		}
 		
 		public Position(float x, float y, float z)
@@ -83,6 +85,10 @@ namespace RegionServer.Model
 			Translation = new Vector3(x,y,z);
 		}
 
+		public override string ToString()
+		{
+			return string.Format("Position: x:{0}, y:{1}, z:{2}", X, Y, Z);
+		}
 
 		public static implicit operator PositionData(Position pos)
 		{
