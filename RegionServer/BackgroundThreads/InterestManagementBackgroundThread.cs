@@ -9,6 +9,8 @@ namespace RegionServer.BackgroundThreads
 {
 	public class InterestManagementBackgroundThread : IBackgroundThread
 	{
+		private const int UPDATE_SPEED = 1250;
+
 		private bool isRunning = false;
 		public Region Region {get; set;}
 		private const int FullUpdateTimer = 100;
@@ -30,18 +32,20 @@ namespace RegionServer.BackgroundThreads
 
 			while(isRunning)
 			{
-				if(timer.Elapsed < TimeSpan.FromMilliseconds(1250))
+				if(timer.Elapsed < TimeSpan.FromMilliseconds((double)UPDATE_SPEED))
 				{
 					if(Region.NumPlayers <= 0)
 					{
 						Thread.Sleep(1000);
 						timer.Restart();
 					}
-					Thread.Sleep(1250 - timer.Elapsed.Milliseconds);
+					Thread.Sleep(UPDATE_SPEED - timer.Elapsed.Milliseconds);
 					continue;
 				}
 
-				Update(timer.Elapsed, (FullUpdateTimer == _fullUpdateTimer), updatePass);
+				var updateTime = timer.Elapsed;
+				timer.Restart();
+				Update(updateTime, (FullUpdateTimer == _fullUpdateTimer), updatePass);
 				if(_fullUpdateTimer > 0)
 				{
 					_fullUpdateTimer--;
@@ -52,7 +56,6 @@ namespace RegionServer.BackgroundThreads
 				}
 				updatePass = !updatePass;
 
-				timer.Restart();
 			}
 		}
 

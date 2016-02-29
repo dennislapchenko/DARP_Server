@@ -71,26 +71,26 @@ namespace RegionServer.Model
 
 					if(_playerMovement.Right < 0)
 					{
-						WalkDirection += strafeDir;
+						WalkDirection -= strafeDir;
 						Direction |= MoveDirection.Right;
 						Moving = true;
 					}
 					if(_playerMovement.Right > 0)
 					{
-						WalkDirection -= strafeDir;
+						WalkDirection += strafeDir;
 						Direction |= MoveDirection.Left;
 						Moving = true;
 					}
 
 					if(_playerMovement.Forward < 0)
 					{
-						WalkDirection += forwardDir;
+						WalkDirection -= forwardDir;
 						Direction |= MoveDirection.Forward;
 						Moving = true;
 					}
 					if(_playerMovement.Forward > 0)
 					{
-						WalkDirection -= forwardDir;
+						WalkDirection += forwardDir;
 						Direction |= MoveDirection.Backward;
 						Moving = true;
 					}

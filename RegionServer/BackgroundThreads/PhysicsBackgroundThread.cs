@@ -26,7 +26,8 @@ namespace RegionServer.BackgroundThreads
 {
 	public class PhysicsBackgroundThread : IBackgroundThread
 	{
-		//run roughly at 60fps
+		private const float FPS = 30f;
+
 		public Region Region {get; set;}
 		private bool isRunning;
 		protected PhotonApplication Server {get; set;}
@@ -71,6 +72,7 @@ namespace RegionServer.BackgroundThreads
 
 		public void Setup()
 		{
+			parallelLooper = new ParallelLooper();
 			parallelLooper.AddThread();
 			parallelLooper.AddThread();
 			parallelLooper.AddThread();
@@ -79,7 +81,7 @@ namespace RegionServer.BackgroundThreads
 			Space = new Space(parallelLooper);
 
 			Space.ForceUpdater.Gravity = new Vector3(0, -10, 0);
-			Space.TimeStepSettings.TimeStepDuration = 1f/30f; //step calculation time. 1f/30f = 30fps
+			Space.TimeStepSettings.TimeStepDuration = 1f/FPS; //step calculation time. 1f/30f = 30fps
 
 			var groupPair = new CollisionGroupPair(characters, characters);
 			CollisionRules.CollisionGroupRules.Add(groupPair, CollisionRule.NoBroadPhase); //passes right through other characters
@@ -109,10 +111,10 @@ namespace RegionServer.BackgroundThreads
 			//Box Colliders
 			foreach (var bpBox in colliders.Boxes)
 			{
-				var groundShape = new Box(bpBox.Center, bpBox.LocalScale.X * bpBox.HalfExtents.X *2,
+				var groundShape = new Box((Vector3)(Position)bpBox.Center, bpBox.LocalScale.X * bpBox.HalfExtents.X *2,
 				                          bpBox.LocalScale.Y * bpBox.HalfExtents.Y *2,
 				                          bpBox.LocalScale.Z * bpBox.HalfExtents.Z *2);
-				groundShape.Orientation = Quaternion.CreateFromYawPitchRoll(bpBox.Rotation.Y, bpBox.Rotation.X, bpBox.Rotation.Z);
+				groundShape.Orientation = new Quaternion(bpBox.Rotation.X, bpBox.Rotation.Y, bpBox.Rotation.Z, bpBox.Rotation.W);
 				groundShape.IsAffectedByGravity = false;
 				Space.Add(groundShape);
 			}
@@ -121,9 +123,9 @@ namespace RegionServer.BackgroundThreads
 			//Capsule Colliders
 			foreach (var bpCapsule in colliders.Capsules)
 			{
-				var groundShape = new Capsule(bpCapsule.Center, bpCapsule.LocalScale.X * bpCapsule.Height,
+				var groundShape = new Capsule((Vector3)(Position)bpCapsule.Center, bpCapsule.LocalScale.X * bpCapsule.Height,
 				                              bpCapsule.LocalScale.Z * bpCapsule.Radius);
-				groundShape.Orientation = Quaternion.CreateFromYawPitchRoll(bpCapsule.Rotation.Y, bpCapsule.Rotation.X, bpCapsule.Rotation.Z);
+				groundShape.Orientation = new Quaternion(bpCapsule.Rotation.X, bpCapsule.Rotation.Y, bpCapsule.Rotation.Z, bpCapsule.Rotation.W);
 				groundShape.IsAffectedByGravity = false;
 				Space.Add(groundShape);
 			}
@@ -131,8 +133,8 @@ namespace RegionServer.BackgroundThreads
 			//Sphere Colliders
 			foreach (var bpSphere in colliders.Spheres)
 			{
-				var groundShape = new Sphere(bpSphere.Center, bpSphere.LocalScale.X * bpSphere.Radius);
-				groundShape.Orientation = Quaternion.CreateFromYawPitchRoll(bpSphere.Rotation.Y, bpSphere.Rotation.X, bpSphere.Rotation.Z);
+				var groundShape = new Sphere((Vector3)(Position)bpSphere.Center, bpSphere.LocalScale.X * bpSphere.Radius);
+				groundShape.Orientation = new Quaternion(bpSphere.Rotation.X, bpSphere.Rotation.Y, bpSphere.Rotation.Z, bpSphere.Rotation.W);
 				groundShape.IsAffectedByGravity = false;
 				Space.Add(groundShape);
 			}
@@ -150,9 +152,9 @@ namespace RegionServer.BackgroundThreads
 				}
 
 				Terrain groundShape = new Terrain(data, 
-				                   new AffineTransform(bpTerrain.LocalScale, 
-				                   Quaternion.CreateFromYawPitchRoll(bpTerrain.Rotation.Y, bpTerrain.Rotation.X, bpTerrain.Rotation.Z), 
-				                   bpTerrain.Center));
+				                   new AffineTransform((Vector3)(Position)bpTerrain.LocalScale, 
+				                    new Quaternion(bpTerrain.Rotation.X, bpTerrain.Rotation.Y, bpTerrain.Rotation.Z, bpTerrain.Rotation.W), 
+				                   (Vector3)(Position)bpTerrain.Center));
 
 				groundShape.Shape.QuadTriangleOrganization = BEPUphysics.CollisionShapes.QuadTriangleOrganization.BottomRightUpperLeft;
 				Space.Add(groundShape);
@@ -160,9 +162,19 @@ namespace RegionServer.BackgroundThreads
 			//Mesh colliders
 			foreach (var bpMesh in colliders.Meshes)
 			{
-				StaticMesh groundShape = new StaticMesh(bpMesh.Vertexes.ToArray(), bpMesh.Triangles.ToArray(),
-				                                        new AffineTransform(bpMesh.LocalScale,
-				                    Quaternion.CreateFromYawPitchRoll(bpMesh.Rotation.Y, bpMesh.Rotation.X, bpMesh.Rotation.Z), bpMesh.Center));
+				List<Vector3> vList = new List<Vector3>();
+				foreach (var data in bpMesh.Vertexes)
+				{
+					vList.Add(new Vector3(data.X, data.Y, data.Z));
+				}
+				StaticMesh groundShape = new StaticMesh
+					(
+						vList.ToArray(), 
+						bpMesh.Triangles.ToArray(),
+					    new AffineTransform((Vector3)(Position)bpMesh.LocalScale,
+					    new Quaternion(bpMesh.Rotation.X, bpMesh.Rotation.Y, bpMesh.Rotation.Z, bpMesh.Rotation.W), 
+					    (Vector3)(Position)bpMesh.Center)
+					);
 				Space.Add(groundShape);
 			}
 
@@ -177,22 +189,22 @@ namespace RegionServer.BackgroundThreads
 
 			while(isRunning)
 			{
-				if(timer.Elapsed < TimeSpan.FromSeconds(1/30f))
+				if(timer.Elapsed < TimeSpan.FromSeconds(1/FPS))
 				{
 					if(Region.NumPlayers <= 0)
 					{
 						Thread.Sleep(1000);
 						timer.Restart();
 					}
-					if((int)(1000f/30f - timer.Elapsed.Milliseconds) > 0)
+					if((int)(1000f/FPS - timer.Elapsed.Milliseconds) > 0)
 					{
-						Thread.Sleep((int)(1000f/30f - timer.Elapsed.Milliseconds));
+						Thread.Sleep((int)(1000f/FPS - timer.Elapsed.Milliseconds));
 					}
 					continue;
 				}
-				
-				Update(timer.Elapsed);
+				var updateTime = timer.Elapsed;
 				timer.Restart();
+				Update(updateTime);
 			}
 		}
 

@@ -105,6 +105,12 @@ namespace RegionServer.Model
 			return new Position(position.X, position.Y, position.Z) { Heading = position.Heading };
 		}
 
+		public static implicit operator Vector3(Position position)
+		{
+			return new Vector3(position.X, position.Y, position.Z);
+		}
+
+
 		public string Serialize()
 		{
 			return Xml.Serialize<PositionData>((PositionData)this);

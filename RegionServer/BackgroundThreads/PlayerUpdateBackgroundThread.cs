@@ -13,6 +13,8 @@ namespace RegionServer.BackgroundThreads
 {
 	public class PlayerUpdateBackgroundThread : IBackgroundThread
 	{
+		private const int UPDATE_SPEED = 100;
+
 		public Region Region {get; set;}
 		private bool isRunning = false;
 		protected static readonly ILogger Log = LogManager.GetCurrentClassLogger();
@@ -36,22 +38,22 @@ namespace RegionServer.BackgroundThreads
 			{
 				try
 				{
-					if (timer.Elapsed < TimeSpan.FromMilliseconds(100))
+					if (timer.Elapsed < TimeSpan.FromMilliseconds((double)UPDATE_SPEED))
 					{
 						if (Region.NumPlayers <= 0)
 						{
 							Thread.Sleep(1000);
 							timer.Restart();
 						}
-						if(100 - timer.Elapsed.Milliseconds > 0)
+						if(UPDATE_SPEED - timer.Elapsed.Milliseconds > 0)
 						{
-							Thread.Sleep(100 - timer.Elapsed.Milliseconds);
+							Thread.Sleep(UPDATE_SPEED - timer.Elapsed.Milliseconds);
 						}
 						continue;
 					}
-					
-					Update(timer.Elapsed);
+					var updateTime = timer.Elapsed;
 					timer.Restart();
+					Update(updateTime);
 
 				}
 				catch (Exception e)
