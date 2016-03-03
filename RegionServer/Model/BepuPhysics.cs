@@ -51,8 +51,6 @@ namespace RegionServer.Model
 					Moving = false;
 					Direction = MoveDirection.None;
 
-//					var xform = ((KinematicCharacterController)CharacterController).GetGhostObject().GetWorldTransform();
-//					xform.SetRotation(Quaternion.CreateFromAxisAngle(new Vector3(0,1,0), Util.DegToRad((180 - (_playerMovement.Facing*0.0055f)))));
 					CharacterController.Body.Orientation = Quaternion.CreateFromAxisAngle(new Vector3(0,1,0), (float)-Math.PI*(_playerMovement.Facing*0.0055f)/180f);
 
 					Vector3 forwardDir = CharacterController.Body.WorldTransform.Forward;

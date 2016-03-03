@@ -11,6 +11,8 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 using SubServerCommon.Data.ClientData;
+using MMO.Framework;
+using System.Linq;
 
 namespace LoginServer.Handlers
 {
@@ -25,9 +27,9 @@ namespace LoginServer.Handlers
 		
 		#region implemented abstract members of PhotonServerHandler
 
-		public override MMO.Framework.MessageType Type {
+		public override MessageType Type {
 			get {
-				return MMO.Framework.MessageType.Request;
+				return MessageType.Request;
 			}
 		}
 		
@@ -43,7 +45,7 @@ namespace LoginServer.Handlers
 			}
 		}
 
-		protected override bool OnHandleMessage (MMO.Framework.IMessage message, PhotonServerPeer serverPeer)
+		protected override bool OnHandleMessage (IMessage message, PhotonServerPeer serverPeer)
 		{
 			var operation = new LoginSecurely(serverPeer.Protocol, message);
 			if (!operation.IsValid)
@@ -59,7 +61,10 @@ namespace LoginServer.Handlers
 			
 			if (operation.UserName == "" ||	 operation.Password == "")
 			{
-				serverPeer.SendOperationResponse(new OperationResponse(message.Code, new Dictionary<byte, object> {{(byte)ClientParameterCode.PeerId, message.Parameters[(byte)ClientParameterCode.PeerId]}} )
+				serverPeer.SendOperationResponse(new OperationResponse(message.Code, new Dictionary<byte, object> 
+				            {
+								{(byte)ClientParameterCode.PeerId, message.Parameters[(byte)ClientParameterCode.PeerId]}
+							})
                        	  	{		
 								ReturnCode = (int)ErrorCode.UserNamePasswordInvalid,
 								DebugMessage = "Username or password is incorrect" 
@@ -127,6 +132,7 @@ namespace LoginServer.Handlers
 																	ReturnCode = (int)ErrorCode.UserNamePasswordInvalid,
 																	DebugMessage = "Username or password is incorrect" 
 																},	new SendParameters());
+								//Log.DebugFormat("server: {0}", serverPeer.ApplicationName);
 								return true;
 
 							}
@@ -140,6 +146,8 @@ namespace LoginServer.Handlers
 									ReturnCode = (int)ErrorCode.UserNamePasswordInvalid,
 									DebugMessage = "Username or password is incorrect" 
 								}, new SendParameters());
+							//Log.DebugFormat("server: {0}", serverPeer.ApplicationName.FirstOrDefault());
+
 							return true;
 						}
 					}

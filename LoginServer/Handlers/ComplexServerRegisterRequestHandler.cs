@@ -10,6 +10,7 @@ using SubServerCommon;
 using SubServerCommon.Data.NHibernate;
 using System.Security.Cryptography;
 using System.Text;
+using MMO.Framework;
 
 namespace LoginServer.Handlers
 {
@@ -21,16 +22,35 @@ namespace LoginServer.Handlers
 
 		#region implemented abstract members of PhotonServerHandler
 
-		protected override bool OnHandleMessage (MMO.Framework.IMessage message, PhotonServerPeer serverPeer)
+		public override MessageType Type {
+			get {
+				return MessageType.Request;
+			}
+		}
+		
+		public override byte Code {
+			get {
+				return (byte) ClientOperationCode.Login;
+			}
+		}
+		
+		public override int? SubCode {
+			get {
+				return (int) MessageSubCode.Register;
+			}
+		}
+
+		protected override bool OnHandleMessage (IMessage message, PhotonServerPeer serverPeer)
 		{
 			var operation = new RegisterSecurely(serverPeer.Protocol, message);
 			if (!operation.IsValid)
 			{
 				serverPeer.SendOperationResponse(new OperationResponse(message.Code, 
-				                new Dictionary<byte, object> {{(byte)ClientParameterCode.PeerId, message.Parameters[(byte)ClientParameterCode.PeerId]}})
-				                                 {	ReturnCode = (int)ErrorCode.OperationInvalid,
-													DebugMessage = operation.GetErrorMessage() },
-												 	new SendParameters());
+					new Dictionary<byte, object>()
+	                {
+						{(byte)ClientParameterCode.PeerId, message.Parameters[(byte)ClientParameterCode.PeerId]}
+					})
+				    {ReturnCode = (int)ErrorCode.OperationInvalid, DebugMessage = operation.GetErrorMessage()}	,new SendParameters());
 												
 			return true;
 			}
@@ -89,7 +109,7 @@ namespace LoginServer.Handlers
 						if (userList.Count > 0)
 						{
 							Log.DebugFormat("Creating Profile");
-							UserProfile profile = new UserProfile() { CharacterSlots = 1, UserId = userList[0]};
+							UserProfile profile = new UserProfile() { CharacterSlots = 2, UserId = userList[0]};
 							session.Save(profile);
 							Log.DebugFormat("Saved profile");
 							transaction.Commit();
@@ -112,23 +132,7 @@ namespace LoginServer.Handlers
 
 
 
-		public override MMO.Framework.MessageType Type {
-			get {
-				return MMO.Framework.MessageType.Request;
-			}
-		}
-
-		public override byte Code {
-			get {
-				return (byte) ClientOperationCode.Login;
-			}
-		}
-
-		public override int? SubCode {
-			get {
-				return (int) MessageSubCode.Register;
-			}
-		}
+	
 
 		#endregion
 	}

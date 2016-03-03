@@ -37,7 +37,7 @@ namespace RegionServer
 			
 			//Registering Assemblies
 			builder.RegisterAssemblyTypes(Assembly.GetAssembly(GetType())).Where(t => t.Name.EndsWith("Handler")).As<PhotonServerHandler>().SingleInstance();
-			builder.RegisterAssemblyTypes(Assembly.GetAssembly(GetType())).AsImplementedInterfaces(); //BGThreads, BulletPhysics, CPlayerInstance + others
+			builder.RegisterAssemblyTypes(Assembly.GetAssembly(GetType())).AsImplementedInterfaces(); //BGThreads, BEPUPhysics, CPlayerInstance + others
 			
 		}
 		

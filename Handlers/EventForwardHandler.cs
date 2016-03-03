@@ -13,7 +13,7 @@ namespace ComplexServer.Handlers
 		public EventForwardHandler (PhotonApplication application) : base(application)
 		{
 		}
-		protected override bool OnHandleMessage (MMO.Framework.IMessage message, PhotonServerPeer serverPeer)
+		protected override bool OnHandleMessage (IMessage message, PhotonServerPeer serverPeer)
 		{
 			if (message.Parameters.ContainsKey((byte) ClientParameterCode.PeerId))
 			{

@@ -132,6 +132,12 @@
     <Compile Include="Model\Stats\Level.cs" />
     <Compile Include="Model\Stats\Level5HP.cs" />
     <Compile Include="Model\BepuPhysics.cs" />
+    <Compile Include="Model\Stats\Strength.cs" />
+    <Compile Include="Model\Stats\Dexterity.cs" />
+    <Compile Include="Model\Stats\Instinct.cs" />
+    <Compile Include="Model\Stats\Stamina.cs" />
+    <Compile Include="Model\Stats\CriticalChance.cs" />
+    <Compile Include="Model\Interfaces\IMoveExchange.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
