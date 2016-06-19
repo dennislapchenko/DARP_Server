@@ -1,5 +1,9 @@
 using ComplexServerCommon;
 using ComplexServerCommon.MessageObjects;
+using System.Collections.Generic;
+using System.Linq;
+using System.Collections;
+using RegionServer.Model.Items;
 
 namespace RegionServer.Model.ServerEvents
 {
@@ -9,19 +13,28 @@ namespace RegionServer.Model.ServerEvents
 		{
 			AddParameter(player.ObjectId, ClientParameterCode.ObjectId);
 			AddUserInfo(player);
-		}
+		} 
 
 		private void AddUserInfo(CPlayerInstance player)
 		{
+			var equipment = player.Items.Equipment.ToDictionary(item => (int)item.Key, item => (ItemData)item.Value);
+			var inventory = player.Items.Inventory.ToDictionary(item => item.Key, item => (ItemData)item.Value);
 			UserInfo info = new UserInfo() 
 			{
-				//when initialize character (on login)
 				Position = player.Position,
-				Name = player.Name
+				Name = player.Name,
+				GenStats = player.GenStats,
 
 				//Attributes - level, exp, stats
+				Stats = player.Stats.GetAllStats(),
 
 				//inventory - all equiped items
+				EquipmentKeys = equipment.Keys.ToArray(),
+				EquipmentValues = equipment.Values.ToArray(),
+
+				InventoryKeys = inventory.Keys.ToArray(),
+				InventoryValues = inventory.Values.ToArray(),
+
 
 				//Talents - skills
 

@@ -12,12 +12,17 @@ using SubServerCommon.Data.NHibernate;
 using System.Xml.Serialization;
 using ComplexServerCommon.MessageObjects;
 using System.IO;
+using RegionServer.Model.Interfaces;
+using RegionServer.Model.Stats;
 
 
 namespace LoginServer.Handlers
 {
 	public class LoginServerCreateCharacterHandler : PhotonServerHandler
 	{
+
+		private StatHolder _baseFullStatHolder;
+
 		public LoginServerCreateCharacterHandler(PhotonApplication application) : base(application)
 		{
 		}
@@ -88,7 +93,8 @@ namespace LoginServer.Handlers
 										Name = createCharacter.CharacterName,
 										Class = createCharacter.CharacterClass,
 										Sex = createCharacter.Sex,
-										Level = 0
+										Level = 0,
+										//Stats = _baseFullStatHolder.SerializeStats(),
 									};
 								session.Save(newChar);
 								transaction.Commit();

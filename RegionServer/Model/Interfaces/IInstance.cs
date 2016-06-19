@@ -8,11 +8,8 @@ namespace RegionServer.Model.Interfaces
 		Dictionary<short, CPlayerInstance> TeamA {get; set;}
 		Dictionary<short, CPlayerInstance> TeamB {get; set;}
 
-		Dictionary<short, IMoveExchange> Moves {get; set;}
-
-
-
-
+		//Dictionary<short, IMoveExchange> Moves {get; set;}
+	
 	}
 }
 

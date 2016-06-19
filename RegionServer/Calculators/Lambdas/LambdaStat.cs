@@ -19,7 +19,7 @@ namespace RegionServer.Calculators.Lambdas
 		{
 			if(_useTarget && env.Target == null)
 			{
-				return 1;
+				return 0;
 			}
 			if(!_useTarget && env.Character == null)
 			{

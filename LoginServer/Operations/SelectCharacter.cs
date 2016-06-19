@@ -7,7 +7,8 @@ namespace LoginServer.Operations
 {
 	public class SelectCharacter : Operation
 	{
-		public SelectCharacter(IRpcProtocol protocol, IMessage message) : base(protocol, new OperationRequest(message.Code, message.Parameters))
+		public SelectCharacter(IRpcProtocol protocol, IMessage message) 
+			: base(protocol, new OperationRequest(message.Code, message.Parameters))
 		{
 		}
 

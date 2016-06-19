@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>10.0.0</ProductVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{FA69763D-3E02-495B-8AAE-80956A227B9F}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -75,6 +75,7 @@
     <Compile Include="Operations\SelectCharacter.cs" />
     <Compile Include="Handlers\LoginServerCreateCharacterHandler.cs" />
     <Compile Include="Operations\CreateCharacter.cs" />
+    <Compile Include="Handlers\ComplexServerLogoutRequestHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -97,6 +98,10 @@
     <ProjectReference Include="..\..\MMO.Photon\MMO.Photon.csproj">
       <Project>{2D944662-3067-4449-9F5F-B703238BF0EF}</Project>
       <Name>MMO.Photon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RegionServer\RegionServer.csproj">
+      <Project>{CA9791CA-5EFF-4188-9175-3310E8802DB9}</Project>
+      <Name>RegionServer</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

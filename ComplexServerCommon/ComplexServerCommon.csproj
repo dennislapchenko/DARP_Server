@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>10.0.0</ProductVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{97B1F704-8FCF-409B-A321-CA1EADC5CB9E}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -33,10 +33,10 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
+    <Reference Include="Boo.Lang, Version=2.0.9.5, Culture=neutral, PublicKeyToken=32c39770e9a21a67" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="ClientEventCode.cs" />
     <Compile Include="ClientOperationCode.cs" />
     <Compile Include="ClientParameterCode.cs" />
     <Compile Include="ErrorCode.cs" />
@@ -45,13 +45,11 @@
     <Compile Include="MessageObjects\CharacterListItem.cs" />
     <Compile Include="MessageObjects\CharacterCreateDetails.cs" />
     <Compile Include="MessageObjects\ChatItem.cs" />
-    <Compile Include="MessageObjects\ChatType.cs" />
     <Compile Include="SystemMessageId.cs" />
     <Compile Include="Xml.cs" />
     <Compile Include="MessageObjects\MoveTo.cs" />
     <Compile Include="MessageObjects\PositionData.cs" />
     <Compile Include="MessageObjects\CharInfo.cs" />
-    <Compile Include="MessageObjects\da.cs" />
     <Compile Include="MessageObjects\UserInfo.cs" />
     <Compile Include="MessageObjects\PlayerMovement.cs" />
     <Compile Include="SerializedPhysicsObjects\BPColliders.cs" />
@@ -61,6 +59,27 @@
     <Compile Include="SerializedPhysicsObjects\BPTerrain.cs" />
     <Compile Include="SerializedPhysicsObjects\BPMesh.cs" />
     <Compile Include="MessageObjects\MoveDirection.cs" />
+    <Compile Include="MessageObjects\InventoryItem.cs" />
+    <Compile Include="MessageObjects\ItemData.cs" />
+    <Compile Include="MessageObjects\GenStatData.cs" />
+    <Compile Include="Enums\FightState.cs" />
+    <Compile Include="Enums\FightType.cs" />
+    <Compile Include="MessageObjects\FightQueueListItem.cs" />
+    <Compile Include="MessageObjects\FightCharsInfo.cs" />
+    <Compile Include="MessageObjects\UserFightInfo.cs" />
+    <Compile Include="MessageObjects\KeyValuePairS.cs" />
+    <Compile Include="MessageObjects\CharFightInfo.cs" />
+    <Compile Include="ClientEventCode.cs" />
+    <Compile Include="MessageObjects\FightInitInfo.cs" />
+    <Compile Include="MessageObjects\FightMove.cs" />
+    <Compile Include="Enums\HitSpot.cs" />
+    <Compile Include="Enums\MoveOutcome.cs" />
+    <Compile Include="Enums\FightTeam.cs" />
+    <Compile Include="Enums\ItemSlot.cs" />
+    <Compile Include="Enums\ChatType.cs" />
+    <Compile Include="MessageObjects\Rewards.cs" />
+    <Compile Include="MessageObjects\ExchangeProfile.cs" />
+    <Compile Include="Enums\FightWinLossTie.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

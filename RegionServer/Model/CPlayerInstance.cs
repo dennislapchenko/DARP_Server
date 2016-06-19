@@ -2,7 +2,6 @@ using System;
 using RegionServer.Model.Interfaces;
 using MMO.Photon.Client;
 using MMO.Photon.Server;
-using ExitGames.Logging;
 using RegionServer.Model.ServerEvents;
 using ComplexServerCommon;
 using Photon.SocketServer;
@@ -14,41 +13,46 @@ using RegionServer.Model.Stats;
 using System.Linq;
 using ComplexServerCommon.MessageObjects;
 
-
 namespace RegionServer.Model
 {
 	public class CPlayerInstance : CPlayable, IPlayer, IClientData
 	{
 
-		public CPlayerInstance(Region region, PlayerKnownList objectKnownList, IStatHolder stats, IPhysics physics) : base (region, objectKnownList, stats)
+		public CPlayerInstance(FightManager fightManager, Region region, PlayerKnownList objectKnownList, IStatHolder stats, IItemHolder items, IPhysics physics, GeneralStats gStats) 
+			: base (region, objectKnownList, stats, items)
 		{
+			
 			Physics = physics;
+			GenStats = gStats;
 			Physics.MoveSpeed = Stats.GetStat<MoveSpeed>();
 			Destination = new Position();
+			FightManager = fightManager;
 		}
-
 
 		public SubServerClientPeer Client {get; set;}
 		public PhotonServerPeer ServerPeer {get; set;}
+		public FightManager FightManager {get;set;}
 		public int? UserID {get; set;}
 		public int? CharacterID {get; set;}
+
 		public IPhysics Physics {get; set;}
+		public GeneralStats GenStats {get;set;}
 		
 		public override Position Position
-		{
-			get
-			{
+		{ 
+			get	
+			{	
 				base.Position = Physics.Position;
-				return base.Position;
+				return base.Position;	
 			}
-			set
-			{
+			set	
+			{	
 				base.Position = value;
 				if(Physics != null)
 				{
 					Physics.Position = value;
-				}
-			}
+				}			
+			}		
 		}
 
 		public override MoveDirection Direction
@@ -124,9 +128,11 @@ namespace RegionServer.Model
 
 		public void CleanUp()
 		{
-			Client.Log.DebugFormat("Logging off");
 			//abort attacks
 			StopMove(null);
+			//remove created queues
+			FightManager.LeaveQueue(this);
+
 			//remove temp items
 			//remove LFG
 			//Stop some timers
@@ -145,7 +151,6 @@ namespace RegionServer.Model
 		public void Store()
 		{
 			//save character to db
-
 			try
 			{
 				using(var session = NHibernateHelper.OpenSession())
@@ -154,12 +159,20 @@ namespace RegionServer.Model
 					{
 						var user = session.QueryOver<User>().Where(u => u.Id == UserID).SingleOrDefault();
 						var character = session.QueryOver<ComplexCharacter>().Where(cc => cc.UserId == user && cc.Name == Name).SingleOrDefault();
+						UserID = user.Id;
+						CharacterID = character.Id;
+
 						character.Level = (int)Stats.GetStat<Level>();
+
 						string position = Position.Serialize();
 						character.Position = position;
 
 						// Store stats
+						character.GenStats = GenStats.SerializeStats();
 						character.Stats = Stats.SerializeStats();
+
+						//Store items
+						character.Items = Items.SerializeItems();
 						session.Save(character);
 
 						transaction.Commit();
@@ -183,7 +196,8 @@ namespace RegionServer.Model
 					{
 						transaction.Commit();
 						ObjectId = objectId;
-						Name = character.Name;
+						Name = character.Name; //failcatch
+						CharacterID = character.Id;
 
 						//Appearance
 
@@ -198,24 +212,57 @@ namespace RegionServer.Model
 						}
 						else
 						{
-							Position = new Position(0,0,0);
+							Position = new Position(10,0,10);
 						}
 
 						//Guild
 						//Titles
 						//Timers
 
+						if(!string.IsNullOrEmpty(character.GenStats))
+						{
+							GenStats.DeserializeStats(character.GenStats);
+							GenStats.Name = character.Name;
+						}
+						else
+						{
+							GenStats.Name = character.Name;
+							GenStats.Experience = 0;
+							GenStats.Battles = 0;
+							GenStats.Win = 0;
+							GenStats.Loss = 0;
+							GenStats.Tie = 0;
+							GenStats.Gold = 0;
+							GenStats.Skulls = 0;
+							GenStats.InventorySlots = 20;
+						}
+
 						if(!string.IsNullOrEmpty(character.Stats))
 						{
 							Stats.DeserializeStats(character.Stats);
 						}
 
-						//equipment
-						//inventory
-						//effects
 
-						//social - guild/friend notify
-						Client.Log.DebugFormat("Max HP: {0}", Stats.GetStat<Level5HP>());
+						//equipment
+						if(!string.IsNullOrEmpty(character.Items))
+						{
+							Items.DeserializeItems(character.Items);
+						}
+						else
+						{
+							Client.Log.DebugFormat("{0}",Items.AddItem(1));
+							Client.Log.DebugFormat("{0}",Items.AddItem(4));
+							Client.Log.DebugFormat("{0}",Items.AddItem(5));
+							Client.Log.DebugFormat("{0}",Items.AddItem(6));
+							Items.EquipItem(1);
+							Items.EquipItem(2);
+							Items.EquipItem(2);
+							Client.Log.DebugFormat("{0}",Items.AddItem(2));
+							Client.Log.DebugFormat("{0}",Items.AddItem(3));
+							Client.Log.DebugFormat("{0}",Items.AddItem(7));
+							Client.Log.DebugFormat("{0}",Items.AddItem(2));
+						}
+						Stats.SetStat<CurrHealth>(Stats.GetStat<MaxHealth>());				
 					}
 					else
 					{
@@ -228,4 +275,3 @@ namespace RegionServer.Model
 		}
 	}
 }
-

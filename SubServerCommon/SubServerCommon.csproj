@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>10.0.0</ProductVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{57B25880-46D3-4F43-A4B7-7F3107F0C9BA}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -84,6 +84,8 @@
     <Compile Include="Data\NHibernate\RegionRecord.cs" />
     <Compile Include="Data\Mapping\RegionRecordMap.cs" />
     <Compile Include="Math\RandomExtensions.cs" />
+    <Compile Include="Data\NHibernate\ItemDBEntry.cs" />
+    <Compile Include="Data\Mapping\ItemDBEntryMap.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

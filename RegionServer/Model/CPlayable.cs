@@ -6,7 +6,8 @@ namespace RegionServer.Model
 {
 	public abstract class CPlayable : CCharacter, IPlayable
 	{
-		public CPlayable(Region region, PlayableKnownList objectKnownList, IStatHolder stats) : base(region, objectKnownList, stats)
+		public CPlayable(Region region, PlayableKnownList objectKnownList, IStatHolder stats, IItemHolder items) 
+			: base(region, objectKnownList, stats, items)
 		{
 		}
 

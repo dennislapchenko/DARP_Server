@@ -13,7 +13,11 @@ namespace ComplexServerCommon
 		CharacterSlots,
 		CharacterCreateDetails,
 		Object,
-		ObjectId
+		ObjectId,
+		EquipmentSlot,
+		InventorySlot,
+		FightID,
+		CurrentHealth,
 	}
 }
 

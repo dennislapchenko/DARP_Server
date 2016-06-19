@@ -1,5 +1,7 @@
 
 using System;
+using System.Linq;
+using System.Collections;
 using RegionServer.Model.KnownList;
 using RegionServer.Model.Interfaces;
 using System.Collections.Generic;
@@ -11,10 +13,12 @@ namespace RegionServer.Model
 {
 	public class CCharacter : CObject, ICharacter
 	{
-		public CCharacter(Region region, CharacterKnownList objectKnownList, IStatHolder stats) : base(region, objectKnownList)
+		public CCharacter(Region region, CharacterKnownList objectKnownList, IStatHolder stats, IItemHolder items) : base(region, objectKnownList)
 		{
 			Stats = stats;
 			Stats.Character = this;
+			Items = items;
+			Items.Character = this;
 			StatusListeners = new List<ICharacter>();
 		}
 
@@ -22,8 +26,6 @@ namespace RegionServer.Model
 		{
 			get { return ObjectKnownList as CharacterKnownList; }
 		}
-
-
 
 		private IObject _target;
 		public IObject Target 
@@ -33,13 +35,14 @@ namespace RegionServer.Model
 			{
 				if (value != null && !value.IsVisible)
 				{
-					value = null;
+					//value = null;
 				}
 				
 				if (value != null && value != _target)
 				{
 					KnownList.AddKnownObject(value);
 					value.KnownList.AddKnownObject(value);
+					_target = value;
 				}
 			}
 		}
@@ -54,6 +57,55 @@ namespace RegionServer.Model
 				return -1;
 			}
 		}
+
+		public void SwitchCurrentFightTarget()
+		{
+			var hostileTeam = CurrentFight.CharFightData[this as CPlayerInstance].Team == FightTeam.Red ? CurrentFight.TeamBlue : CurrentFight.TeamRed;
+			var aliveTargets = hostileTeam.Values.Where(p => !p.IsDead).ToList();
+			var cplayer = this as CPlayerInstance;
+			if(cplayer != null)
+			{
+				cplayer.Client.Log.DebugFormat("found hostile team: {0}. {1}/{2} players alive", hostileTeam, aliveTargets.Count, hostileTeam.Values.Count);
+			}
+
+			if(!CurrentFight.Moves.Any())
+			{
+				Target = aliveTargets.FirstOrDefault();
+				if(cplayer != null)
+				{
+					cplayer.Client.Log.DebugFormat("({0}){1} has targeted ({2}){3} - (Moves were empty)", cplayer.ObjectId, cplayer.Name, cplayer.TargetId, cplayer.Target.Name);
+				}
+				return;
+			}
+
+			foreach(var enemy in aliveTargets)
+			{
+				var matchingMove = CurrentFight.Moves.FirstOrDefault(n => n.PeerObjectId == ObjectId && n.TargetObjectId == enemy.ObjectId);
+
+				if(matchingMove == null)
+				{
+					Target = enemy;
+					if(cplayer != null)
+					{
+						cplayer.Client.Log.DebugFormat("{0} has targeted ({1}){2}", cplayer.Name, cplayer.TargetId, cplayer.Target.Name);
+					}
+					return;
+				}
+				else
+				{
+					if(cplayer != null)
+					{
+						cplayer.Client.Log.DebugFormat("found existing move in a foreach enemy list\n" + matchingMove.ToString());
+					}
+				}
+			}
+		}
+//			}
+//			else
+//			{
+//				//switch NPC's target
+//			}
+
 		public bool IsTeleporting {get; private set;}
 		public bool IsDead {get; set;}
 		public Position Destination {get; set;}
@@ -62,7 +114,11 @@ namespace RegionServer.Model
 		public int Facing {get; set;}
 		public IList<ICharacter> StatusListeners {get; private set;}
 		public delegate void DeathListener(ICharacter killer);
-		public IStatHolder Stats {get; protected set;}
+
+		public IStatHolder Stats {get; set;}
+		public IItemHolder Items {get; protected set;}
+		public Fight CurrentFight {get; set;}
+
 		
 
 		public DeathListener DeathListeners; //so spawner can remove it from its list and respawn the NPC after timer
@@ -108,6 +164,31 @@ namespace RegionServer.Model
 			Teleport(teleportType.GetNearestTeleportLocation(this));
 		}
 
+		public virtual bool Die()
+		{
+			if(IsDead)
+			{
+				return false;
+			}
+
+			IsDead = true;
+			Target = null;
+			StopMove(null);
+			//BroadcastStatusUpdate();
+			return true;
+		}
+
+		public virtual bool Resurrect()
+		{
+			if(!IsDead)
+			{
+				return false;
+			}
+			IsDead = false;
+			return true;
+		}
+
+
 		public virtual bool Die(ICharacter killer)
 		{
 			if(IsDead)
@@ -125,7 +206,7 @@ namespace RegionServer.Model
 			Target = null;
 			StopMove(null);
 			//Effects.StopAllEffectsThroughDeath();
-			CalculateRewards(killer);
+			//CalculateRewards(killer);
 			BroadcastStatusUpdate();
 			//Region.OnDeath(this);
 
@@ -152,9 +233,10 @@ namespace RegionServer.Model
 
 		public void BroadcastStatusUpdate()
 		{
-			foreach (var statusListener in StatusListeners)
+			//foreach (var statusListener in StatusListeners)
+			foreach(var player in CurrentFight.Players)
 			{
-				statusListener.BroadcastMessage(new StatusUpdate(this));
+				player.Value.BroadcastMessage(new StatusUpdate(this));
 			}
 		}
 		public virtual void UpdateAndBroadcastStatus(int broadcastType)

@@ -13,7 +13,7 @@ namespace RegionServer.BackgroundThreads
 {
 	public class PlayerUpdateBackgroundThread : IBackgroundThread
 	{
-		private const int UPDATE_SPEED = 100;
+		private const double UPDATE_SPEED = 100;
 
 		public Region Region {get; set;}
 		private bool isRunning = false;
@@ -38,16 +38,16 @@ namespace RegionServer.BackgroundThreads
 			{
 				try
 				{
-					if (timer.Elapsed < TimeSpan.FromMilliseconds((double)UPDATE_SPEED))
+					if (timer.Elapsed < TimeSpan.FromMilliseconds(UPDATE_SPEED))
 					{
 						if (Region.NumPlayers <= 0)
 						{
 							Thread.Sleep(1000);
 							timer.Restart();
 						}
-						if(UPDATE_SPEED - timer.Elapsed.Milliseconds > 0)
+						if((int)UPDATE_SPEED - timer.Elapsed.Milliseconds > 0)
 						{
-							Thread.Sleep(UPDATE_SPEED - timer.Elapsed.Milliseconds);
+							Thread.Sleep((int)UPDATE_SPEED - timer.Elapsed.Milliseconds);
 						}
 						continue;
 					}
@@ -61,7 +61,6 @@ namespace RegionServer.BackgroundThreads
 					Log.ErrorFormat(string.Format("Exception happened in PlayerUpdateBackgroundThread.Run - {0}", e.StackTrace));
 				}
 			}
-
 		}
 
 		void Update(TimeSpan elapsed)
@@ -75,7 +74,7 @@ namespace RegionServer.BackgroundThreads
 			{
 				instance.BroadcastMessage(new MoveToLocation(instance));
 				instance.Physics.Dirty = false;
-				Log.DebugFormat("Sending MoveToLocation to {0}", instance.Name);
+				//Log.DebugFormat("Sending MoveToLocation to {0}", instance.Name);
 			}
 		}
 
@@ -83,8 +82,5 @@ namespace RegionServer.BackgroundThreads
 		{
 			isRunning = false;
 		}
-
-
-
 	}
 }

@@ -45,10 +45,10 @@ namespace LoginServer.Handlers
 			{
 				Log.Error(operation.GetErrorMessage());
 				serverPeer.SendOperationResponse(new OperationResponse(message.Code) 
-			                             	    { 	ReturnCode = (int)ErrorCode.OperationInvalid,
-													DebugMessage = operation.GetErrorMessage(),
-													Parameters = para
-												}, new SendParameters() );
+						                             	    { 	ReturnCode = (int)ErrorCode.OperationInvalid,
+																DebugMessage = operation.GetErrorMessage(),
+																Parameters = para
+															}, new SendParameters() );
 				return true;
 			}
 

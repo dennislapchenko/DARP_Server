@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>10.0.0</ProductVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{CA9791CA-5EFF-4188-9175-3310E8802DB9}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -70,6 +70,9 @@
     <Reference Include="BEPUutilities">
       <HintPath>..\packages\BEPUPhysics\BEPUutilities.dll</HintPath>
     </Reference>
+    <Reference Include="System.Linq.Dynamic">
+      <HintPath>..\packages\DynamicLinq\System.Linq.Dynamic.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -130,14 +133,63 @@
     <Compile Include="Model\Interfaces\IDerivedStat.cs" />
     <Compile Include="Model\Stats\MoveSpeed.cs" />
     <Compile Include="Model\Stats\Level.cs" />
-    <Compile Include="Model\Stats\Level5HP.cs" />
     <Compile Include="Model\BepuPhysics.cs" />
-    <Compile Include="Model\Stats\Strength.cs" />
-    <Compile Include="Model\Stats\Dexterity.cs" />
-    <Compile Include="Model\Stats\Instinct.cs" />
-    <Compile Include="Model\Stats\Stamina.cs" />
-    <Compile Include="Model\Stats\CriticalChance.cs" />
+    <Compile Include="Model\Items\Item.cs" />
+    <Compile Include="Model\Items\ItemDBCache.cs" />
+    <Compile Include="Model\Items\ItemType.cs" />
+    <Compile Include="Model\Interfaces\IItem.cs" />
     <Compile Include="Model\Interfaces\IMoveExchange.cs" />
+    <Compile Include="Model\Interfaces\IItemHolder.cs" />
+    <Compile Include="Model\Items\ItemHolder.cs" />
+    <Compile Include="Calculators\Lambdas\LambdaEquipment.cs" />
+    <Compile Include="Model\Stats\Strength.cs" />
+    <Compile Include="Model\Stats\Stamina.cs" />
+    <Compile Include="Model\Stats\Instinct.cs" />
+    <Compile Include="Model\Stats\Dexterity.cs" />
+    <Compile Include="Model\Stats\CriticalHitChance.cs" />
+    <Compile Include="Model\Stats\CriticalAntiHitChance.cs" />
+    <Compile Include="Model\Stats\HitChance.cs" />
+    <Compile Include="Model\Stats\DodgeChance.cs" />
+    <Compile Include="Model\Stats\ParryChance.cs" />
+    <Compile Include="Model\Stats\CounterAttackChance.cs" />
+    <Compile Include="Model\Stats\MinDamage.cs" />
+    <Compile Include="Model\Stats\MaxDamage.cs" />
+    <Compile Include="Model\Stats\CriticalDamage.cs" />
+    <Compile Include="Model\Stats\HealthRegen.cs" />
+    <Compile Include="Model\Stats\MaxHealth.cs" />
+    <Compile Include="Model\Stats\CurrHealth.cs" />
+    <Compile Include="Model\Stats\Damage.cs" />
+    <Compile Include="Handlers\ItemEquipHandler.cs" />
+    <Compile Include="Handlers\ItemDequipHandler.cs" />
+    <Compile Include="Model\Interfaces\IFight.cs" />
+    <Compile Include="Model\FightManager.cs" />
+    <Compile Include="Model\Fight.cs" />
+    <Compile Include="Operations\ItemDequipOperation.cs" />
+    <Compile Include="Operations\ItemEquipOperation.cs" />
+    <Compile Include="Operations\CreateQueueOperation.cs" />
+    <Compile Include="Model\ServerEvents\StartFight.cs" />
+    <Compile Include="Handlers\Fighting\PullQueuesHandler.cs" />
+    <Compile Include="Handlers\Fighting\CreateQueueHandler.cs" />
+    <Compile Include="Handlers\Fighting\JoinQueueHandler.cs" />
+    <Compile Include="Handlers\Fighting\LeaveQueueHandler.cs" />
+    <Compile Include="Model\ServerEvents\ReadyPrompt.cs" />
+    <Compile Include="Handlers\Fighting\PlayerReadyQueueHandler.cs" />
+    <Compile Include="Handlers\Fighting\PlayerInFightHandler.cs" />
+    <Compile Include="Model\ServerEvents\FightQueueParticipants.cs" />
+    <Compile Include="Model\ServerEvents\FightParticipants.cs" />
+    <Compile Include="Model\Stats\GeneralStats.cs" />
+    <Compile Include="Model\ServerEvents\LoadIngameScene.cs" />
+    <Compile Include="Model\ServerEvents\UserFightInfoUpdate.cs" />
+    <Compile Include="Model\ServerEvents\FightUpdate.cs" />
+    <Compile Include="Model\Move.cs" />
+    <Compile Include="Handlers\Fighting\SendMoveHandler.cs" />
+    <Compile Include="Model\ServerEvents\PulledQueues.cs" />
+    <Compile Include="Model\ServerEvents\FinishFight.cs" />
+    <Compile Include="Model\CurrentFightCharData.cs" />
+    <Compile Include="Model\ServerEvents\HP5.cs" />
+    <Compile Include="BackgroundThreads\RegenerationBackgroundThread.cs" />
+    <Compile Include="BackgroundThreads\PlayerBackupBackgroundThread.cs" />
+    <Compile Include="Model\Interfaces\INPC.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -173,6 +225,8 @@
     <Folder Include="Calculators\Functions\" />
     <Folder Include="Calculators\Lambdas\" />
     <Folder Include="Model\Stats\" />
+    <Folder Include="Model\Items\" />
+    <Folder Include="Handlers\Fighting\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

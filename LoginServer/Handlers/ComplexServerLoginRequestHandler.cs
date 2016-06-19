@@ -47,6 +47,12 @@ namespace LoginServer.Handlers
 
 		protected override bool OnHandleMessage (IMessage message, PhotonServerPeer serverPeer)
 		{
+			var para = new Dictionary<byte, object> 
+			{ 
+				{(byte)ClientParameterCode.PeerId, message.Parameters[(byte)ClientParameterCode.PeerId]},
+				{(byte)ClientParameterCode.SubOperationCode, message.Parameters[(byte)ClientParameterCode.SubOperationCode]},
+			};
+
 			var operation = new LoginSecurely(serverPeer.Protocol, message);
 			if (!operation.IsValid)
 			{
@@ -58,13 +64,10 @@ namespace LoginServer.Handlers
 				
 				return true;
 			}
-			
+
 			if (operation.UserName == "" ||	 operation.Password == "")
 			{
-				serverPeer.SendOperationResponse(new OperationResponse(message.Code, new Dictionary<byte, object> 
-				            {
-								{(byte)ClientParameterCode.PeerId, message.Parameters[(byte)ClientParameterCode.PeerId]}
-							})
+				serverPeer.SendOperationResponse(new OperationResponse(message.Code, para)
                        	  	{		
 								ReturnCode = (int)ErrorCode.UserNamePasswordInvalid,
 								DebugMessage = "Username or password is incorrect" 
@@ -102,11 +105,6 @@ namespace LoginServer.Handlers
 
 									if(founduser)
 									{
-										var para = new Dictionary<byte, object> 
-										{ 
-											{(byte)ClientParameterCode.PeerId, message.Parameters[(byte)ClientParameterCode.PeerId]},
-											{(byte)ClientParameterCode.SubOperationCode, message.Parameters[(byte)ClientParameterCode.SubOperationCode]},
-										};
 										serverPeer.SendOperationResponse(new OperationResponse((byte)ClientOperationCode.Login) {Parameters = para, ReturnCode = (short)ErrorCode.UserCurrentlyLoggedIn, DebugMessage = "User is currently logged in"}, new SendParameters());
 									}
 									else 
@@ -114,12 +112,9 @@ namespace LoginServer.Handlers
 										server.ConnectionCollection<SubServerConnectionCollection>().Clients.Add(new Guid((Byte[])message.Parameters[(byte)ClientParameterCode.PeerId]), _clientFactory(new Guid((Byte[])message.Parameters[(byte)ClientParameterCode.PeerId])));
 										server.ConnectionCollection<SubServerConnectionCollection>().Clients[new Guid((Byte[])message.Parameters[(byte)ClientParameterCode.PeerId])].ClientData<CharacterData>().UserId = user.Id;
 										Log.Debug("Login Handler sucessfully found character to log in.");
-										var para = new Dictionary<byte, object> 
-										{
-											{(byte)ClientParameterCode.PeerId, message.Parameters[(byte)ClientParameterCode.PeerId]},
-											{(byte)ClientParameterCode.SubOperationCode, message.Parameters[(byte)ClientParameterCode.SubOperationCode]},
-											{(byte)ClientParameterCode.UserId, user.Id}
-										};
+
+										para.Add((byte)ClientParameterCode.UserId, user.Id);
+
 										serverPeer.SendOperationResponse(new OperationResponse((byte)ClientOperationCode.Login) {Parameters = para}, new SendParameters());
 									}
 								}
@@ -127,7 +122,7 @@ namespace LoginServer.Handlers
 							}
 							else
 							{
-								serverPeer.SendOperationResponse(new OperationResponse(message.Code, new Dictionary<byte, object> {{(byte)ClientParameterCode.PeerId, message.Parameters[(byte)ClientParameterCode.PeerId]}} )
+								serverPeer.SendOperationResponse(new OperationResponse(message.Code, para)
 								                                 {		
 																	ReturnCode = (int)ErrorCode.UserNamePasswordInvalid,
 																	DebugMessage = "Username or password is incorrect" 
@@ -141,7 +136,7 @@ namespace LoginServer.Handlers
 						{
 							Log.DebugFormat("Account name does not exist {0}", operation.UserName);
 							transaction.Commit(); //closing transaction
-							serverPeer.SendOperationResponse(new OperationResponse(message.Code) 
+							serverPeer.SendOperationResponse(new OperationResponse(message.Code, para)
 							    {
 									ReturnCode = (int)ErrorCode.UserNamePasswordInvalid,
 									DebugMessage = "Username or password is incorrect" 
@@ -156,12 +151,11 @@ namespace LoginServer.Handlers
 			catch (Exception e)
 			{
 				Log.Error("Error Occured", e);
-				serverPeer.SendOperationResponse(new OperationResponse(message.Code, 
-				    new Dictionary<byte, object> {{(byte)ClientParameterCode.PeerId, message.Parameters[(byte)ClientParameterCode.PeerId]}})
-                     	{	
-							ReturnCode = (int)ErrorCode.UserNameInUse,
-							DebugMessage = e.ToString() 	
-						}, new SendParameters());	
+				serverPeer.SendOperationResponse(new OperationResponse(message.Code,para)
+             	{	
+					ReturnCode = (int)ErrorCode.UserNameInUse,
+					DebugMessage = e.ToString() 	
+				}, new SendParameters());	
 			}
 			return true;
 		}

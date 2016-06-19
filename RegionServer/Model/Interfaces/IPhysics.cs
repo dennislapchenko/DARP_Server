@@ -8,7 +8,7 @@ namespace RegionServer.Model.Interfaces
 	public interface IPhysics
 	{
 		Position Position {get; set;}
-		bool Dirty {get; set;} //changed or not (should update or not)
+		bool Dirty {get; set;} //should update or not
 		PlayerMovement Movement {get;set;}
 		MoveDirection Direction {get; set;}
 		float MoveSpeed {get; set;}

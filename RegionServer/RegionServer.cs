@@ -14,6 +14,8 @@ using SubServerCommon.Handlers;
 using RegionServer.Model;
 using RegionServer.Model.KnownList;
 using RegionServer.BackgroundThreads;
+using RegionServer.Model.Items;
+using RegionServer.Model.Stats;
 
 
 namespace RegionServer
@@ -34,10 +36,14 @@ namespace RegionServer
 			builder.RegisterType<CPlayerInstance>();
 			builder.RegisterType<Region>().SingleInstance();
 			builder.RegisterType<PlayerKnownList>();
+			builder.RegisterType<ItemDBCache>().SingleInstance();
+			builder.RegisterType<GeneralStats>();
+			builder.RegisterType<FightManager>().SingleInstance();
+			//builder.RegisterType<Fight>().SingleInstance();
 			
 			//Registering Assemblies
 			builder.RegisterAssemblyTypes(Assembly.GetAssembly(GetType())).Where(t => t.Name.EndsWith("Handler")).As<PhotonServerHandler>().SingleInstance();
-			builder.RegisterAssemblyTypes(Assembly.GetAssembly(GetType())).AsImplementedInterfaces(); //BGThreads, BEPUPhysics, CPlayerInstance + others
+			builder.RegisterAssemblyTypes(Assembly.GetAssembly(GetType())).AsImplementedInterfaces(); //BGThreads, BulletPhysics, CPlayerInstance + others
 			
 		}
 		

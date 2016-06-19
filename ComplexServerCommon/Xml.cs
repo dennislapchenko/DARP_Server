@@ -14,7 +14,7 @@ namespace ComplexServerCommon
 			return outStream.ToString();
 		}
 		
-		public static T Deserialize<T>(object obj)
+		public static T Deserialize<T>(object obj) where T : class, new()
 		{
 			XmlSerializer mySerializer = new XmlSerializer(typeof(T));
 			StringReader inStream = new StringReader(Convert.ToString(obj));

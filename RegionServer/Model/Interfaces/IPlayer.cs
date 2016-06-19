@@ -10,6 +10,7 @@ namespace RegionServer.Model.Interfaces
 		int? UserID {get; set;}
 		int? CharacterID {get; set;}
 		IPhysics Physics {get; set;}
+		IStatHolder Stats {get;set;}
 	}
 }
 

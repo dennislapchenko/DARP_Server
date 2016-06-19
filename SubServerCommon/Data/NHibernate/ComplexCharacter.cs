@@ -11,8 +11,10 @@ namespace SubServerCommon.Data.NHibernate
 		public virtual int Level {get;set;}
 		public virtual string Class {get; set;}
 		public virtual string Sex {get; set;}
+		public virtual string GenStats {get; set;}
 		public virtual string Stats {get; set;}
 		public virtual string Position {get; set;}
+		public virtual string Items {get; set;}
 
 		public virtual CharacterListItem BuilderCharacterListItem()
 		{

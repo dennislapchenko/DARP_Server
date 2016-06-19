@@ -5,19 +5,19 @@ using ExitGames.Logging;
 using RegionServer.Calculators;
 using ComplexServerCommon;
 using System.Linq;
-using System.Xml.Serialization;
-using System.IO;
+using Environment = RegionServer.Calculators.Environment;
+using ComplexServerCommon.MessageObjects;
+using ComplexServerCommon.Enums;
 
 namespace RegionServer.Model.Stats
 {
 	public class StatHolder : IStatHolder
 	{
-	
-
 		public ICharacter Character {get; set;}
 		private Dictionary<Type, IStat> _stats;
 		public Dictionary<Type, IStat> Stats {get { return _stats; } }
 		protected Dictionary<IStat, Calculator> Calculators = new Dictionary<IStat, Calculator>();
+		private bool _dirty;
 
 		protected ILogger Log = LogManager.GetCurrentClassLogger();
 
@@ -36,6 +36,32 @@ namespace RegionServer.Model.Stats
 			}
 		}
 
+		public bool Dirty
+		{
+			get 
+			{
+				if(GetStat<CurrHealth>() < GetStat<MaxHealth>())
+				{
+					if(Character.CurrentFight != null)
+					{
+						if(Character.CurrentFight.State != FightState.ENGAGED)
+						{
+							_dirty = true;
+							return _dirty;
+						}
+						else
+						{
+							_dirty = false;
+							return _dirty;
+						}
+					}
+					_dirty = true;
+				}
+				return _dirty;
+				
+			}
+			set { _dirty = value;}
+		}
 
 		public float GetStat<T>() where T : class, IStat
 		{
@@ -63,13 +89,91 @@ namespace RegionServer.Model.Stats
 			return 0;
 		}
 
+		public float GetStat<T, C>(T stat, C target)	where T : class, IStat 
+														where C : ICharacter
+		{
+			IStat result;
+			_stats.TryGetValue(typeof(T), out result);
+			if(result == null)
+			{
+				_stats.TryGetValue(((dynamic)stat).GetType(), out result);
+			}
+			if(result != null && target != null)
+			{
+				return CalcStat(result, target);
+			}
+			return 0;
+		}
+
+		public float GetStatBase<T>() where T :class, IStat
+		{
+			IStat result;
+			_stats.TryGetValue(typeof(T), out result);
+			if(result != null)
+			{
+				return result.BaseValue;
+			}
+			return 0;
+		}
+
+		public int ApplyDamage(int damage)
+		{
+			IStat health;
+			_stats.TryGetValue(typeof(CurrHealth), out health);
+			int currentHealth = (int)health.BaseValue;
+			if(health != null)
+			{
+				//Log.DebugFormat("currHp: {0}, newHP: {1}, dmg: {2}, killdmg: {3}, overkill: {4}", currentHealth, -99, damage, -99, -99);
+				var newHealth = currentHealth - damage;
+				if(newHealth <= 0)
+				{
+					health.BaseValue = 0; //Dead
+					Character.Die();
+					//Log.DebugFormat("currHp: {0}, newHP: {1}, dmg: {2}, killdmg: {3}, overkill: {4}", currentHealth, newHealth, damage, -99, -99);
+					var killDamage = damage - Math.Abs(newHealth);
+					//Log.DebugFormat("currHp: {0}, newHP: {1}, dmg: {2}, killdmg: {3}, overkill: {4}", currentHealth, newHealth, damage, killDamage, -99);
+					var overkill = damage - Math.Abs(currentHealth);
+					//Log.DebugFormat("currHp: {0}, newHP: {1}, dmg: {2}, killdmg: {3}, overkill: {4}", currentHealth, newHealth, damage, killDamage, overkill);
+					Log.DebugFormat("OVER-KILL. DMG TOTAL: {0} . ACTUAL DEALT: {1}({2})", damage, killDamage, overkill);
+					return killDamage;
+				}
+				else
+				{
+					health.BaseValue = newHealth;
+					return damage;
+				}
+			}
+			return -9999999; //invalid result
+		}
+
+		public void RegenHealth()
+		{
+			var currentHP = (int)GetStat<CurrHealth>();
+			var newHP = currentHP += (int)GetStat<HealthRegen>();
+			SetStat<CurrHealth>(newHP);
+		}
+
 		public void SetStat<T>(float value) where T : class, IStat
 		{
 			IStat result;
 			_stats.TryGetValue(typeof(T), out result);
 			if (result != null)
 			{
-				result.BaseValue = value;
+				if(result.GetType() == typeof(CurrHealth))
+				{
+					if(value > GetStat<MaxHealth>())
+					{
+						result.BaseValue = GetStat<MaxHealth>();
+					}
+					else
+					{
+						result.BaseValue = value;
+					}
+				}
+				else
+				{
+					result.BaseValue = value;
+				}
 			}
 		}
 
@@ -83,15 +187,68 @@ namespace RegionServer.Model.Stats
 			float returnValue = stat.BaseValue;
 
 			var calculator = Calculators[stat];
-			var env = new Calculators.Environment() { Value = returnValue, Character = Character, Target = target};
+			var env = new Environment() { Value = returnValue, Character = Character, Target = target};
 
 			calculator.Calculate(env);
 
-			if (env.Value <= 0 && stat.IsNonZero)
+			if (env.Value <= 0 && stat.IsNonZero && !stat.IsNonNegative)
 			{
 				return 1;
 			}
+			if(env.Value <= 0 && stat.IsNonNegative)
+			{
+				return 0;
+			}
 			return env.Value;
+		}
+
+		public List<KeyValuePairS<string, float>> GetAllStats()
+		{
+			var result = new List<KeyValuePairS<string, float>>();
+			foreach(KeyValuePair<Type, IStat> stat in _stats)
+			{
+				result.Add(new KeyValuePairS<string, float>(stat.Value.Name, CalcStat(stat.Value)));
+			}
+			return result;
+		}
+
+		public List<KeyValuePairS<string, float>> GetMainStatsForEnemy()
+		{
+			var result = new List<KeyValuePairS<string, float>>();
+			result.Add(new KeyValuePairS<string, float>(_stats[typeof(Level)].Name, CalcStat(_stats[typeof(Level)])));
+			result.Add(new KeyValuePairS<string, float>(_stats[typeof(CurrHealth)].Name, CalcStat(_stats[typeof(CurrHealth)])));
+			result.Add(new KeyValuePairS<string, float>(_stats[typeof(MaxHealth)].Name, CalcStat(_stats[typeof(MaxHealth)])));
+			result.Add(new KeyValuePairS<string, float>(_stats[typeof(Strength)].Name, CalcStat(_stats[typeof(Strength)])));
+			result.Add(new KeyValuePairS<string, float>(_stats[typeof(Dexterity)].Name, CalcStat(_stats[typeof(Dexterity)])));
+			result.Add(new KeyValuePairS<string, float>(_stats[typeof(Instinct)].Name, CalcStat(_stats[typeof(Instinct)])));
+			result.Add(new KeyValuePairS<string, float>(_stats[typeof(Stamina)].Name, CalcStat(_stats[typeof(Stamina)])));
+			return result;
+		}
+
+		public List<KeyValuePairS<string, float>> GetHealthLevel()
+		{
+			var result = new List<KeyValuePairS<string, float>>();
+			result.Add(new KeyValuePairS<string, float>(_stats[typeof(Level)].Name, CalcStat(_stats[typeof(Level)])));
+			result.Add(new KeyValuePairS<string, float>(_stats[typeof(CurrHealth)].Name, CalcStat(_stats[typeof(CurrHealth)])));
+			result.Add(new KeyValuePairS<string, float>(_stats[typeof(MaxHealth)].Name, CalcStat(_stats[typeof(MaxHealth)])));
+			return result;
+		}
+
+		public Dictionary<string, float> GetCurrMaxHealth()
+		{
+			return new Dictionary<string, float>()
+			{
+				{_stats[typeof(CurrHealth)].Name, CalcStat(_stats[typeof(CurrHealth)])},
+				{_stats[typeof(MaxHealth)].Name, CalcStat(_stats[typeof(MaxHealth)])},
+			};
+		}
+
+		public void RefreshCurrentHealth()
+		{
+			if(GetStat<CurrHealth>() > GetStat<MaxHealth>())
+			{
+				SetStat<CurrHealth>(GetStat<MaxHealth>());
+			}
 		}
 
 		[Serializable]
@@ -114,19 +271,14 @@ namespace RegionServer.Model.Stats
 
 		public void DeserializeStats(string stats)
 		{
-			XmlSerializer serializer = new XmlSerializer(typeof(List<SerializedStat>));
-			StringReader reader = new StringReader(stats);
-			foreach (var stat in (List<SerializedStat>)serializer.Deserialize(reader))
+			foreach (var stat in Xml.Deserialize<List<SerializedStat>>(stats))
 			{
 				var result = _stats.Values.FirstOrDefault(s => s.Name == stat.StatType);
 				if(result != null)
 				{
 					result.BaseValue = stat.StatValue;
 				}
-				
 			}
 		}
-
 	}
 }
-

@@ -67,19 +67,19 @@ namespace LoginServer.Handlers
 													{
 														{(byte)ClientParameterCode.CharacterSlots, profile.CharacterSlots},
 														{(byte)ClientParameterCode.PeerId, message.Parameters[(byte)ClientParameterCode.PeerId]},
-														{(byte)ClientParameterCode.SubOperationCode, message.Parameters[(byte) ClientParameterCode.SubOperationCode]}
+														{(byte)ClientParameterCode.SubOperationCode, message.Parameters[(byte)ClientParameterCode.SubOperationCode]}
 													};
 								var characters = session.QueryOver<ComplexCharacter>().Where(cc => cc.UserId == user).List();
-								Hashtable characterList = new Hashtable();
 
+								Hashtable characterList = new Hashtable();
 								foreach (var complexCharacter in characters)
 								{
 									characterList.Add(complexCharacter.Id, Xml.Serialize(complexCharacter.BuilderCharacterListItem()));
 								}
 
 								para.Add((byte)ClientParameterCode.CharacterList, characterList);
+								
 								transaction.Commit();
-
 								serverPeer.SendOperationResponse(new OperationResponse((byte)ClientOperationCode.Login) { Parameters = para }, new SendParameters());
 							}
 							else
