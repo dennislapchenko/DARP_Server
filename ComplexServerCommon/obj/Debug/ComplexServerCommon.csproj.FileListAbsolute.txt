@@ -1,0 +1,4 @@
+C:\PHOTONSDK\deploy\ComplexServer\ComplexServerCommon.dll
+C:\PHOTONSDK\deploy\ComplexServer\ComplexServerCommon.pdb
+C:\Development\DARP\ComplexServerCommon\obj\Debug\ComplexServerCommon.dll
+C:\Development\DARP\ComplexServerCommon\obj\Debug\ComplexServerCommon.pdb

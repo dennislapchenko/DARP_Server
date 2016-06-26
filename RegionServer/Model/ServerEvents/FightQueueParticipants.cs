@@ -44,32 +44,24 @@ namespace RegionServer.Model.ServerEvents
 		{
 			foreach(var player in fight.TeamRed.Values)
 			{
-				var cplayer = player as CPlayerInstance;
-				if(cplayer != null)
-				{
-					var stats = cplayer.Stats.GetMainStatsForEnemy();
-					TeamRedInfos.Add(new CharInfo()
-												{
-													Name = cplayer.Name,
-													GenStats = cplayer.GenStats,
-													Stats = cplayer.Stats.GetMainStatsForEnemy(),
-												});
-					cplayer.Client.Log.DebugFormat("FQP {0} added to team red (client packet)", cplayer.Name);
-				}
+				var stats = player.Stats.GetMainStatsForEnemy();
+				TeamRedInfos.Add(new CharInfo()
+											{
+												Name = player.Name,
+												GenStats = player.GenStats,
+												Stats = player.Stats.GetMainStatsForEnemy(),
+											});
+				Log.DebugFormat("FQP {0} added to team red (client packet)", player.Name);
 			}
 			foreach(var player in fight.TeamBlue.Values)
 			{
-				var cplayer = player as CPlayerInstance;
-				if(cplayer != null)
-				{
-					TeamBlueInfos.Add(new CharInfo()
-												{
-													Name = cplayer.Name,
-													GenStats = cplayer.GenStats,
-													Stats = cplayer.Stats.GetMainStatsForEnemy(),
-												});
-					cplayer.Client.Log.DebugFormat("FQP {0} added to team blue (client packet)", cplayer.Name);
-				}
+				TeamBlueInfos.Add(new CharInfo()
+											{
+												Name = player.Name,
+												GenStats = player.GenStats,
+												Stats = player.Stats.GetMainStatsForEnemy(),
+											});
+				Log.DebugFormat("FQP {0} added to team blue (client packet)", player.Name);
 			}
 		}
 
@@ -78,30 +70,21 @@ namespace RegionServer.Model.ServerEvents
 			//NAME, LEVEL, CURRHEALTH/MAXHEALTH for each.
 			foreach(var player in fight.TeamRed.Values)
 			{
-				var cplayer = player as CPlayerInstance;
-				if(cplayer != null)
-				{
-					TeamRedInfos.Add(new CharInfo()
-												{
-													Name = cplayer.Name,
-													Stats = cplayer.Stats.GetHealthLevel(),
-												});
-					cplayer.Client.Log.DebugFormat("FQP {0} added to team red (client packet)", cplayer.Name);
-				}
+				TeamRedInfos.Add(new CharInfo()
+											{
+												Name = player.Name,
+												Stats = player.Stats.GetHealthLevel(),
+											});
+				Log.DebugFormat("FQP {0} added to team red (client packet)", player.Name);
 			}
 			foreach(var player in fight.TeamBlue.Values)
 			{
-				var cplayer = player as CPlayerInstance;
-				if(cplayer != null)
-				{
-					var stats = cplayer.Stats.GetHealthLevel();
-					TeamBlueInfos.Add(new CharInfo()
-												{
-													Name = cplayer.Name,
-													Stats = cplayer.Stats.GetHealthLevel(),
-												});
-					cplayer.Client.Log.DebugFormat("FQP {0} added to team blue (client packet)", cplayer.Name);
-				}
+				TeamBlueInfos.Add(new CharInfo()
+											{
+												Name = player.Name,
+												Stats = player.Stats.GetHealthLevel(),
+											});
+				Log.DebugFormat("FQP {0} added to team blue (client packet)", player.Name);
 			}
 		}
 	}

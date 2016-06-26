@@ -1,0 +1,6 @@
+/Users/DennisL/Desktop/PC/PHOTONSDK/deploy/ComplexServer/ChatServer/obj/Debug/.NETFramework,Version=v4.0.AssemblyAttribute.cs
+/Users/DennisL/Desktop/PC/PHOTONSDK/deploy/ComplexServer/bin/Debug/log4net.config
+/Users/DennisL/Desktop/PC/PHOTONSDK/deploy/ComplexServer/bin/Debug/ChatServer.dll.mdb
+/Users/DennisL/Desktop/PC/PHOTONSDK/deploy/ComplexServer/bin/Debug/ChatServer.dll
+/Users/DennisL/Desktop/PC/PHOTONSDK/deploy/ComplexServer/ChatServer/obj/Debug/ChatServer.dll
+/Users/DennisL/Desktop/PC/PHOTONSDK/deploy/ComplexServer/ChatServer/obj/Debug/ChatServer.dll.mdb

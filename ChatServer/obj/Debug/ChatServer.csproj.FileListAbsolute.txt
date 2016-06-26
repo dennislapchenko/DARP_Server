@@ -1,0 +1,6 @@
+C:\PHOTONSDK\deploy\ComplexServer\log4net.config
+C:\PHOTONSDK\deploy\ComplexServer\ChatServer.dll
+C:\PHOTONSDK\deploy\ComplexServer\ChatServer.pdb
+C:\Development\DARP\ChatServer\obj\Debug\ChatServer.csprojResolveAssemblyReference.cache
+C:\Development\DARP\ChatServer\obj\Debug\ChatServer.dll
+C:\Development\DARP\ChatServer\obj\Debug\ChatServer.pdb

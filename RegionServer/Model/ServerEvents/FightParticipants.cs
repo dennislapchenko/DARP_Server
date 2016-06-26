@@ -17,7 +17,7 @@ namespace RegionServer.Model.ServerEvents
 		public FightParticipants(CPlayerInstance player, bool onlyTarget) : base(ClientEventCode.ServerPacket, MessageSubCode.FightParticipants)
 		{
 			_instance = player;
-			AddParameter(player.TargetId, ClientParameterCode.ObjectId);
+			AddParameter(player.Target.ObjectId, ClientParameterCode.ObjectId);
 			if(!onlyTarget)
 			{
 				AddInfo(player);
@@ -39,23 +39,19 @@ namespace RegionServer.Model.ServerEvents
 		private void AddCharInfo(Fight fight)
 		{
 			charsInfo = new List<KeyValuePairS<int, CharFightInfo>>();
-			var allChars = fight.Players;
-			foreach(var player in allChars.Values)
+			var allChars = fight.getAllParticipants();
+			foreach(var player in allChars)
 			{
-				var cplayer = player as CPlayerInstance;
-				if(cplayer != null)
-				{
-					var info = new CharFightInfo() 
-												{
-													ObjectId = cplayer.ObjectId,
-													Name = cplayer.Name,
-													Team = (fight.CharFightData[cplayer].Team == FightTeam.Red ? FightTeam.Red : FightTeam.Blue),
-													stats = cplayer.Stats.GetHealthLevel(),
-													equipment = Util.ConvertEquipmentForXml(cplayer.Items.Equipment),
-												};
-					charsInfo.Add(new KeyValuePairS<int, CharFightInfo>(cplayer.ObjectId, info));
-					//cplayer.Client.Log.DebugFormat("FP {0} added to team {1} (client packet)", cplayer.Name, fight.CharFightData[cplayer.ObjectId].Team);
-				}
+				var info = new CharFightInfo() 
+											{
+												ObjectId = player.ObjectId,
+												Name = player.Name,
+												Team = fight.CharFightData[player].Team,
+												stats = player.Stats.GetHealthLevel(),
+												equipment = Util.ConvertEquipmentForXml(player.Items.Equipment),
+											};
+				charsInfo.Add(new KeyValuePairS<int, CharFightInfo>(player.ObjectId, info));
+				//cplayer.Client.Log.DebugFormat("FP {0} added to team {1} (client packet)", cplayer.Name, fight.CharFightData[cplayer.ObjectId].Team);
 			}
 		}
 

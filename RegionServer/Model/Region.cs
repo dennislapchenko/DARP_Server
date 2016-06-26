@@ -211,32 +211,7 @@ namespace RegionServer.Model
 
 		public List<IObject> GetVisibleObjects(IObject obj, float radius = 0, bool use3D = false)
 		{
-			if(radius == 0)
-			{
-				return _allObjects.Values.Where(a => a != null && a != obj && a.IsVisible).ToList();
-			}
-
-			float sqRadius = radius * radius;
-			float x = obj.Position.X;
-			float y = obj.Position.Y;
-			float z = obj.Position.Z;
-
-			return _allObjects.Values.Where(a => 
-			                                {
-												if (a == null || a == obj)
-												{
-													return false;
-												}
-												float dx = a.Position.X - x;
-												float dy = use3D ? a.Position.Y - y : 0;
-												float dz = a.Position.Z - z;
-
-												if(((dx*dx) + (dy*dy) + (dz*dz)) < sqRadius)
-												{
-													return true;
-												}
-												return false;
-											}).ToList();
+			return _allObjects.Values.Where(a => a != null && a != obj && a.IsVisible).ToList();
 		}
 
 		#endregion

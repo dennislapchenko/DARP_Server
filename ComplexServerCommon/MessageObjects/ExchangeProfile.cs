@@ -1,6 +1,5 @@
 ﻿using System;
 using ComplexServerCommon.MessageObjects.Enums;
-using System.Collections.Generic;
 
 namespace ComplexServerCommon.MessageObjects
 {
@@ -12,12 +11,12 @@ namespace ComplexServerCommon.MessageObjects
 		public int damage {get;set;}
 		public int totalDamage {get;set;}
 
-		public ExchangeProfile(int objId, int dmg, int totaldmg)
+		public ExchangeProfile(int objId)
 		{
 			objectId = objId;
 			outcome = MoveOutcome.Hit;
-			damage = dmg;
-			totalDamage = totaldmg;
+			damage = 0;
+			totalDamage = 0;
 		}
 	}
 }

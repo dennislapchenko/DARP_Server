@@ -73,7 +73,7 @@ namespace RegionServer.BackgroundThreads
 			{
 				instance.Store();
 				//instance.stored = true
-				Log.DebugFormat("Backing info for {0} to the Database", instance.Name);
+				//Log.DebugFormat("Backing info for {0} to the Database", instance.Name);
 			}
 		}
 

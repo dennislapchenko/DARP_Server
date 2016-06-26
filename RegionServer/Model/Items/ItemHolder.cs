@@ -2,7 +2,6 @@
 using RegionServer.Model.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
-//using System.Linq.Dynamic;
 using ComplexServerCommon;
 using ExitGames.Logging;
 using ComplexServerCommon.MessageObjects;
@@ -11,6 +10,8 @@ namespace RegionServer.Model.Items
 {
 	public class ItemHolder : IItemHolder
 	{
+		private static readonly bool DEBUG = true;
+
 		public ICharacter Character {get; set;}
 		private Dictionary<int, Item> _inventory;
 		public Dictionary<int, Item> Inventory { get { return _inventory; } }
@@ -20,30 +21,16 @@ namespace RegionServer.Model.Items
 
 		private int _inventorySlots;
 		private int _usedInventorySlots;
-		private int InventorySlots { get { return _inventorySlots;}}
+		public int InventorySlots { get { return _inventorySlots; } set { _inventorySlots = value; } }
 
 		protected ILogger Log = LogManager.GetCurrentClassLogger();
 
-		private ItemDBCache ItemDB;
-
-		public ItemHolder(ItemDBCache itemDb)
+		public ItemHolder()
 		{
-			ItemDB = itemDb;
 			_inventory = new Dictionary<int, Item>();
 			_equipment = new Dictionary<ItemSlot, Item>();
-
+			InventorySlots = Enum.GetNames(typeof (ItemSlot)).Length;
 			_usedInventorySlots = 0;
-			var character = Character as CPlayerInstance;
-			if(character != null)
-			{
-				SetInventorySlots(character.GenStats.InventorySlots);
-				Log.DebugFormat("character found, fetched inv slots: {0}", _inventorySlots);
-			}
-			else
-			{
-				SetInventorySlots(10);
-				Log.DebugFormat("character is null, cant fetch inv slots. backup setter: 10");
-			}
 		}
 
 		public void SetInventorySlots(int numSlots)
@@ -73,19 +60,20 @@ namespace RegionServer.Model.Items
 		{
 			if(_usedInventorySlots < InventorySlots)
 			{
-				if(ItemDB.Items.ContainsKey(itemId))
+				if (DEBUG) if(ItemDBCache.Items == null) Log.DebugFormat("ItemHolder - AddItem: ItemDBCache.Items == null");
+				if(ItemDBCache.Items.ContainsKey(itemId))
 				{
-					_inventory.Add(++_usedInventorySlots, ItemDB.GetItem(itemId));
+					_inventory.Add(++_usedInventorySlots, ItemDBCache.GetItem(itemId));
 				}
 			}
-			return string.Format("+item {0}, slot {1}",ItemDB.GetItem(itemId).Name, _usedInventorySlots);
+			return string.Format("+item {0}, slot {1}", ItemDBCache.GetItem(itemId).Name, _usedInventorySlots);
 		}
 
 		public bool RemoveItemFromInv(int invSlot)
 		{
 			if(_inventory[invSlot] != null)
 			{
-				Log.DebugFormat("Moved item {0} - {1} from inv to equip. removed: {2}", invSlot, _inventory[invSlot].Name,
+				if (DEBUG) Log.DebugFormat("Moved item {0} - {1} from inv to equip. removed: {2}", invSlot, _inventory[invSlot].Name,
 					_inventory.Remove(invSlot));
 //				_inventory.Remove(invSlot);
 				_inventory = _inventory.ToDictionary(d => d.Key < invSlot ? d.Key : d.Key -1, d => d.Value); //move all below items to a +1 location
@@ -99,6 +87,7 @@ namespace RegionServer.Model.Items
 		{
 			_inventory = new Dictionary<int, Item>();
 			_equipment = new Dictionary<ItemSlot, Item>();
+			_usedInventorySlots = 0;
 		}
 			
 		public bool EquipItem(int invSlot)
@@ -106,7 +95,7 @@ namespace RegionServer.Model.Items
 			var item = GetInventoryItem(invSlot);
 			if (item != null)
 			{
-				Log.DebugFormat("Equipping item: {0} - {1}", invSlot, item.Name);
+				if (DEBUG) Log.DebugFormat("Equipping item: {0} - {1}", invSlot, item.Name);
 				if(item.Type != ItemType.Consumable && item.Type != ItemType.Material)
 				{
 					if(DequipItem(item.Slot))//remove previous item to inventory, if there was one
@@ -120,20 +109,20 @@ namespace RegionServer.Model.Items
 						_equipment[item.Slot] = item;
 					}
 
-					Log.DebugFormat("equipped: {0}", true);
+					if (DEBUG) Log.DebugFormat("equipped: {0}", true);
 					return true;
 				}
 			}
-			Log.DebugFormat("equipped: {0}", false);
+			if (DEBUG) Log.DebugFormat("equipped: {0}", false);
 			return false;
 		}
 
 		//for initial loading
 		public void EquipItemOnRestore(int itemId)
 		{
-			if(ItemDB.Items.ContainsKey(itemId))
+			if(ItemDBCache.Items.ContainsKey(itemId))
 			{
-				var item = ItemDB.GetItem(itemId);
+				var item = ItemDBCache.GetItem(itemId);
 				_equipment.Add(item.Slot, item);
 			}
 		}
@@ -195,12 +184,9 @@ namespace RegionServer.Model.Items
 
 		private void SortInventoryItemSlotsOnLoad(SerializedItem item)
 		{
-			if(ItemDB.Items.ContainsKey(item.ItemId))
+			if(ItemDBCache.Items.ContainsKey(item.ItemId))
 			{
-				if(item != null)
-				{
-					Inventory.Add(item.InventorySlot, ItemDB.Items[item.ItemId] as Item);
-				}
+				Inventory.Add(item.InventorySlot, ItemDBCache.Items[item.ItemId] as Item);
 			}
 		}
 

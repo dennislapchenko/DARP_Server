@@ -13,7 +13,7 @@ namespace RegionServer.Model.Items
 {
 	public class ItemDBCache
 	{
-		public Dictionary<int, IItem> Items;
+		public static Dictionary<int, IItem> Items;
 
 		private List<IStat> _allStatsList;
 
@@ -21,6 +21,7 @@ namespace RegionServer.Model.Items
 
 		public ItemDBCache(IEnumerable<IStat> stats)
 		{
+			Log.DebugFormat("ItemDBCache constructor called");
 			Items = new Dictionary<int, IItem>();
 			_allStatsList = stats.ToList();
 			PullFromDB();
@@ -96,44 +97,38 @@ namespace RegionServer.Model.Items
 			foreach(var stat in statsInclusionList)
 			{
 				//Log.DebugFormat("stat.Key: {0},  stat.Value: {1}", stat.Key, stat.Value);
-				switch(stat.Key)
+				IStat statEntry;
+				switch (stat.Key)
 				{
 					case(0):
-						IStat statEntry;
-						statEntry = (MinDamage)_allStatsList.Where(s => s.Name == "Min Damage").FirstOrDefault() as MinDamage;
+						statEntry = _allStatsList.Where(s => s.Name == "Min Damage").FirstOrDefault() as MinDamage;
 						statEntry.ConvertToIsOnItem(item.minDamageValue);
 						result.Add(statEntry);
-						statEntry = null;
 						break;
 					case(1):
 						statEntry = _allStatsList.Where(s => s.Name == "Max Damage").FirstOrDefault() as MaxDamage;
 						statEntry.ConvertToIsOnItem(item.maxDamageValue);
 						result.Add(statEntry);
-						statEntry = null;
 						break;
 					case(2):
 						statEntry = _allStatsList.Where(s => s.Name == "Strength").FirstOrDefault() as Strength;
 						statEntry.ConvertToIsOnItem(item.strengthValue);
 						result.Add(statEntry);
-						statEntry = null;
 						break; 
 					case(3):
 						statEntry = _allStatsList.Where(s => s.Name == "Dexterity").FirstOrDefault() as Dexterity;
 						statEntry.ConvertToIsOnItem(item.dexterityValue);
 						result.Add(statEntry);
-						statEntry = null;
 						break;
 					case(4):
 						statEntry = _allStatsList.Where(s => s.Name == "Instinct").FirstOrDefault() as Instinct;
 						statEntry.ConvertToIsOnItem(item.instinctValue);	
 						result.Add(statEntry);
-						statEntry = null;
 						break;
 					case(5):				
 						statEntry = _allStatsList.Where(s => s.Name == "Stamina").FirstOrDefault() as Stamina;
 						statEntry.ConvertToIsOnItem(item.staminaValue);		
 						result.Add(statEntry);
-						statEntry = null;
 						break;
 					case(6):
 						statEntry = _allStatsList.Where(s => s.Name == "Critical Hit Chance").FirstOrDefault() as CriticalHitChance;
@@ -176,18 +171,10 @@ namespace RegionServer.Model.Items
 
 		private StatHolder SetupItemStatCollection(IEnumerable<IStat> stats)
 		{
-			StatHolder result = new StatHolder(stats);
-			if(result != null)
-			{
-				return result;
-			}
-			else
-			{
-				return null;
-			}
+			return new StatHolder(stats);
 		}
 
-		public Item GetItem(int itemId)
+		public static Item GetItem(int itemId)
 		{
 			IItem result;
 			Items.TryGetValue(itemId, out result);

@@ -1,5 +1,4 @@
-﻿using System;
-using ComplexServerCommon.MessageObjects;
+﻿using ComplexServerCommon.MessageObjects;
 using ComplexServerCommon.Enums;
 
 namespace RegionServer.Model

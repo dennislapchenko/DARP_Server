@@ -64,7 +64,7 @@ namespace RegionServer.BackgroundThreads
 
 		void Update(TimeSpan elapsed)
 		{
-			Parallel.ForEach(Region.AllPlayers.Values.Where(p => p.Stats.Dirty && p is CPlayerInstance).Cast<CPlayerInstance>(), SendUpdate);
+			Parallel.ForEach(Region.AllPlayers.Values.Where(p => ((CPlayerInstance)p).Stats.Dirty && p is CPlayerInstance).Cast<CPlayerInstance>(), SendUpdate);
 		}
 
 		public void SendUpdate(CPlayerInstance instance)

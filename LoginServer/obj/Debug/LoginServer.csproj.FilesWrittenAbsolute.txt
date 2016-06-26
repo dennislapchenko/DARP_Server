@@ -1,0 +1,6 @@
+/Users/DennisL/Desktop/PC/PHOTONSDK/deploy/ComplexServer/LoginServer/obj/Debug/.NETFramework,Version=v4.0.AssemblyAttribute.cs
+/Users/DennisL/Desktop/PC/PHOTONSDK/deploy/ComplexServer/bin/Debug/log4net.config
+/Users/DennisL/Desktop/PC/PHOTONSDK/deploy/ComplexServer/bin/Debug/LoginServer.dll.mdb
+/Users/DennisL/Desktop/PC/PHOTONSDK/deploy/ComplexServer/bin/Debug/LoginServer.dll
+/Users/DennisL/Desktop/PC/PHOTONSDK/deploy/ComplexServer/LoginServer/obj/Debug/LoginServer.dll
+/Users/DennisL/Desktop/PC/PHOTONSDK/deploy/ComplexServer/LoginServer/obj/Debug/LoginServer.dll.mdb

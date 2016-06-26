@@ -35,36 +35,8 @@ namespace RegionServer.Handlers
 			Guid fightId = Guid.Parse((string)message.Parameters[(byte)ClientParameterCode.FightID]);
 
 			Fight fight = _fightManager.GetFight(fightId) as Fight;
-			bool success = false;
 
-			if(fight.NumPlayers() < fight.TeamSize*2 && fight.State == FightState.QUEUE)
-			{
-				if(fight.TeamRed.Count < fight.TeamSize && fight.TeamBlue.Count < fight.TeamSize)
-				{
-					success = fight.AddPlayer(new Random().Next(1,3), instance);
-				}
-				else
-				{
-					if(fight.TeamRed.Count < fight.TeamSize)
-					{
-						success = fight.AddPlayer(1, instance); //else add to red
-					}
-					else
-					{
-						success = fight.AddPlayer(2, instance); //if red full - add to blue
-					}
-				}
-			}
-			if(success)
-			{
-				var fightParticipants = new FightQueueParticipants(fight);
-				var pulledQueues = new PulledQueues(_fightManager);
-				foreach(var character in fight.Players.Values)
-				{
-					character.SendPacket(pulledQueues);
-					character.SendPacket(fightParticipants);
-				}
-			}
+			fight.addPlayer(instance);
 			return true;
 		}
 	}

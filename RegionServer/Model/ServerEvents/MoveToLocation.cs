@@ -13,10 +13,7 @@ namespace RegionServer.Model.ServerEvents
 			                     	{
 										CurrentPosition = (PositionData)character.Position, 
 										Destination = (PositionData)character.Destination,
-										Facing = character.Facing,
-										Moving = character.Moving,
-										Direction = character.Direction,
-										Speed = character.Stats.GetStat<MoveSpeed>(),
+										Moving = character.Moving
 									}, ClientParameterCode.Object);
 		}
 	}

@@ -49,11 +49,14 @@ namespace RegionServer.Handlers
 				var clients = Server.ConnectionCollection<SubServerConnectionCollection>().Clients;
 				clients.Add(peerId, _clientFactory(peerId));
 				var instance = clients[peerId].ClientData<CPlayerInstance>();
+
 				instance.UserID = Convert.ToInt32(message.Parameters[(byte)ClientParameterCode.UserId]);
 				instance.ServerPeer = serverPeer;
 				instance.Client = clients[peerId];
+				instance.CharacterID = characterId;
+				instance.ObjectId = characterId;
 
-				instance.Restore(characterId);
+				instance.Restore();
 			}
 			catch(Exception e)
 			{

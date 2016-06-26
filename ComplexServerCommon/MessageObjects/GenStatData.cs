@@ -21,6 +21,7 @@ namespace ComplexServerCommon.MessageObjects
 		public GenStatData()
 		{
 		}
+
 		public GenStatData(string name, int exp, int battles, int win, int loss, int tie, int gold, int skulls, int invSlots)
 		{
 			Name = name;

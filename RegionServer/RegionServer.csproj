@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -15,7 +15,7 @@
     <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>False</Optimize>
-    <OutputPath>..\bin\Debug</OutputPath>
+    <OutputPath>..\..\..\PHOTONSDK\deploy\ComplexServer\</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -76,6 +76,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="BackgroundThreads\BotQueenBackgroundThread.cs" />
+    <Compile Include="FightUtils.cs" />
+    <Compile Include="Model\CBotInstance.cs" />
+    <Compile Include="Model\DataKeepers\FightInformation.cs" />
+    <Compile Include="Persistence\IDatabaseAccess.cs" />
+    <Compile Include="Persistence\PlayerRestoreAccess.cs" />
+    <Compile Include="Persistence\PlayerStoreAccess.cs" />
     <Compile Include="RegionServer.cs" />
     <Compile Include="Handlers\RegionServerDeregisterEventHandler.cs" />
     <Compile Include="Handlers\RegionServerRegisterEventHandler.cs" />
@@ -89,7 +96,6 @@
     <Compile Include="Model\Interfaces\ITeleportType.cs" />
     <Compile Include="Model\Interfaces\IKnownList.cs" />
     <Compile Include="Model\ServerEvents\ServerPacket.cs" />
-    <Compile Include="Model\ServerEvents\StopMove.cs" />
     <Compile Include="Model\ServerEvents\TeleportToLocation.cs" />
     <Compile Include="Model\ServerEvents\MoveToLocation.cs" />
     <Compile Include="Model\ServerEvents\StatusUpdate.cs" />
@@ -107,13 +113,9 @@
     <Compile Include="Model\KnownList\PlayerKnownList.cs" />
     <Compile Include="Model\ServerEvents\DeleteObject.cs" />
     <Compile Include="Handlers\PlayerInGameHandler.cs" />
-    <Compile Include="BackgroundThreads\PhysicsBackgroundThread.cs" />
     <Compile Include="BackgroundThreads\PlayerUpdateBackgroundThread.cs" />
-    <Compile Include="Model\Interfaces\IPhysics.cs" />
-    <Compile Include="Model\BulletPhysics.cs" />
     <Compile Include="Handlers\PlayerMovementHandler.cs" />
     <Compile Include="Operations\PlayerMovementOperation.cs" />
-    <Compile Include="BackgroundThreads\InterestManagementBackgroundThread.cs" />
     <Compile Include="Model\Interfaces\IStatHolder.cs" />
     <Compile Include="Model\Interfaces\IStat.cs" />
     <Compile Include="Model\Interfaces\IFunction.cs" />
@@ -133,7 +135,6 @@
     <Compile Include="Model\Interfaces\IDerivedStat.cs" />
     <Compile Include="Model\Stats\MoveSpeed.cs" />
     <Compile Include="Model\Stats\Level.cs" />
-    <Compile Include="Model\BepuPhysics.cs" />
     <Compile Include="Model\Items\Item.cs" />
     <Compile Include="Model\Items\ItemDBCache.cs" />
     <Compile Include="Model\Items\ItemType.cs" />
@@ -189,7 +190,7 @@
     <Compile Include="Model\ServerEvents\HP5.cs" />
     <Compile Include="BackgroundThreads\RegenerationBackgroundThread.cs" />
     <Compile Include="BackgroundThreads\PlayerBackupBackgroundThread.cs" />
-    <Compile Include="Model\Interfaces\INPC.cs" />
+    <Compile Include="Model\Interfaces\IBot.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -213,21 +214,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Handlers\" />
-    <Folder Include="Model\" />
-    <Folder Include="Model\Interfaces\" />
-    <Folder Include="Model\KnownList\" />
-    <Folder Include="Model\ServerEvents\" />
-    <Folder Include="BackgroundThreads\" />
-    <Folder Include="Operations\" />
-    <Folder Include="Calculators\" />
-    <Folder Include="Calculators\Functions\" />
-    <Folder Include="Calculators\Lambdas\" />
-    <Folder Include="Model\Stats\" />
-    <Folder Include="Model\Items\" />
-    <Folder Include="Handlers\Fighting\" />
-  </ItemGroup>
+  <ItemGroup />
   <ProjectExtensions>
     <MonoDevelop>
       <Properties>

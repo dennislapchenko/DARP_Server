@@ -51,7 +51,6 @@ namespace ComplexServerCommon
 		StatusUpdate,
 		MoveToLocation,
 		PlayerMovement,
-		StopMove,
 		TeleportToLocation,
 	}
 }

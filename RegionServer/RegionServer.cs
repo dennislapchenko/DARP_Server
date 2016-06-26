@@ -34,12 +34,12 @@ namespace RegionServer
 			builder.RegisterInstance(this).As<PhotonApplication>().SingleInstance();
 			builder.RegisterType<SubServerClientPeer>();
 			builder.RegisterType<CPlayerInstance>();
+			builder.RegisterType<CBotInstance>();
 			builder.RegisterType<Region>().SingleInstance();
 			builder.RegisterType<PlayerKnownList>();
 			builder.RegisterType<ItemDBCache>().SingleInstance();
 			builder.RegisterType<GeneralStats>();
 			builder.RegisterType<FightManager>().SingleInstance();
-			//builder.RegisterType<Fight>().SingleInstance();
 			
 			//Registering Assemblies
 			builder.RegisterAssemblyTypes(Assembly.GetAssembly(GetType())).Where(t => t.Name.EndsWith("Handler")).As<PhotonServerHandler>().SingleInstance();

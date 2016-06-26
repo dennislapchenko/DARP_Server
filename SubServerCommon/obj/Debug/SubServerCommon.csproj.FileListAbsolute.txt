@@ -1,0 +1,6 @@
+C:\PHOTONSDK\deploy\ComplexServer\SubServerCommon.dll.config
+C:\PHOTONSDK\deploy\ComplexServer\SubServerCommon.dll
+C:\PHOTONSDK\deploy\ComplexServer\SubServerCommon.pdb
+C:\Development\DARP\SubServerCommon\obj\Debug\SubServerCommon.csprojResolveAssemblyReference.cache
+C:\Development\DARP\SubServerCommon\obj\Debug\SubServerCommon.dll
+C:\Development\DARP\SubServerCommon\obj\Debug\SubServerCommon.pdb

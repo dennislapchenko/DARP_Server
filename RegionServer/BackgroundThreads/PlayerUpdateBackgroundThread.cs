@@ -65,17 +65,17 @@ namespace RegionServer.BackgroundThreads
 
 		void Update(TimeSpan elapsed)
 		{
-			Parallel.ForEach(Region.AllPlayers.Values.Where(p => p.Physics.Dirty && p is CPlayerInstance).Cast<CPlayerInstance>(), SendUpdate);
+			//Parallel.ForEach(Region.AllPlayers.Values.Where(p => p.Physics.Dirty && p is CPlayerInstance).Cast<CPlayerInstance>(), SendUpdate);
 		}
 
 		public void SendUpdate(CPlayerInstance instance)
 		{
-			if( instance != null && instance.Physics.Dirty)
-			{
-				instance.BroadcastMessage(new MoveToLocation(instance));
-				instance.Physics.Dirty = false;
-				//Log.DebugFormat("Sending MoveToLocation to {0}", instance.Name);
-			}
+//			if( instance != null && instance.Physics.Dirty)
+//			{
+//				instance.BroadcastMessage(new MoveToLocation(instance));
+//				instance.Physics.Dirty = false;
+//				//Log.DebugFormat("Sending MoveToLocation to {0}", instance.Name);
+//			}
 		}
 
 		public void Stop()

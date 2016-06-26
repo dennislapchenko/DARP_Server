@@ -2,13 +2,13 @@
 
 namespace ComplexServerCommon.Enums
 {
-		public enum HitSpot
-		{
-			Head,
-			Chest,
-			Gut,
-			Legs,
-			Feet
-		}
+	public enum HitSpot : byte
+	{
+		Head = 0,
+		Chest = 1,
+		Gut = 2,
+		Legs = 3,
+		Feet = 4
+	}
 }
 

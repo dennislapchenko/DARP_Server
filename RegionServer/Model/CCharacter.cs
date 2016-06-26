@@ -5,21 +5,33 @@ using System.Collections;
 using RegionServer.Model.KnownList;
 using RegionServer.Model.Interfaces;
 using System.Collections.Generic;
+using ComplexServerCommon.Enums;
 using RegionServer.Model.ServerEvents;
 using ComplexServerCommon.MessageObjects;
+using ExitGames.Logging;
+using log4net.Repository.Hierarchy;
+using RegionServer.Model.Stats;
 
 
 namespace RegionServer.Model
 {
 	public class CCharacter : CObject, ICharacter
 	{
-		public CCharacter(Region region, CharacterKnownList objectKnownList, IStatHolder stats, IItemHolder items) : base(region, objectKnownList)
+		protected readonly ILogger Log = LogManager.GetCurrentClassLogger();
+
+		public CCharacter(Region region, CharacterKnownList objectKnownList, IStatHolder stats, IItemHolder items, GeneralStats genStats) : base(region, objectKnownList)
 		{
 			Stats = stats;
 			Stats.Character = this;
 			Items = items;
 			Items.Character = this;
+			GenStats = genStats;
 			StatusListeners = new List<ICharacter>();
+		}
+
+		public CCharacter()
+		{
+			
 		}
 
 		public new CharacterKnownList KnownList //new means the type can be changed
@@ -60,21 +72,15 @@ namespace RegionServer.Model
 
 		public void SwitchCurrentFightTarget()
 		{
-			var hostileTeam = CurrentFight.CharFightData[this as CPlayerInstance].Team == FightTeam.Red ? CurrentFight.TeamBlue : CurrentFight.TeamRed;
+			var hostileTeam = CurrentFight.CharFightData[this].Team == FightTeam.Red ? CurrentFight.TeamBlue : CurrentFight.TeamRed;
 			var aliveTargets = hostileTeam.Values.Where(p => !p.IsDead).ToList();
-			var cplayer = this as CPlayerInstance;
-			if(cplayer != null)
-			{
-				cplayer.Client.Log.DebugFormat("found hostile team: {0}. {1}/{2} players alive", hostileTeam, aliveTargets.Count, hostileTeam.Values.Count);
-			}
+
+			Log.DebugFormat("found hostile team: {0}. {1}/{2} players alive", hostileTeam, aliveTargets.Count, hostileTeam.Values.Count);
 
 			if(!CurrentFight.Moves.Any())
 			{
 				Target = aliveTargets.FirstOrDefault();
-				if(cplayer != null)
-				{
-					cplayer.Client.Log.DebugFormat("({0}){1} has targeted ({2}){3} - (Moves were empty)", cplayer.ObjectId, cplayer.Name, cplayer.TargetId, cplayer.Target.Name);
-				}
+				Log.DebugFormat("{0} has targeted ({1}){2} - (Moves were empty)", ToString(), Target.ObjectId, Target.Name);
 				return;
 			}
 
@@ -85,38 +91,27 @@ namespace RegionServer.Model
 				if(matchingMove == null)
 				{
 					Target = enemy;
-					if(cplayer != null)
-					{
-						cplayer.Client.Log.DebugFormat("{0} has targeted ({1}){2}", cplayer.Name, cplayer.TargetId, cplayer.Target.Name);
-					}
+					Log.DebugFormat("{0} has targeted ({1}){2}", ToString(), Target.ObjectId, Target.Name);
 					return;
 				}
 				else
 				{
-					if(cplayer != null)
-					{
-						cplayer.Client.Log.DebugFormat("found existing move in a foreach enemy list\n" + matchingMove.ToString());
-					}
+					Log.DebugFormat(ToString() +" found existing move in a foreach enemy list - " + matchingMove.ToString());
 				}
 			}
 		}
-//			}
-//			else
-//			{
-//				//switch NPC's target
-//			}
 
-		public bool IsTeleporting {get; private set;}
 		public bool IsDead {get; set;}
 		public Position Destination {get; set;}
-		public virtual MoveDirection Direction {get; set;}
+
 		public virtual bool Moving {get; set;}
-		public int Facing {get; set;}
+
 		public IList<ICharacter> StatusListeners {get; private set;}
 		public delegate void DeathListener(ICharacter killer);
 
 		public IStatHolder Stats {get; set;}
 		public IItemHolder Items {get; protected set;}
+		public GeneralStats GenStats { get; set; }
 		public Fight CurrentFight {get; set;}
 
 		
@@ -137,26 +132,18 @@ namespace RegionServer.Model
 
 		public void Teleport(Position pos)
 		{
-			Teleport(pos.X, pos.Y, pos.Z, pos.Heading);
+			var locations = pos.getPosition();
+			Teleport(locations[0], locations[1]);
 		}
 
-		public void Teleport(float x, float y, float z, short heading)
+		public void Teleport(LocationType high, LocationType low)
 		{
-			StopMove(null);
-
-			IsTeleporting = true;
 			Target = null;
 
-			BroadcastMessage(new TeleportToLocation(this, x, y, z, heading));
+			BroadcastMessage(new TeleportToLocation(this, high, low));
 
 			Decay();
-			Position.XYZ(x, y, z);
-			Position.Heading = heading;
-		}
-
-		public void Teleport(float x, float y, float z)
-		{
-			Teleport(x, y, z, Position.Heading);
+			Position.setPosition(high, low);
 		}
 
 		public void Teleport(ITeleportType teleportType)
@@ -173,7 +160,6 @@ namespace RegionServer.Model
 
 			IsDead = true;
 			Target = null;
-			StopMove(null);
 			//BroadcastStatusUpdate();
 			return true;
 		}
@@ -204,27 +190,12 @@ namespace RegionServer.Model
 			}
 
 			Target = null;
-			StopMove(null);
 			//Effects.StopAllEffectsThroughDeath();
 			//CalculateRewards(killer);
 			BroadcastStatusUpdate();
 			//Region.OnDeath(this);
 
 			return true;
-		}
-
-		public void StopMove(Position pos)
-		{
-			if(pos != null)
-			{
-				Destination = pos;
-				Position = pos;
-			}
-			else
-			{
-				Destination = Position;
-			}
-			BroadcastMessage(new StopMove(this));
 		}
 
 		public virtual void CalculateRewards(ICharacter killer)
@@ -253,5 +224,9 @@ namespace RegionServer.Model
 
 		}
 
+		public override string ToString()
+		{
+			return String.Format("[{0}]{1}", ObjectId, Name);
+		}
 	}
 }

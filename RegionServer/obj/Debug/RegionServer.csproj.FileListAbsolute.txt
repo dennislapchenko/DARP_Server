@@ -1,0 +1,5 @@
+C:\PHOTONSDK\deploy\ComplexServer\RegionServer.dll
+C:\PHOTONSDK\deploy\ComplexServer\RegionServer.pdb
+C:\Development\DARP\RegionServer\obj\Debug\RegionServer.csprojResolveAssemblyReference.cache
+C:\Development\DARP\RegionServer\obj\Debug\RegionServer.dll
+C:\Development\DARP\RegionServer\obj\Debug\RegionServer.pdb

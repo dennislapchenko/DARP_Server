@@ -36,16 +36,13 @@ namespace RegionServer
 				return false;
 			}
 
-			float dx = obj1.Position.X - obj2.Position.X;
-			float dy = obj1.Position.Y - obj2.Position.Y;
-			float dz = obj1.Position.Z - obj2.Position.Z;
+			var obj1Loc = obj1.Position.getPosition();
+			var obj2Loc = obj2.Position.getPosition();
 
-			return ((dx*dx) + (dy*dy) + (includeZAxis ? (dz*dz) : 0 )) <= distanceToForgetObject * distanceToForgetObject;
-		}
-
-		public static float DegToRad(float degrees)
-		{
-			return (float)Math.PI * (degrees/180f);
+			if (obj1Loc[0] == obj2Loc[0] && obj1Loc[1] == obj2Loc[1])
+				return true;
+			else
+				return false;
 		}
 
 		public static CPlayerInstance GetCPlayerInstance(PhotonApplication server, IMessage message)
@@ -58,6 +55,7 @@ namespace RegionServer
 			}
 			return null;
 		}
+
 		public static CharacterData GetCharacterData(PhotonApplication server, IMessage message)
 		{
 			if(message.Parameters.ContainsKey((byte)ClientParameterCode.PeerId))

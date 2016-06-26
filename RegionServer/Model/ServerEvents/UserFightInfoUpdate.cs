@@ -18,7 +18,7 @@ namespace RegionServer.Model.ServerEvents
 												{
 													Name = player.Name,
 													ObjectId = player.ObjectId,
-													TargetId = player.TargetId,
+													TargetId = player.Target.ObjectId,
 													Team = player.CurrentFight.CharFightData[player].Team,
 													stats = player.Stats.GetHealthLevel(), //add more later
 													equipment = Util.ConvertEquipmentForXml(player.Items.Equipment),

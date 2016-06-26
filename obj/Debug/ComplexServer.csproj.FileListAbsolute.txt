@@ -1,0 +1,6 @@
+C:\PHOTONSDK\deploy\ComplexServer\log4net.config
+C:\PHOTONSDK\deploy\ComplexServer\ComplexServer.dll
+C:\PHOTONSDK\deploy\ComplexServer\ComplexServer.pdb
+C:\Development\DARP\obj\Debug\ComplexServer.csprojResolveAssemblyReference.cache
+C:\Development\DARP\obj\Debug\ComplexServer.dll
+C:\Development\DARP\obj\Debug\ComplexServer.pdb

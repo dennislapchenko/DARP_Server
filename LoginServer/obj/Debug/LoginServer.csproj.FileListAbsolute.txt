@@ -1,0 +1,6 @@
+C:\PHOTONSDK\deploy\ComplexServer\log4net.config
+C:\PHOTONSDK\deploy\ComplexServer\LoginServer.dll
+C:\PHOTONSDK\deploy\ComplexServer\LoginServer.pdb
+C:\Development\DARP\LoginServer\obj\Debug\LoginServer.csprojResolveAssemblyReference.cache
+C:\Development\DARP\LoginServer\obj\Debug\LoginServer.dll
+C:\Development\DARP\LoginServer\obj\Debug\LoginServer.pdb

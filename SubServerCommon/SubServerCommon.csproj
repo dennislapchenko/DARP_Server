@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -15,7 +15,7 @@
     <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>False</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
+    <OutputPath>..\..\..\PHOTONSDK\deploy\ComplexServer\</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -88,15 +88,7 @@
     <Compile Include="Data\Mapping\ItemDBEntryMap.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Handlers\" />
-    <Folder Include="Operations\" />
-    <Folder Include="Data\" />
-    <Folder Include="Data\NHibernate\" />
-    <Folder Include="Data\Mapping\" />
-    <Folder Include="Data\ClientData\" />
-    <Folder Include="Math\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\ComplexServerCommon\ComplexServerCommon.csproj">
       <Project>{97B1F704-8FCF-409B-A321-CA1EADC5CB9E}</Project>

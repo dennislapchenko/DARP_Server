@@ -8,9 +8,21 @@ namespace RegionServer.Model
 {
 	public class CObject : IObject
 	{
-		protected IKnownList ObjectKnownList;
+		public int InstanceId { get; set; }
+		public int ObjectId { get; set; }
+		public bool IsVisible { get; set; }
+		public string Name { get; set; }
+		public virtual Position Position { get; set; }
+		protected ObjectKnownList ObjectKnownList;
 
-		public virtual ObjectKnownList KnownList { get {return ObjectKnownList as ObjectKnownList;} set { ObjectKnownList = value;} }
+		private readonly Region _region;
+		public Region Region { get { return _region; } }
+
+		public virtual ObjectKnownList KnownList
+		{
+			get {return ObjectKnownList as ObjectKnownList;}
+			set { ObjectKnownList = value;}
+		}
 
 		public CObject(Region region, ObjectKnownList objectKnownList)
 		{
@@ -20,14 +32,10 @@ namespace RegionServer.Model
 			Position = new Position();
 		}
 
-		private readonly Region _region;
-		public Region Region {get { return _region;} }
+		public CObject()
+		{ }
 
-		#region IObject implementation
-	
-		public virtual void OnSpawn()
-		{
-		}
+
 
 		public void ToggleVisible()
 		{
@@ -36,13 +44,6 @@ namespace RegionServer.Model
 			else
 				Spawn();
 		}
-		#endregion
-
-		public int InstanceId {get; set;}
-		public int ObjectId {get; set;}
-		public bool IsVisible {get; set;}
-		public string Name {get; set;}
-		public virtual Position Position {get; set;}
 		
 		public void Spawn()
 		{
@@ -53,6 +54,10 @@ namespace RegionServer.Model
 			Region.AddVisibleObject(this);
 
 			OnSpawn();
+		}
+
+		public virtual void OnSpawn()
+		{
 		}
 
 		public void Decay()

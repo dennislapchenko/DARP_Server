@@ -5,11 +5,10 @@ namespace ComplexServerCommon.MessageObjects.Enums
 	public enum MoveOutcome
 	{
 		Hit,
-			Crit,
+		Crit,
 		Dodge,
-
 		Block,
-			BlockCrit,
+		BlockCrit,
 	}
 }
 

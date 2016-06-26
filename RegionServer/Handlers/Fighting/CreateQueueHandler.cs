@@ -14,6 +14,8 @@ namespace RegionServer.Handlers
 {
 	public class CreateQueueHandler : PhotonServerHandler
 	{
+		private static readonly string CLASSNAME = "CreateQueueHandler";
+
 		private FightManager _fightManager;
 		public CreateQueueHandler(PhotonApplication application, FightManager fightManager)
 			: base (application)
@@ -50,7 +52,7 @@ namespace RegionServer.Handlers
 			if(instance.CurrentFight == null)
 			{
 				newFight = _fightManager.AddFight(queueItemRequest);
-				wasAllowedNewFight = newFight.AddPlayer(1, instance); //1 - red, 2 - blue teams
+				wasAllowedNewFight = newFight.addPlayer(1, instance); //1 - red, 2 - blue teams
 			}
 
 			//send response with refreshed queue list
@@ -61,6 +63,7 @@ namespace RegionServer.Handlers
 				foreach(var player in newFight.Players.Values)
 				{
 					player.SendPacket(new FightQueueParticipants(newFight));
+					Log.Debug(CLASSNAME + " - OnHandleMessage:: sending queue info back to client");
 				}
 			}
 			else
@@ -71,6 +74,8 @@ namespace RegionServer.Handlers
 					DebugMessage = "Already queued/engaged in a fight",
 					Parameters = para,
 				}, new SendParameters());
+				Log.Debug(CLASSNAME + " - OnHandleMessage:: was not allowed a new fight");
+
 			}
 			return true;
 		}

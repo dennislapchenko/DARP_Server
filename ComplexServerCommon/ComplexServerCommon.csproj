@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -15,7 +15,7 @@
     <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>False</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
+    <OutputPath>..\..\..\PHOTONSDK\deploy\ComplexServer\</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -39,6 +39,7 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="ClientOperationCode.cs" />
     <Compile Include="ClientParameterCode.cs" />
+    <Compile Include="Enums\LocationType.cs" />
     <Compile Include="ErrorCode.cs" />
     <Compile Include="MessageSubCode.cs" />
     <Compile Include="ClientReturnCode.cs" />
@@ -52,12 +53,6 @@
     <Compile Include="MessageObjects\CharInfo.cs" />
     <Compile Include="MessageObjects\UserInfo.cs" />
     <Compile Include="MessageObjects\PlayerMovement.cs" />
-    <Compile Include="SerializedPhysicsObjects\BPColliders.cs" />
-    <Compile Include="SerializedPhysicsObjects\BPBox.cs" />
-    <Compile Include="SerializedPhysicsObjects\BPSphere.cs" />
-    <Compile Include="SerializedPhysicsObjects\BPCapsule.cs" />
-    <Compile Include="SerializedPhysicsObjects\BPTerrain.cs" />
-    <Compile Include="SerializedPhysicsObjects\BPMesh.cs" />
     <Compile Include="MessageObjects\MoveDirection.cs" />
     <Compile Include="MessageObjects\InventoryItem.cs" />
     <Compile Include="MessageObjects\ItemData.cs" />
@@ -82,8 +77,5 @@
     <Compile Include="Enums\FightWinLossTie.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="MessageObjects\" />
-    <Folder Include="SerializedPhysicsObjects\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

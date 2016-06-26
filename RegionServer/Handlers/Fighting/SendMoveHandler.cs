@@ -38,7 +38,7 @@ namespace RegionServer.Handlers.Fighting
 
 			var newMove = Xml.Deserialize<FightMove>(message.Parameters[(byte)ClientParameterCode.Object]);
 			newMove.PeerObjectId = _instance.ObjectId;
-			newMove.TargetObjectId = _instance.TargetId;
+			newMove.TargetObjectId = _instance.Target.ObjectId;
 
 			_currentFight.AddMoveSendPkg(_instance, newMove);
 

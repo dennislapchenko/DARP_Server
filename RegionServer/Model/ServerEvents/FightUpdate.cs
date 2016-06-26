@@ -18,18 +18,15 @@ namespace RegionServer.Model.ServerEvents
 		{
 			var fight = instance.CurrentFight;
 			charsInfo = new List<KeyValuePairS<int, CharFightInfo>>();
-			var allChars = fight.Players;
-			foreach(var cplayer in allChars.Values)
+			var allChars = fight.getAllParticipants();
+			foreach(var player in allChars)
 			{
-				if(cplayer != null)
-				{
-					var info = new CharFightInfo() 
-												{
-													Team = cplayer.CurrentFight.CharFightData[cplayer].Team,
-													stats = cplayer.Stats.GetHealthLevel(),
-												};
-					charsInfo.Add(new KeyValuePairS<int, CharFightInfo>(cplayer.ObjectId, info));
-				}
+				var info = new CharFightInfo() 
+											{
+												Team = player.CurrentFight.CharFightData[player].Team,
+												stats = player.Stats.GetHealthLevel(),
+											};
+				charsInfo.Add(new KeyValuePairS<int, CharFightInfo>(player.ObjectId, info));
 			}
 
 			var serializedExchangeList = new List<KeyValuePairS<int, ExchangeProfile>>();

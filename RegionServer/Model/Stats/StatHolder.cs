@@ -159,16 +159,9 @@ namespace RegionServer.Model.Stats
 			_stats.TryGetValue(typeof(T), out result);
 			if (result != null)
 			{
-				if(result.GetType() == typeof(CurrHealth))
+				if(result.GetType() == typeof(CurrHealth) && value+GetStat<CurrHealth>() > GetStat<MaxHealth>())
 				{
-					if(value > GetStat<MaxHealth>())
-					{
-						result.BaseValue = GetStat<MaxHealth>();
-					}
-					else
-					{
-						result.BaseValue = value;
-					}
+					result.BaseValue = GetStat<MaxHealth>();
 				}
 				else
 				{
@@ -266,7 +259,7 @@ namespace RegionServer.Model.Stats
 				StatValues.Add(new SerializedStat(){StatType = stat.Name, StatValue = stat.BaseValue});
 			}
 
-			return Xml.Serialize<List<SerializedStat>>(StatValues);
+			return Xml.Serialize(StatValues);
 		}
 
 		public void DeserializeStats(string stats)

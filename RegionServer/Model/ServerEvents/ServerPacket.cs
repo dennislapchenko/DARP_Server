@@ -2,12 +2,15 @@ using System;
 using MMO.Photon.Application;
 using System.Collections.Generic;
 using ComplexServerCommon;
+using ExitGames.Logging;
 
 
 namespace RegionServer.Model.ServerEvents
 {
 	public class ServerPacket : PhotonEvent
 	{
+		protected static ILogger Log = LogManager.GetCurrentClassLogger();
+
 		public bool SendToSelf {get; set;}
 
 		public ServerPacket (ClientEventCode code, MessageSubCode subCode, bool sendToSelf = true) : base ((byte)code, (int?)subCode, new Dictionary<byte, object>())

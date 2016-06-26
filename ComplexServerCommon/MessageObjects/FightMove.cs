@@ -9,7 +9,7 @@ namespace ComplexServerCommon.MessageObjects
 	{
 		//public Guid? PeerId {get;set;}
 		public int PeerObjectId {get;set;}
-		public HitSpot? AttackSpot{get;set;}
+		public HitSpot AttackSpot{get;set;}
 		public List<HitSpot> BlockSpots{get;set;}
 		public int? SkillId {get;set;}
 		public int TargetObjectId {get;set;}
