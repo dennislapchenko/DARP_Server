@@ -2,11 +2,7 @@
 using System.Collections.Generic;
 using ComplexServerCommon.MessageObjects;
 using System.Linq;
-using System.Xml.Serialization;
-using System.IO;
-using ComplexServerCommon.Enums;
 using RegionServer.Model.Fighting;
-using RegionServer.Model.Items;
 
 namespace RegionServer.Model.ServerEvents
 {

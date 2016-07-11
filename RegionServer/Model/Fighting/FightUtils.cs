@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using CloneExtensions;
 using ComplexServerCommon.Enums;
 using ComplexServerCommon.MessageObjects;
 using ComplexServerCommon.MessageObjects.Enums;
@@ -90,33 +89,5 @@ namespace RegionServer.Model.Fighting
 
 			return genStats;
 		}
-
-	    public static StatHolder getStatHolder()
-	    {
-	        var stats = new List<IStat>
-	                            {
-	                                new CounterAttackChance(),
-	                                new CriticalAntiHitChance(),
-	                                new CriticalDamage(),
-	                                new CriticalHitChance(),
-	                                new CurrHealth(),
-	                                new Damage(),
-	                                new Dexterity(),
-	                                new DodgeChance(),
-	                                new HealthRegen(),
-	                                new HitChance(),
-	                                new Instinct(),
-	                                new Dexterity(),
-	                                new Strength(),
-	                                new Stamina(),
-	                                new Level(),
-	                                new MaxDamage(),
-	                                new MinDamage(),
-	                                new ParryChance(),
-	                                new MoveSpeed()
-	                            };
-
-	        return new StatHolder(stats);
-	    }
 	}
 }

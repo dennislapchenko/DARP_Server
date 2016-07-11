@@ -30,14 +30,6 @@
     <ConsolePause>False</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CloneExtensions, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\CloneExtensions.1.2\lib\portable-net40+sl50+win+wp80\CloneExtensions.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="MsgPack, Version=0.6.0.0, Culture=neutral, PublicKeyToken=a2625990d5dc0167, processorArchitecture=MSIL">
-      <HintPath>packages\MsgPack.Cli.0.6.8\lib\net40-client\MsgPack.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="log4net">
       <HintPath>..\..\lib\log4net.dll</HintPath>
@@ -54,7 +46,6 @@
     <Reference Include="Autofac">
       <HintPath>packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="ExitGames.Logging.Log4Net">
       <HintPath>..\..\lib\ExitGames.Logging.Log4Net.dll</HintPath>
