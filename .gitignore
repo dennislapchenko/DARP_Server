@@ -5,6 +5,8 @@
 #Proj files
 *.dll
 *.mdb
+*.pdb
+*.cache
 *.config
 [Pp]ackages*/
 *.userprefs
