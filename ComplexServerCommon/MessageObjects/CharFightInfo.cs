@@ -9,7 +9,7 @@ namespace ComplexServerCommon.MessageObjects
 	    public FightTeam Team;
 	    public int ObjectId;
 		public Dictionary<string, float> stats;
-		public List<KeyValuePairS<ItemSlot, ItemData>> equipment;
+        public Dictionary<int, ItemData> equipment;
 	}
 }
 

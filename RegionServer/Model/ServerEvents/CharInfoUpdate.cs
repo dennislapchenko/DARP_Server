@@ -16,7 +16,6 @@ namespace RegionServer.Model.ServerEvents
 
 		public void AddCharInfo(CPlayerInstance player)
 		{
-			var equipment = player.Items.Equipment.ToDictionary(item => (int)item.Key, item => (ItemData)item.Value);
 			CharInfo info = new CharInfo() 
 			{
 				Position = player.Position,
@@ -25,14 +24,13 @@ namespace RegionServer.Model.ServerEvents
 				//stats
 				GenStats = player.GenStats,
 				Stats = player.Stats.GetMainStatsForEnemy(),
-				EquipmentKeys = equipment.Keys.ToArray(),
-				EquipmentValues = equipment.Values.ToArray(),
+				Equipment = player.Items.Equipment.ToDictionary(item => (int)item.Key, item => (ItemData)item.Value),
 
-				//race, sex, class, title, guild
-				//effects - pvp flag, debuffs, buffs
-				//movement speed for smoothing/calculation
-				//action/emote walk, run, sit
-			};
+            //race, sex, class, title, guild
+            //effects - pvp flag, debuffs, buffs
+            //movement speed for smoothing/calculation
+            //action/emote walk, run, sit
+        };
 			info.GenStats.Gold = -1;
 			info.GenStats.Skulls = -1;
 			info.GenStats.InventorySlots = -1;

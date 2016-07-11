@@ -12,7 +12,7 @@ namespace RegionServer.Model.ServerEvents
 {
 	public class FightParticipants : ServerPacket
 	{
-		List<KeyValuePairS<int, CharFightInfo>> charsInfo;
+		Dictionary<int, CharFightInfo> charsInfo;
 
 		private CPlayerInstance _instance;
 		public FightParticipants(CPlayerInstance player, bool onlyTarget) : base(ClientEventCode.ServerPacket, MessageSubCode.FightParticipants)
@@ -39,7 +39,7 @@ namespace RegionServer.Model.ServerEvents
 
 		private void AddCharInfo(Fight fight)
 		{
-			charsInfo = new List<KeyValuePairS<int, CharFightInfo>>();
+		    charsInfo = new Dictionary<int, CharFightInfo>();
 			var allChars = fight.getAllParticipants();
 			foreach(var player in allChars)
 			{
@@ -49,9 +49,9 @@ namespace RegionServer.Model.ServerEvents
 												Name = player.Name,
 												Team = fight.CharFightData[player].Team,
 												stats = player.Stats.GetHealthLevel(),
-												equipment = Util.ConvertEquipmentForXml(player.Items.Equipment),
+												equipment = player.Items.Equipment.ToDictionary(k => (int)k.Key, v => (ItemData)v.Value)
 											};
-				charsInfo.Add(new KeyValuePairS<int, CharFightInfo>(player.ObjectId, info));
+				charsInfo.Add(player.ObjectId, info);
 				//cplayer.Client.Log.DebugFormat("FP {0} added to team {1} (client packet)", cplayer.Name, fight.CharFightData[cplayer.ObjectId].Team);
 			}
 		}

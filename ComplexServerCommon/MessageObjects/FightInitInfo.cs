@@ -8,10 +8,10 @@ namespace ComplexServerCommon.MessageObjects
     {
         public FightType fightType;
         public bool sanguinary;
-        public List<KeyValuePairS<int, CharFightInfo>> allChars; //key - objectId
-        public List<KeyValuePairS<int, ExchangeProfile>> moveLog;
+        public Dictionary<int, CharFightInfo> allChars; //key - objectId
+        public Dictionary<int, ExchangeProfile> moveLog;
 
-		public FightInitInfo(FightType type, bool sang, List<KeyValuePairS<int, CharFightInfo>> charInfos)
+		public FightInitInfo(FightType type, bool sang, Dictionary<int, CharFightInfo> charInfos)
 		{
 			fightType = type;
 			sanguinary = sang;

@@ -14,8 +14,6 @@ namespace RegionServer.Model.ServerEvents
 
 		private void AddUserInfo(CPlayerInstance player)
 		{
-			var equipment = player.Items.Equipment.ToDictionary(item => (int)item.Key, item => (ItemData)item.Value);
-			var inventory = player.Items.Inventory.ToDictionary(item => item.Key, item => (ItemData)item.Value);
 			UserInfo info = new UserInfo() 
 			{
 				Position = player.Position,
@@ -26,20 +24,16 @@ namespace RegionServer.Model.ServerEvents
 				Stats = player.Stats.GetAllStats(),
 
 				//inventory - all equiped items
-				EquipmentKeys = equipment.Keys.ToArray(),
-				EquipmentValues = equipment.Values.ToArray(),
+				Equipment = player.Items.Equipment.ToDictionary(item => (int)item.Key, item => (ItemData)item.Value),
+                Inventory = player.Items.Inventory.ToDictionary(item => item.Key, item => (ItemData)item.Value),
 
-				InventoryKeys = inventory.Keys.ToArray(),
-				InventoryValues = inventory.Values.ToArray(),
+            //Talents - skills
 
+            //effects
 
-				//Talents - skills
-
-				//effects
-
-				//movement speed
-				//action/emotes
-			};
+            //movement speed
+            //action/emotes
+        };
 			AddSerializedParameter(info, ClientParameterCode.Object, false);
 		}
 	}

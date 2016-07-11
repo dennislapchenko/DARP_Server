@@ -9,10 +9,8 @@ namespace ComplexServerCommon.MessageObjects
 	    public PositionData Position;
         public string Name;
         public GenStatData GenStats;
-        public int[] EquipmentKeys;
-        public ItemData[] EquipmentValues;
-        public int[] InventoryKeys;
-        public ItemData[] InventoryValues;
+        public Dictionary<int, ItemData> Equipment;
+        public Dictionary<int, ItemData> Inventory;
         public Dictionary<string, float> Stats;
 	}
 }

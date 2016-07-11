@@ -1,13 +1,13 @@
-﻿using System.Linq;
-using ComplexServerCommon;
+﻿using ComplexServerCommon;
 using ComplexServerCommon.MessageObjects;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RegionServer.Model.ServerEvents
 {
 	public class FightUpdate : ServerPacket
 	{
-		List<KeyValuePairS<int, CharFightInfo>> charsInfo;
+		Dictionary<int, CharFightInfo> charsInfo;
 
 		public FightUpdate(CPlayerInstance instance, Dictionary<int, ExchangeProfile> result) : base(ClientEventCode.ServerPacket, MessageSubCode.FightUpdate)
 		{
@@ -17,7 +17,7 @@ namespace RegionServer.Model.ServerEvents
 		private void AddHealthLevelOnly(CPlayerInstance instance, Dictionary<int, ExchangeProfile> result)
 		{
 			var fight = instance.CurrentFight;
-			charsInfo = new List<KeyValuePairS<int, CharFightInfo>>();
+			charsInfo = new Dictionary<int, CharFightInfo>();
 			var allChars = fight.getAllParticipants();
 			foreach(var player in allChars)
 			{
@@ -26,19 +26,13 @@ namespace RegionServer.Model.ServerEvents
 												Team = player.CurrentFight.CharFightData[player].Team,
 												stats = player.Stats.GetHealthLevel(),
 											};
-				charsInfo.Add(new KeyValuePairS<int, CharFightInfo>(player.ObjectId, info));
-			}
-
-			var serializedExchangeList = new List<KeyValuePairS<int, ExchangeProfile>>();
-			foreach(var r in result)
-			{
-				serializedExchangeList.Add(new KeyValuePairS<int, ExchangeProfile>(r.Key, r.Value));
+				charsInfo.Add(player.ObjectId, info);
 			}
 
 			var fightInfo = new FightInitInfo()
 			{
 				allChars = charsInfo,
-				moveLog = serializedExchangeList,
+				moveLog = result
 			};
 			AddSerializedParameter(fightInfo, ClientParameterCode.Object, false);
 		}

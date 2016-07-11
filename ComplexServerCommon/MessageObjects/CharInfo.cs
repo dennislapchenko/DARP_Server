@@ -12,8 +12,7 @@ namespace ComplexServerCommon.MessageObjects
 	    public string Name;
 	    public GenStatData GenStats;
 	    public Dictionary<string, float> Stats;
-	    public int[] EquipmentKeys;
-	    public ItemData[] EquipmentValues;
+        public Dictionary<int, ItemData> Equipment; 
 
 		public CharInfo()
 		{
