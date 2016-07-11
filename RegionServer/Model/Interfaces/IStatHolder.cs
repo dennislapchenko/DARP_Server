@@ -18,9 +18,9 @@ namespace RegionServer.Model.Interfaces
 		void RegenHealth();
 		bool Dirty {get;set;}
 		//Dictionary<string, float> GetAllStats();
-		List<KeyValuePairS<string, float>> GetAllStats();
-		List<KeyValuePairS<string, float>> GetMainStatsForEnemy();
-		List<KeyValuePairS<string, float>> GetHealthLevel();
+		Dictionary<string, float> GetAllStats();
+        Dictionary<string, float> GetMainStatsForEnemy();
+        Dictionary<string, float> GetHealthLevel();
 		void RefreshCurrentHealth();
 		float CalcStat(IStat stat);
 		string SerializeStats();

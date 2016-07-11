@@ -203,35 +203,34 @@ namespace RegionServer.Model.Stats
 			return env.Value;
 		}
 
-		public List<KeyValuePairS<string, float>> GetAllStats()
+		public Dictionary<string, float> GetAllStats()
 		{
-			var result = new List<KeyValuePairS<string, float>>();
-			foreach(KeyValuePair<Type, IStat> stat in _stats)
-			{
-				result.Add(new KeyValuePairS<string, float>(stat.Value.Name, CalcStat(stat.Value)));
-			}
+			return _stats.ToDictionary(k => k.Value.Name, k => GetStat(k.Value));
+        }
+
+		public Dictionary<string, float> GetMainStatsForEnemy()
+		{
+		    var result = new Dictionary<string, float>()
+		                                {
+		                                    {_stats[typeof (Level)].Name, CalcStat(_stats[typeof (Level)])},
+                                            {_stats[typeof (CurrHealth)].Name, CalcStat(_stats[typeof (CurrHealth)])},
+                                            {_stats[typeof (MaxHealth)].Name, CalcStat(_stats[typeof (MaxHealth)])},
+                                            {_stats[typeof (Strength)].Name, CalcStat(_stats[typeof (Strength)])},
+                                            {_stats[typeof (Dexterity)].Name, CalcStat(_stats[typeof (Dexterity)])},
+                                            {_stats[typeof (Instinct)].Name, CalcStat(_stats[typeof (Instinct)])},
+                                            {_stats[typeof (Stamina)].Name, CalcStat(_stats[typeof (Stamina)])},
+                                        };
 			return result;
 		}
 
-		public List<KeyValuePairS<string, float>> GetMainStatsForEnemy()
+		public Dictionary<string, float> GetHealthLevel()
 		{
-			var result = new List<KeyValuePairS<string, float>>();
-			result.Add(new KeyValuePairS<string, float>(_stats[typeof(Level)].Name, CalcStat(_stats[typeof(Level)])));
-			result.Add(new KeyValuePairS<string, float>(_stats[typeof(CurrHealth)].Name, CalcStat(_stats[typeof(CurrHealth)])));
-			result.Add(new KeyValuePairS<string, float>(_stats[typeof(MaxHealth)].Name, CalcStat(_stats[typeof(MaxHealth)])));
-			result.Add(new KeyValuePairS<string, float>(_stats[typeof(Strength)].Name, CalcStat(_stats[typeof(Strength)])));
-			result.Add(new KeyValuePairS<string, float>(_stats[typeof(Dexterity)].Name, CalcStat(_stats[typeof(Dexterity)])));
-			result.Add(new KeyValuePairS<string, float>(_stats[typeof(Instinct)].Name, CalcStat(_stats[typeof(Instinct)])));
-			result.Add(new KeyValuePairS<string, float>(_stats[typeof(Stamina)].Name, CalcStat(_stats[typeof(Stamina)])));
-			return result;
-		}
-
-		public List<KeyValuePairS<string, float>> GetHealthLevel()
-		{
-			var result = new List<KeyValuePairS<string, float>>();
-			result.Add(new KeyValuePairS<string, float>(_stats[typeof(Level)].Name, CalcStat(_stats[typeof(Level)])));
-			result.Add(new KeyValuePairS<string, float>(_stats[typeof(CurrHealth)].Name, CalcStat(_stats[typeof(CurrHealth)])));
-			result.Add(new KeyValuePairS<string, float>(_stats[typeof(MaxHealth)].Name, CalcStat(_stats[typeof(MaxHealth)])));
+			var result = new Dictionary <string, float>()
+		                                {
+                                            { _stats[typeof(Level)].Name, CalcStat(_stats[typeof(Level)])},
+                                            { _stats[typeof(CurrHealth)].Name, CalcStat(_stats[typeof(CurrHealth)])},
+                                            { _stats[typeof(MaxHealth)].Name, CalcStat(_stats[typeof(MaxHealth)])}
+		                                };
 			return result;
 		}
 

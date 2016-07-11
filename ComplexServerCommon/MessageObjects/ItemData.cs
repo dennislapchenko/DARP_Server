@@ -1,28 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Collections;
+﻿using System.Collections.Generic;
 
 namespace ComplexServerCommon.MessageObjects
 {
-	[Serializable]
-	public class ItemData
-	{
-		public string Name {get; set;}
-		public int ItemId {get; set;}
-		public int Type {get; set;}
-		public int Slot {get; set;}
-		public int Value {get; set;}
-		public int Equippable {get; set;}
-		public int LevelReq {get; set;}
-		public List<KeyValuePairS<string, float>> Stats {get;set;}
+    [System.Serializable]
+    public class ItemData
+    {
+        public string Name;
+        public int ItemId;
+        public int Type;
+        public int Slot;
+        public int Value;
+        public int Equippable;
+        public int LevelReq;
+        public Dictionary<string, float> Stats;
 		//public int Quality {get;set;}
 
 		public ItemData()
 		{
 		}
 
-		public ItemData(string name, int itemId, int type, int slot, int value, int equippable, int levelReq, List<KeyValuePairS<string, float>> stats)
+		public ItemData(string name, int itemId, int type, int slot, int value, int equippable, int levelReq, Dictionary<string, float> stats)
 		{
 			Name = name;
 			ItemId = itemId;

@@ -16,7 +16,7 @@ namespace RegionServer.Model
 
 	    private static readonly List<string> botNames = new List<string>() {"Alberto", "Gandolfini", "ISIS BOI", "CHEGRILLA", "1337 BOY", "EBLAN"};
 
-	    private static readonly long moveReplyMaxDelayInMs = 7000;
+	    private static readonly long moveReplyMaxDelayInMs = 0000;
 
 	    public delegate CBotInstance Factory(byte level);
 

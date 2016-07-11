@@ -1,19 +1,19 @@
-using System;
 namespace ComplexServerCommon.MessageObjects
 {
-	[Serializable]
-	public class MoveTo
+    [System.Serializable]
+    public class MoveTo
 	{
 		public MoveTo()
 		{
 			CurrentPosition = new PositionData();
 			Destination = new PositionData();
 		}
-		public PositionData CurrentPosition {get; set;}
-		public PositionData Destination {get; set;}
 
-		public bool Moving {get; set;}
-		public MoveDirection Direction {get; set;}
+        public PositionData CurrentPosition;
+        public PositionData Destination;
+
+        public bool Moving;
+        public MoveDirection Direction;
 	}
 }
 

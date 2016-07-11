@@ -1,18 +1,17 @@
-﻿using System;
-using ComplexServerCommon.Enums;
+﻿using ComplexServerCommon.Enums;
 
 namespace ComplexServerCommon.MessageObjects
 {
-	[Serializable]
-	public class Rewards
+    [System.Serializable]
+    public class Rewards
 	{
-		public int TotalDamage {get;set;}
-		public int Experience {get;set;}
-		public int Gold {get;set;}
-		public int Skulls {get;set;}
-		public ItemData Item {get;set;} //possibly a list
-		public FightWinLossTie WLT {get;set;}
-		public bool Injury {get;set;} //best reward ever <3
+	    public int TotalDamage;
+	    public int Experience;
+	    public int Gold;
+	    public int Skulls;
+	    public ItemData Item; //possibly a list
+	    public FightWinLossTie WLT;
+	    public bool Injury; //best reward ever <3
 	}
 }
 

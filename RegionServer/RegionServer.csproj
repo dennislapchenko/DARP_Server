@@ -92,7 +92,6 @@
     <Compile Include="Model\Fighting\MoveProcessor.cs" />
     <Compile Include="Model\NPC\NPCFactory.cs" />
     <Compile Include="Model\RngUtil.cs" />
-    <Compile Include="Model\ServerEvents\TestDictEvent.cs" />
     <Compile Include="Persistence\IDatabaseAccess.cs" />
     <Compile Include="Persistence\PlayerRestoreAccess.cs" />
     <Compile Include="Persistence\PlayerStoreAccess.cs" />

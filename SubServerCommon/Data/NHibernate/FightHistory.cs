@@ -1,5 +1,4 @@
 ﻿using System;
-using ComplexServerCommon.Enums;
 
 namespace SubServerCommon.Data.NHibernate
 {
@@ -12,11 +11,12 @@ namespace SubServerCommon.Data.NHibernate
         public virtual string FightType { get; set; }
         public virtual int TeamSize { get; set; }
         public virtual string Location { get; set; }
-        public virtual long FightDuration { get; set; }
+        public virtual string FightDuration { get; set; }
         public virtual int MovesExchanged { get; set; }
         public virtual string TeamRedNames { get; set; }
         public virtual string TeamBlueNames { get; set; }
         public virtual string HighestDamagePlayer { get; set; }
         public virtual string LowestDamagePlayer { get; set; }
+        public virtual string Winner { get; set; }
     }
 }

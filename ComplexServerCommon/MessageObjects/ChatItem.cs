@@ -1,14 +1,11 @@
-
-using System;
-
 namespace ComplexServerCommon.MessageObjects
 {
-	[Serializable]
-	public class ChatItem
-	{
-		public string TellPlayer {get; set;}
-		public string Text {get;set;}
-		public ChatType Type {get; set;}
-		public string ByPlayer {get; set;}
-	}	
+    [System.Serializable]
+    public class ChatItem
+    {
+        public string TellPlayer;
+        public string Text;
+        public ChatType Type;
+        public string ByPlayer;
+    }	
 }

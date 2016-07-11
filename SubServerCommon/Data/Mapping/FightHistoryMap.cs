@@ -22,6 +22,7 @@ namespace SubServerCommon.Data.Mapping
             Map(x => x.MovesExchanged).Column("MOVES");
             Map(x => x.LowestDamagePlayer).Column("LOWEST_DAMAGE");
             Map(x => x.HighestDamagePlayer).Column("HIGHEST_DAMAGE");
+            Map(x => x.Winner).Column("WINNER");
             Table("fighthistory");
         }
     }

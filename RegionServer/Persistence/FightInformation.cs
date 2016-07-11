@@ -1,11 +1,7 @@
 ﻿using System;
-using System.CodeDom;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
+using System.Globalization;
 using ComplexServerCommon.Enums;
-using ComplexServerCommon.MessageObjects;
 using NHibernate.Exceptions;
 using RegionServer.Model.Fighting;
 using SubServerCommon;
@@ -24,12 +20,13 @@ namespace RegionServer.Model.DataKeepers
         public FightType FightType { get; set; }
         public int TeamSize { get; set; }
         public string Location { get; set; }
-		public long FightDuration { get; set; }
+		public TimeSpan FightDuration { get; set; }
 		public int MovesExchanged { get; set; }
 		public string TeamRedNames { get; set; }
 		public string TeamBlueNames { get; set; }
 		public string HighestDamagePlayer { get; set; }
 		public string LowestDamagePlayer { get; set; }
+        public string Winner { get; set; }
 
 		private Stopwatch fightTimer;
 	    private readonly Fight _fight;
@@ -40,14 +37,8 @@ namespace RegionServer.Model.DataKeepers
 		    FightType = _fight.Type;
 		    TeamSize = _fight.TeamSize;
 		    Location = _fight.FightLocation.ToString();
-//		    try
-//		    {
-//		        FightId = Convert.ToInt32(_fight.FightId);
-//		    }
-//		    catch (Exception)
-//		    {
+
 		    FightId = _fight.FightId.ToString().Replace("-", "");
-//          }
 
 		    TeamRedNames = "";
 		    TeamBlueNames = "";
@@ -69,17 +60,25 @@ namespace RegionServer.Model.DataKeepers
             {
                 TeamBlueNames += player.Name + ", ";
             }
+
+		    if (_fight.TeamSize == 1)
+		    {
+		        TeamRedNames = TeamRedNames.Replace(", ", "");
+                TeamBlueNames = TeamBlueNames.Replace(", ", "");
+
+            }
         }
 
-		public void FightEnded()
+        public void FightEnded()
 		{
 			FightEndedTime = DateTime.Now;
-			FightDuration = fightTimer.ElapsedMilliseconds/1000;
+            FightDuration = TimeSpan.FromMilliseconds(fightTimer.ElapsedMilliseconds);
 			fightTimer.Stop();
 
             setLowestDamage();
             setHighestDamage();
 		    MovesExchanged = _fight.ExchangeCount;
+		    Winner = _fight.Winner;
 		}
 
 	    private void setHighestDamage()
@@ -139,12 +138,13 @@ namespace RegionServer.Model.DataKeepers
                                                                     FightType = FightType.ToString(),
                                                                     TeamSize = TeamSize,
                                                                     Location = Location,
-                                                                    FightDuration = FightDuration,
+                                                                    FightDuration = FightDuration.ToString("g"),
                                                                     MovesExchanged = MovesExchanged,
                                                                     TeamRedNames = TeamRedNames,
                                                                     TeamBlueNames = TeamBlueNames,
                                                                     LowestDamagePlayer = LowestDamagePlayer,
-                                                                    HighestDamagePlayer = HighestDamagePlayer
+                                                                    HighestDamagePlayer = HighestDamagePlayer,
+                                                                    Winner = Winner
                                                                };
    
 

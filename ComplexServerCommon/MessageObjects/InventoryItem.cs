@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace ComplexServerCommon.MessageObjects
 {
-	[Serializable]
-	public class InventoryItem
-	{
-		Dictionary<int, ClientItemInfo> Inventory {get;set;}
-		List<ClientItemInfo> Equipment {get;set;}
+    [System.Serializable]
+    public class InventoryItem
+    {
+        Dictionary<int, ClientItemInfo> Inventory;
+        List<ClientItemInfo> Equipment;
 
 //		public InventoryItem(Dictionary<int, IStat> inv)
 //		{

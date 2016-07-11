@@ -1,18 +1,17 @@
-﻿using System;
-using ComplexServerCommon.Enums;
+﻿using ComplexServerCommon.Enums;
 using System.Collections.Generic;
 
 namespace ComplexServerCommon.MessageObjects
 {
-	[Serializable]
-	public class FightMove
+    [System.Serializable]
+    public class FightMove
 	{
 		//public Guid? PeerId {get;set;}
-		public int PeerObjectId {get;set;}
-		public HitSpot AttackSpot{get;set;}
-		public List<HitSpot> BlockSpots{get;set;}
-		public int? SkillId {get;set;}
-		public int TargetObjectId {get;set;}
+        public int PeerObjectId;
+        public HitSpot AttackSpot;
+        public List<HitSpot> BlockSpots;
+        public int? SkillId;
+        public int TargetObjectId;
 		//public Guid? TargetPeerId {get;set;}
 
 		public override string ToString()

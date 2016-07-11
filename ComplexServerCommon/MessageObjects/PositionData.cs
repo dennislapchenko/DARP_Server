@@ -1,10 +1,9 @@
-using System;
 using ComplexServerCommon.Enums;
 
 namespace ComplexServerCommon.MessageObjects
 {
-	[Serializable]
-	public class PositionData
+    [System.Serializable]
+    public class PositionData
 	{
         /*  Highlevel location  - where in the outer sense the character is
          *  Lowlevel location   - which exact location it is
@@ -12,8 +11,8 @@ namespace ComplexServerCommon.MessageObjects
          *              SHOP - Venruki the Cock's
          *              FIGHT - Magadan Pits
          */
-        public LocationType LocationHighlevel { get; set; }
-        public LocationType LocationLowlevel { get; set; }
+        public LocationType LocationHighlevel;
+        public LocationType LocationLowlevel;
 		
 		public PositionData()
 			: this (LocationType.CITY, LocationType.CITY)

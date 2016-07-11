@@ -1,4 +1,3 @@
-
 namespace ComplexServerCommon.MessageObjects
 {
 	[System.Serializable]

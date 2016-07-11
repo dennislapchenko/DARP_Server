@@ -1,15 +1,14 @@
-﻿using System;
-using ComplexServerCommon.MessageObjects.Enums;
+﻿using ComplexServerCommon.MessageObjects.Enums;
 
 namespace ComplexServerCommon.MessageObjects
 {
-	[Serializable]
-	public class ExchangeProfile
-	{
-		public int objectId {get;set;}
-		public MoveOutcome outcome {get;set;}
-		public int damage {get;set;}
-		public int totalDamage {get;set;}
+    [System.Serializable]
+    public class ExchangeProfile
+    {
+        public int objectId;
+        public MoveOutcome outcome;
+        public int damage;
+        public int totalDamage;
 
 		public ExchangeProfile()
 		{

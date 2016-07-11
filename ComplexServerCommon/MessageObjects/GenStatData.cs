@@ -1,22 +1,20 @@
-﻿using System;
-
-namespace ComplexServerCommon.MessageObjects
+﻿namespace ComplexServerCommon.MessageObjects
 {
-	[Serializable]
-	public class GenStatData
-	{
-		public string Name {get;set;}
-		public int Experience{get; set;}
+    [System.Serializable]
+    public class GenStatData
+    {
+        public string Name;
+        public int Experience;
 
-		public int Battles{get;set;}
-		public int Win {get; set;}
-		public int Loss {get; set;}
-		public int Tie {get; set;}
+        public int Battles;
+        public int Win;
+        public int Loss;
+        public int Tie;
 
-		public int Gold {get; set;}
-		public int Skulls {get; set;}
+        public int Gold;
+        public int Skulls;
 
-		public int InventorySlots {get;set;}
+        public int InventorySlots;
 
 		public GenStatData()
 		{
