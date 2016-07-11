@@ -1,3 +1,4 @@
+using System;
 using RegionServer.Model.Interfaces;
 using System.Collections.Generic;
 using RegionServer.Calculators.Functions;
@@ -6,8 +7,9 @@ using RegionServer.Calculators.Lambdas;
 
 namespace RegionServer.Model.Stats
 {
-	//Buffs CRITICAL HIT CHANCE, CRITICAL DAMAGE, CRITICAL ANTI CHANCE & HIT CHANCE
-	public class Dexterity : IDerivedStat
+    [Serializable]
+    //Buffs CRITICAL HIT CHANCE, CRITICAL DAMAGE, CRITICAL ANTI CHANCE & HIT CHANCE
+    public class Dexterity : IDerivedStat
 	{
 		public string Name { get { return "Dexterity"; } }
 

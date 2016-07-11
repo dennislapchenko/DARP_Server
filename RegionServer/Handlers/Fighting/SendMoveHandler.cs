@@ -1,16 +1,10 @@
-﻿using System;
-using MMO.Photon.Server;
+﻿using MMO.Photon.Server;
 using MMO.Photon.Application;
 using MMO.Framework;
 using ComplexServerCommon;
 using RegionServer.Model;
 using ComplexServerCommon.MessageObjects;
-using ComplexServerCommon.MessageObjects.Enums;
-using RegionServer.Model.Stats;
-using System.Collections.Generic;
-using RegionServer.Model.ServerEvents;
-using Photon.SocketServer;
-using System.Linq;
+using RegionServer.Model.Fighting;
 
 namespace RegionServer.Handlers.Fighting
 {
@@ -36,7 +30,7 @@ namespace RegionServer.Handlers.Fighting
 			_instance = Util.GetCPlayerInstance(Server, message);
 			_currentFight = _instance.CurrentFight;
 
-			var newMove = Xml.Deserialize<FightMove>(message.Parameters[(byte)ClientParameterCode.Object]);
+			var newMove = SerializeUtil.Deserialize<FightMove>(message.Parameters[(byte)ClientParameterCode.Object]);
 			newMove.PeerObjectId = _instance.ObjectId;
 			newMove.TargetObjectId = _instance.Target.ObjectId;
 

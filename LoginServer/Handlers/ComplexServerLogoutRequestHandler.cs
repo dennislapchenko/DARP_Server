@@ -25,6 +25,7 @@ namespace LoginServer.Handlers
 		protected override bool OnHandleMessage(IMessage message, PhotonServerPeer serverPeer)
 		{
 			var peerId = new Guid((Byte[])message.Parameters[(byte)ClientParameterCode.PeerId]);
+
 			LoginServer login = Server as LoginServer;
 			if (login != null)
 			{

@@ -44,7 +44,7 @@ namespace RegionServer.Handlers
 			}
 			//WHEN CORRECT
             var instance = Util.GetCPlayerInstance(Server, message);
-			var playerMovement = Xml.Deserialize<PlayerMovement>(operation.PlayerMovement);
+			var playerMovement = ComplexServerCommon.SerializeUtil.Deserialize<PlayerMovement>(operation.PlayerMovement);
             
             //implement movement logic
 

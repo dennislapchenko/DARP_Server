@@ -10,7 +10,7 @@ namespace ComplexServerCommon.MessageObjects
 		Guild,
 		Group,
 		General,
-		Tell,
+		Whisper,
 		Trade
 	}
 }

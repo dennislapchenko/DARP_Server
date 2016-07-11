@@ -44,7 +44,7 @@ namespace RegionServer.Model.Stats
 				{
 					if(Character.CurrentFight != null)
 					{
-						if(Character.CurrentFight.State != FightState.ENGAGED)
+						if(Character.CurrentFight.fightState != FightState.ENGAGED)
 						{
 							_dirty = true;
 							return _dirty;
@@ -116,7 +116,17 @@ namespace RegionServer.Model.Stats
 			return 0;
 		}
 
-		public int ApplyDamage(int damage)
+	    public void AddToStat<T>(float value) where T : class, IStat
+	    {
+            IStat result;
+            _stats.TryGetValue(typeof(T), out result);
+            if (result != null)
+            {
+                result.BaseValue += (int)value;
+            }
+        }
+
+	    public int ApplyDamage(int damage)
 		{
 			IStat health;
 			_stats.TryGetValue(typeof(CurrHealth), out health);
@@ -148,9 +158,7 @@ namespace RegionServer.Model.Stats
 
 		public void RegenHealth()
 		{
-			var currentHP = (int)GetStat<CurrHealth>();
-			var newHP = currentHP += (int)GetStat<HealthRegen>();
-			SetStat<CurrHealth>(newHP);
+			SetStat<CurrHealth>(GetStat<CurrHealth>() + GetStat<HealthRegen>());
 		}
 
 		public void SetStat<T>(float value) where T : class, IStat
@@ -259,12 +267,12 @@ namespace RegionServer.Model.Stats
 				StatValues.Add(new SerializedStat(){StatType = stat.Name, StatValue = stat.BaseValue});
 			}
 
-			return Xml.Serialize(StatValues);
+			return ComplexServerCommon.SerializeUtil.Serialize(StatValues);
 		}
 
 		public void DeserializeStats(string stats)
 		{
-			foreach (var stat in Xml.Deserialize<List<SerializedStat>>(stats))
+			foreach (var stat in ComplexServerCommon.SerializeUtil.Deserialize<List<SerializedStat>>(stats))
 			{
 				var result = _stats.Values.FirstOrDefault(s => s.Name == stat.StatType);
 				if(result != null)

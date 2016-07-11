@@ -1,3 +1,6 @@
+using System;
+using System.Runtime.Serialization;
+
 namespace RegionServer.Model.Interfaces
 {
 	public interface IStat

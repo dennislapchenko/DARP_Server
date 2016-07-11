@@ -1,3 +1,4 @@
+using System;
 using RegionServer.Model.Interfaces;
 using System.Collections.Generic;
 using RegionServer.Calculators.Functions;
@@ -6,7 +7,8 @@ using RegionServer.Calculators.Lambdas;
 
 namespace RegionServer.Model.Stats
 {
-	public class CriticalHitChance : IDerivedStat
+    [Serializable]
+    public class CriticalHitChance : IDerivedStat
 	{
 		public string Name { get { return "Critical Hit Chance"; } }
 

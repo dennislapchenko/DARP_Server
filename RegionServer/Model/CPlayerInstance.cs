@@ -6,6 +6,7 @@ using ComplexServerCommon;
 using Photon.SocketServer;
 using RegionServer.Model.KnownList;
 using MMO.Framework;
+using RegionServer.Model.Fighting;
 using RegionServer.Model.Stats;
 using RegionServer.Persistence;
 
@@ -26,9 +27,10 @@ namespace RegionServer.Model
 		public int? UserID {get; set;}
 		public int? CharacterID {get; set;}
 
-		
-		
-		public override Position Position
+
+        public bool isNPC { get { return false; } }
+
+        public override Position Position
 		{ 
 			get	
 			{	

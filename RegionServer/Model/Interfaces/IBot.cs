@@ -1,9 +1,9 @@
 ﻿namespace RegionServer.Model.Interfaces
 {
-	public interface IBot : ICharacter
+	public interface IBot
 	{
 		void joinQueue(IFight fight);
-		void makeAMove();
+		void makeAMove(int targetId);
 		void configureBot(byte level);
 	}
 }

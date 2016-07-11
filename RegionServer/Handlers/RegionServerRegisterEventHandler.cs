@@ -23,8 +23,6 @@ namespace RegionServer.Handlers
 
 		#region implemented abstract members of PhotonServerHandler
 
-	
-
 		public override MessageType Type
 		{
 			get	{ return MessageType.Async;	}

@@ -9,11 +9,7 @@ using Photon.SocketServer;
 using LoginServer.Operations;
 using SubServerCommon;
 using SubServerCommon.Data.NHibernate;
-using System.Xml.Serialization;
 using ComplexServerCommon.MessageObjects;
-using System.IO;
-using RegionServer.Model.Interfaces;
-using RegionServer.Model.Stats;
 
 
 namespace LoginServer.Handlers
@@ -21,9 +17,7 @@ namespace LoginServer.Handlers
 	public class LoginServerCreateCharacterHandler : PhotonServerHandler
 	{
 
-		private StatHolder _baseFullStatHolder;
-
-		public LoginServerCreateCharacterHandler(PhotonApplication application) : base(application)
+        public LoginServerCreateCharacterHandler(PhotonApplication application) : base(application)
 		{
 		}
 
@@ -50,6 +44,7 @@ namespace LoginServer.Handlers
 									{(byte)ClientParameterCode.PeerId, message.Parameters[(byte)ClientParameterCode.PeerId]},
 									{(byte)ClientParameterCode.SubOperationCode, message.Parameters[(byte)ClientParameterCode.SubOperationCode]}
 								};
+
 			var operation = new CreateCharacter(serverPeer.Protocol, message);
 			if (!operation.IsValid)
 			{
@@ -78,7 +73,8 @@ namespace LoginServer.Handlers
 						}
 						else
 						{
-							var createCharacter = Xml.Deserialize<CharacterCreateDetails>(operation.CharacterCreateDetails);
+							var createCharacter = SerializeUtil.Deserialize<CharacterCreateDetails>(operation.CharacterCreateDetails);
+                            Server.Log.DebugFormat("NEW CHAR: NAME: {0} / SEX: {1} / CLASS: {2}", createCharacter.CharacterName, createCharacter.Sex, createCharacter.CharacterClass);
 							var character = session.QueryOver<ComplexCharacter>().Where(cc => cc.Name == createCharacter.CharacterName).List().FirstOrDefault();
 							if (character != null)
 							{
@@ -94,7 +90,6 @@ namespace LoginServer.Handlers
 										Class = createCharacter.CharacterClass,
 										Sex = createCharacter.Sex,
 										Level = 0,
-										//Stats = _baseFullStatHolder.SerializeStats(),
 									};
 								session.Save(newChar);
 								transaction.Commit();

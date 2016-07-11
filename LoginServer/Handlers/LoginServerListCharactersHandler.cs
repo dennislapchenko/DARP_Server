@@ -74,7 +74,7 @@ namespace LoginServer.Handlers
 								Hashtable characterList = new Hashtable();
 								foreach (var complexCharacter in characters)
 								{
-									characterList.Add(complexCharacter.Id, Xml.Serialize(complexCharacter.BuilderCharacterListItem()));
+									characterList.Add(complexCharacter.Id, SerializeUtil.Serialize(complexCharacter.BuilderCharacterListItem()));
 								}
 
 								para.Add((byte)ClientParameterCode.CharacterList, characterList);
@@ -87,8 +87,8 @@ namespace LoginServer.Handlers
 								serverPeer.SendOperationResponse(
 									new OperationResponse(message.Code) 
 									{ 
-									ReturnCode = (int)ErrorCode.OperationInvalid, 
-									DebugMessage = "Profile not found"
+									    ReturnCode = (int)ErrorCode.OperationInvalid, 
+									    DebugMessage = "Profile not found"
 									}, 
 									new SendParameters());
 							}
@@ -98,8 +98,8 @@ namespace LoginServer.Handlers
 							serverPeer.SendOperationResponse(
 								new OperationResponse(message.Code) 
 								{ 
-								ReturnCode = (int)ErrorCode.OperationInvalid, 
-								DebugMessage = "User not found"
+								    ReturnCode = (int)ErrorCode.OperationInvalid, 
+								    DebugMessage = "User not found"
 								}, 
 								new SendParameters());
 						}

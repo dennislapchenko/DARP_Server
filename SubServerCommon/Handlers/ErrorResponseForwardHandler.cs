@@ -1,4 +1,3 @@
-using System;
 using MMO.Photon.Server;
 using MMO.Photon.Application;
 using MMO.Framework;
@@ -30,7 +29,7 @@ namespace SubServerCommon.Handlers
 			}
 		}
 		
-		protected override bool OnHandleMessage (MMO.Framework.IMessage message, PhotonServerPeer serverPeer)
+		protected override bool OnHandleMessage (IMessage message, PhotonServerPeer serverPeer)
 		{
 			Log.ErrorFormat("No existing Response Handler. {0} : {1}", message.Code, message.SubCode);
 			return true;

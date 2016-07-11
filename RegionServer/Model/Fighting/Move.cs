@@ -1,7 +1,7 @@
 ﻿using System;
 using RegionServer.Model.Interfaces;
 
-namespace RegionServer.Model
+namespace RegionServer.Model.Fighting
 {
 //	public struct Move
 //	{

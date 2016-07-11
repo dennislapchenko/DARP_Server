@@ -1,5 +1,6 @@
 ﻿using System;
 using ComplexServerCommon;
+using ComplexServerCommon.Enums;
 using ComplexServerCommon.MessageObjects;
 
 namespace RegionServer.Model.Stats
@@ -28,14 +29,33 @@ namespace RegionServer.Model.Stats
 			return new GenStatData(gStats.Name, gStats.Experience, gStats.Battles, gStats.Win, gStats.Loss, gStats.Tie, gStats.Gold, gStats.Skulls, gStats.InventorySlots);
 		}
 
-		public string SerializeStats()
+        public void postFightUpdate(FightWinLossTie result, Rewards reward)
+        {
+            AddExperience(reward.Experience);
+            Gold += reward.Gold;
+            Battles++;
+            switch (result)
+            {
+                case (FightWinLossTie.Win):
+                    Win++;
+                    break;
+                case (FightWinLossTie.Loss):
+                    Loss++;
+                    break;
+                case (FightWinLossTie.Tie):
+                    Tie++;
+                    break;
+            }
+        }
+
+        public string SerializeStats()
 		{
-			return Xml.Serialize<GeneralStats>(this);
+			return ComplexServerCommon.SerializeUtil.Serialize<GeneralStats>(this);
 		}
 
 		public void DeserializeStats(string genStats)
 		{
-			var gStats = Xml.Deserialize<GeneralStats>(genStats);
+			var gStats = ComplexServerCommon.SerializeUtil.Deserialize<GeneralStats>(genStats);
 			this.Experience = gStats.Experience;
 			this.Battles = gStats.Battles;
 			this.Win = gStats.Win;

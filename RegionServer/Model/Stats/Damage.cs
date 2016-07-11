@@ -6,7 +6,8 @@ using RegionServer.Calculators.Lambdas;
 
 namespace RegionServer.Model.Stats
 {
-	public class Damage : IStat
+    [Serializable]
+    public class Damage : IStat
 	{
 		public string Name { get { return "Damage"; } }
 

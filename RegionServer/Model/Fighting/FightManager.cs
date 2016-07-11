@@ -9,7 +9,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using RegionServer.Model.ServerEvents;
 
-namespace RegionServer.Model
+namespace RegionServer.Model.Fighting
 {
 	public class FightManager
 	{
@@ -57,11 +57,27 @@ namespace RegionServer.Model
 			}
 		}
 
+	    public Fight AddFight(int teamSize, FightType fightType = FightType.SINGLE)
+	    {
+            var newFightId = Guid.NewGuid();
+            var newFight = new Fight(newFightId, "Mock", fightType, teamSize, 15, true);
+
+            var success = Fights.TryAdd(newFight.FightId, newFight);
+            if (success)
+            {
+                return Fights[newFightId];
+            }
+            else
+            {
+                return null;
+            }
+        }
+
 		public bool RemoveFight(Fight fight)
 		{
 			if(Fights.ContainsKey(fight.FightId))
 			{
-				foreach(var player in fight.Players.Values)
+				foreach(var player in fight.getPlayers.Values)
 				{
 					player.CurrentFight = null;
 				}
@@ -75,7 +91,7 @@ namespace RegionServer.Model
 		{
 			var result = new List<FightQueueListItem>();
 
-			foreach(var fight in Fights.Where(f => f.Value.State == FightState.QUEUE))
+			foreach(var fight in Fights.Where(f => f.Value.fightState == FightState.QUEUE))
 			{
 				result.Add(fight.Value.GetQueueInfo());
 			}
@@ -94,7 +110,7 @@ namespace RegionServer.Model
 			var targetFight = instance.CurrentFight;
 			if(targetFight != null)
 			{
-				switch(targetFight.State)
+				switch(targetFight.fightState)
 				{
 				case(FightState.QUEUE):
 						targetFight.RemovePlayer(instance);
@@ -102,7 +118,7 @@ namespace RegionServer.Model
 						break;
 				case(FightState.ENGAGED): //action on other players upon ones leave from engaged fight
 						//will send 'load lobby scene event' for now
-						foreach(var p in targetFight.Players.Values)
+						foreach(var p in targetFight.getPlayers.Values)
 						{
 							p.CurrentFight = null;
 							p.SendPacket(new LoadIngameScene());
@@ -120,7 +136,7 @@ namespace RegionServer.Model
 		{
 			if(queue.getNumPlayers() > 0)
 			{
-				queue.Creator = queue.Players.FirstOrDefault().Value.Name;
+				queue.Creator = queue.getPlayers.FirstOrDefault().Value.Name;
 				return true;
 			}
 			else

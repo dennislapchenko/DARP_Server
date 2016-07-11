@@ -82,7 +82,7 @@ namespace RegionServer.Model
 
 		#endregion
 
-		#region All Players Functions
+		#region All getPlayers Functions
 
 		public void AddPlayer(IPlayer player)
 		{

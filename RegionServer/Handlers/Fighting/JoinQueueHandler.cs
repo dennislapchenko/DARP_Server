@@ -1,13 +1,9 @@
 ﻿using MMO.Photon.Application;
 using ComplexServerCommon;
-using RegionServer.Model;
-using System.Collections.Generic;
-using Photon.SocketServer;
 using MMO.Photon.Server;
 using MMO.Framework;
 using System;
-using RegionServer.Model.ServerEvents;
-using ComplexServerCommon.Enums;
+using RegionServer.Model.Fighting;
 
 namespace RegionServer.Handlers
 {

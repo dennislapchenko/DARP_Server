@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using RegionServer.Model.ServerEvents;
 using ComplexServerCommon.MessageObjects;
+using RegionServer.Model.Fighting;
 using RegionServer.Model.Stats;
 
 namespace RegionServer.Model.Interfaces
@@ -11,6 +12,7 @@ namespace RegionServer.Model.Interfaces
 		IObject Target {get; set;}
 		void SwitchCurrentFightTarget();
 
+        bool isNPC { get; }
 		bool IsDead {get;}
 		bool Moving {get; set;}
 		Position Destination {get; set;}

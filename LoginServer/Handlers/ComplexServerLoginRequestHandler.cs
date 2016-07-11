@@ -12,7 +12,6 @@ using System.Security.Cryptography;
 using System.Text;
 using SubServerCommon.Data.ClientData;
 using MMO.Framework;
-using System.Linq;
 
 namespace LoginServer.Handlers
 {
@@ -94,6 +93,7 @@ namespace LoginServer.Handlers
 								LoginServer server = Server as LoginServer;
 								if(server != null)
 								{
+                                    //check if user is already logged in
 									bool founduser = false;
 									foreach (var subServerClientPeer in server.ConnectionCollection<SubServerConnectionCollection>().Clients)
 									{
@@ -107,7 +107,7 @@ namespace LoginServer.Handlers
 									{
 										serverPeer.SendOperationResponse(new OperationResponse((byte)ClientOperationCode.Login) {Parameters = para, ReturnCode = (short)ErrorCode.UserCurrentlyLoggedIn, DebugMessage = "User is currently logged in"}, new SendParameters());
 									}
-									else 
+									else //if not logged in - allow log in and add to Client dictionaries
 									{
 										server.ConnectionCollection<SubServerConnectionCollection>().Clients.Add(new Guid((Byte[])message.Parameters[(byte)ClientParameterCode.PeerId]), _clientFactory(new Guid((Byte[])message.Parameters[(byte)ClientParameterCode.PeerId])));
 										server.ConnectionCollection<SubServerConnectionCollection>().Clients[new Guid((Byte[])message.Parameters[(byte)ClientParameterCode.PeerId])].ClientData<CharacterData>().UserId = user.Id;
@@ -141,7 +141,6 @@ namespace LoginServer.Handlers
 									ReturnCode = (int)ErrorCode.UserNamePasswordInvalid,
 									DebugMessage = "Username or password is incorrect" 
 								}, new SendParameters());
-							//Log.DebugFormat("server: {0}", serverPeer.ApplicationName.FirstOrDefault());
 
 							return true;
 						}

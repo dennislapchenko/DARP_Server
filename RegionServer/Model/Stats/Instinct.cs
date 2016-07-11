@@ -1,3 +1,4 @@
+using System;
 using RegionServer.Model.Interfaces;
 using System.Collections.Generic;
 using RegionServer.Calculators.Functions;
@@ -6,8 +7,9 @@ using RegionServer.Calculators.Lambdas;
 
 namespace RegionServer.Model.Stats
 {
-	//Buffs DODGE, PARRY & COUNTER-ATTACK CHANCE
-	public class Instinct : IDerivedStat
+    [Serializable]
+    //Buffs DODGE, PARRY & COUNTER-ATTACK CHANCE
+    public class Instinct : IDerivedStat
 	{
 		public string Name { get { return "Instinct"; } }
 

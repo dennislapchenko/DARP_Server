@@ -19,6 +19,7 @@ namespace RegionServer.Persistence
 
         public void execute()
         {
+            const string METHODNAME = "execute";
 			try
 			{
 				using (var session = NHibernateHelper.OpenSession())
@@ -27,8 +28,8 @@ namespace RegionServer.Persistence
 					{
 						var user = session.QueryOver<User>().Where(u => u.Id == player.UserID).SingleOrDefault();
 						var character = session.QueryOver<ComplexCharacter>().Where(cc => cc.UserId == user && cc.Name == player.Name).SingleOrDefault();
-						player.UserID = user.Id;
-						player.CharacterID = character.Id;
+						//player.UserID = user.Id;
+						//player.CharacterID = character.Id;
 
 						character.Level = (int)player.Stats.GetStat<Level>();
 
@@ -49,7 +50,7 @@ namespace RegionServer.Persistence
 			}
 			catch (Exception e)
 			{
-				player.Client.Log.DebugFormat("{0} Failed to Store player {1}", CLASSNAME, e.Message);
+				DebugUtils.Logp(DebugUtils.Level.ERROR, CLASSNAME, METHODNAME, "Failed to Store player = " + e.Message);
 			}
 		}
     }

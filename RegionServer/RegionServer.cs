@@ -14,7 +14,9 @@ using SubServerCommon.Handlers;
 using RegionServer.Model;
 using RegionServer.Model.KnownList;
 using RegionServer.BackgroundThreads;
+using RegionServer.Model.Fighting;
 using RegionServer.Model.Items;
+using RegionServer.Model.NPC;
 using RegionServer.Model.Stats;
 
 
@@ -34,9 +36,11 @@ namespace RegionServer
 			builder.RegisterInstance(this).As<PhotonApplication>().SingleInstance();
 			builder.RegisterType<SubServerClientPeer>();
 			builder.RegisterType<CPlayerInstance>();
-			builder.RegisterType<CBotInstance>();
+		    builder.RegisterType<CBotInstance>();
 			builder.RegisterType<Region>().SingleInstance();
 			builder.RegisterType<PlayerKnownList>();
+		    builder.RegisterType<CharacterKnownList>();
+		    builder.RegisterType<NPCFactory>();
 			builder.RegisterType<ItemDBCache>().SingleInstance();
 			builder.RegisterType<GeneralStats>();
 			builder.RegisterType<FightManager>().SingleInstance();
@@ -53,20 +57,19 @@ namespace RegionServer
 		
 		public override void Register (PhotonServerPeer peer)
 		{
-			var registerSubServerOperation = 
-				new RegisterSubServerData()
-			{
-				GameServerAddress = PublicIpAddress.ToString(),
-				TcpPort = TcpPort,
-				UdpPort = UdpPort,
-				ServerId = ServerId,
-				ServerType = ServerType,
-				ApplicationName = ApplicationName
-			};
+			var registerSubServerOperation = new RegisterSubServerData()
+			                                        {
+				                                        GameServerAddress = PublicIpAddress.ToString(),
+				                                        TcpPort = TcpPort,
+				                                        UdpPort = UdpPort,
+				                                        ServerId = ServerId,
+				                                        ServerType = ServerType,
+				                                        ApplicationName = ApplicationName
+			                                        };
 
 			Log.DebugFormat("[RegionServer] Server Register Request Sent");
 			peer.SendOperationRequest(new OperationRequest((byte)ServerOperationCode.RegisterSubServer,
-			                                               new RegisterSubServer() {RegisterSubServerOperation = Xml.Serialize(registerSubServerOperation)}), new SendParameters());
+			                                               new RegisterSubServer() {RegisterSubServerOperation = ComplexServerCommon.SerializeUtil.Serialize(registerSubServerOperation)}), new SendParameters());
 		}
 		
 		public override byte SubCodeParameterCode {

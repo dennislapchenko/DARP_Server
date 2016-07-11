@@ -25,7 +25,7 @@ namespace RegionServer.Model.Items
 
 		protected ILogger Log = LogManager.GetCurrentClassLogger();
 
-		public ItemHolder()
+		public ItemHolder(ItemDBCache itemDb)
 		{
 			_inventory = new Dictionary<int, Item>();
 			_equipment = new Dictionary<ItemSlot, Item>();
@@ -162,12 +162,12 @@ namespace RegionServer.Model.Items
 			{
 				ItemList.Add(new SerializedItem() { ItemId = equipped.ItemId, Equipped = 1} );
 			}
-			return Xml.Serialize<List<SerializedItem>>(ItemList);
+			return ComplexServerCommon.SerializeUtil.Serialize<List<SerializedItem>>(ItemList);
 		}
 		
 		public void DeserializeItems(string items)
 		{
-			var list = Xml.Deserialize<List<SerializedItem>>(items);
+			var list = ComplexServerCommon.SerializeUtil.Deserialize<List<SerializedItem>>(items);
 			foreach (var item in list)
 			{
 				if(item.Equipped == 0)

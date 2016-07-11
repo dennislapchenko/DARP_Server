@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using System.IO;
 using ComplexServerCommon.Enums;
+using RegionServer.Model.Fighting;
 
 namespace RegionServer.Model.ServerEvents
 {

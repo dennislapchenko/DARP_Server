@@ -1,3 +1,4 @@
+using System;
 using RegionServer.Model.Interfaces;
 using System.Collections.Generic;
 using RegionServer.Calculators.Functions;
@@ -6,8 +7,9 @@ using RegionServer.Calculators.Lambdas;
 
 namespace RegionServer.Model.Stats
 {
-	//Buffs MINDAMAGE, MAXDAMAGE, 
-	public class Strength : IDerivedStat
+    [Serializable]
+    //Buffs MINDAMAGE, MAXDAMAGE, 
+    public class Strength : IDerivedStat
 	{
 		public string Name { get { return "Strength"; } }
 

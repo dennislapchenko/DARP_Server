@@ -43,7 +43,7 @@ namespace ComplexServer.Handlers
 				}
 				else
 				{
-					var registerData = Xml.Deserialize<RegisterSubServerData>(registerRequest.RegisterSubServerOperation);
+					var registerData = SerializeUtil.Deserialize<RegisterSubServerData>(registerRequest.RegisterSubServerOperation);
 					if (Log.IsDebugEnabled)
 					{
 						Log.DebugFormat("Received register request: Address={0}, UdpPort={2}, TcpPort={1}, Type={3}",

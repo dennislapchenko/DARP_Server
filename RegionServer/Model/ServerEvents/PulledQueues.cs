@@ -1,5 +1,6 @@
 ﻿using System;
 using ComplexServerCommon;
+using RegionServer.Model.Fighting;
 
 namespace RegionServer.Model.ServerEvents
 {

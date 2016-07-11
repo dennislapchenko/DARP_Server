@@ -1,4 +1,5 @@
-﻿using RegionServer.Model.Interfaces;
+﻿using System;
+using RegionServer.Model.Interfaces;
 using System.Collections.Generic;
 using RegionServer.Calculators.Functions;
 using RegionServer.Calculators.Lambdas;
@@ -6,7 +7,8 @@ using RegionServer.Calculators.Lambdas;
 
 namespace RegionServer.Model.Stats
 {
-	public class MaxHealth : IDerivedStat
+    [Serializable]
+    public class MaxHealth : IDerivedStat
 	{
 		public string Name { get { return "MaxHealth"; } } //hp5
 

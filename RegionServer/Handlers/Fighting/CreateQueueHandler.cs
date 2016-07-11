@@ -8,6 +8,7 @@ using Photon.SocketServer;
 using System.Collections.Generic;
 using ComplexServerCommon.MessageObjects;
 using System;
+using RegionServer.Model.Fighting;
 using RegionServer.Model.ServerEvents;
 
 namespace RegionServer.Handlers
@@ -44,7 +45,7 @@ namespace RegionServer.Handlers
 
 			var instance = Util.GetCPlayerInstance(Server, message);
 
-			var queueItemRequest = Xml.Deserialize<FightQueueListItem>(operation.fightInit);
+			var queueItemRequest = ComplexServerCommon.SerializeUtil.Deserialize<FightQueueListItem>(operation.fightInit);
 			queueItemRequest.Creator = instance.Name;
 
 			Fight newFight = instance.CurrentFight;
@@ -60,7 +61,7 @@ namespace RegionServer.Handlers
 			if(wasAllowedNewFight)
 			{
 				instance.SendPacket(new PulledQueues(_fightManager));
-				foreach(var player in newFight.Players.Values)
+				foreach(var player in newFight.getPlayers.Values)
 				{
 					player.SendPacket(new FightQueueParticipants(newFight));
 					Log.Debug(CLASSNAME + " - OnHandleMessage:: sending queue info back to client");

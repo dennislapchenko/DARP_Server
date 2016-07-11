@@ -55,7 +55,7 @@ namespace ChatServer
 			};
 			Log.DebugFormat("[ChatServer] Server Register Request Sent");
 			peer.SendOperationRequest(new OperationRequest((byte)ServerOperationCode.RegisterSubServer,
-			                                               new RegisterSubServer() {RegisterSubServerOperation = Xml.Serialize(registerSubServerOperation) }), new SendParameters());
+			                                               new RegisterSubServer() {RegisterSubServerOperation = SerializeUtil.Serialize(registerSubServerOperation) }), new SendParameters());
 		}
 		
 		public override byte SubCodeParameterCode {

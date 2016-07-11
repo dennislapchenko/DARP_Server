@@ -1,10 +1,12 @@
 
+using System;
 using RegionServer.Model.Interfaces;
 
 
 namespace RegionServer.Model.Stats
 {
-	public class MoveSpeed : IStat
+    [Serializable]
+    public class MoveSpeed : IStat
 	{
 		public MoveSpeed()
 		{

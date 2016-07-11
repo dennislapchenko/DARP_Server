@@ -1,12 +1,14 @@
 ﻿using System;
 using RegionServer.Model.Interfaces;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using RegionServer.Calculators.Functions;
 using RegionServer.Calculators.Lambdas;
 
 namespace RegionServer.Model.Stats
 {
-	public class CounterAttackChance : IDerivedStat
+    [Serializable]
+    public class CounterAttackChance : IDerivedStat
 	{
 		public string Name { get { return "Counter-Attack Chance"; } }
 

@@ -6,6 +6,7 @@ using Photon.SocketServer;
 using MMO.Photon.Server;
 using MMO.Framework;
 using ComplexServerCommon.Enums;
+using RegionServer.Model.Fighting;
 using RegionServer.Model.ServerEvents;
 
 namespace RegionServer.Handlers
@@ -41,7 +42,7 @@ namespace RegionServer.Handlers
 				if(fight != null)
 				{
 					var fightParticipants = new FightQueueParticipants(fight);
-					foreach(var player in fight.Players.Values)
+					foreach(var player in fight.getPlayers.Values)
 					{
 						player.SendPacket(new PulledQueues(_fightManager));
 						player.SendPacket(fightParticipants);

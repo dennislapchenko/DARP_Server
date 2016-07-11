@@ -40,7 +40,7 @@ namespace RegionServer.Model
 
 		public override string ToString()
 		{
-			return string.Format("Position: {0} - {1}", LocationHighlevel, LocationLowlevel);
+			return string.Format("{0} - {1}", LocationHighlevel, LocationLowlevel);
 		}
 
 		public static implicit operator PositionData(Position pos)
@@ -55,12 +55,12 @@ namespace RegionServer.Model
 
 		public string Serialize()
 		{
-			return Xml.Serialize<PositionData>((PositionData)this);
+			return ComplexServerCommon.SerializeUtil.Serialize<PositionData>((PositionData)this);
 		}
 
 		public static PositionData Deserialize(string value)
 		{
-			return Xml.Deserialize<PositionData>(value);
+			return ComplexServerCommon.SerializeUtil.Deserialize<PositionData>(value);
 		}
 
 

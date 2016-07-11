@@ -30,6 +30,14 @@
     <ConsolePause>False</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CloneExtensions, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CloneExtensions.1.2\lib\portable-net40+sl50+win+wp80\CloneExtensions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MsgPack, Version=0.6.0.0, Culture=neutral, PublicKeyToken=a2625990d5dc0167, processorArchitecture=MSIL">
+      <HintPath>..\packages\MsgPack.Cli.0.6.8\lib\net40-client\MsgPack.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="Autofac">
       <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
@@ -77,9 +85,14 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="BackgroundThreads\BotQueenBackgroundThread.cs" />
-    <Compile Include="FightUtils.cs" />
+    <Compile Include="DebugUtils.cs" />
+    <Compile Include="Model\Fighting\FightUtils.cs" />
     <Compile Include="Model\CBotInstance.cs" />
-    <Compile Include="Model\DataKeepers\FightInformation.cs" />
+    <Compile Include="Persistence\FightInformation.cs" />
+    <Compile Include="Model\Fighting\MoveProcessor.cs" />
+    <Compile Include="Model\NPC\NPCFactory.cs" />
+    <Compile Include="Model\RngUtil.cs" />
+    <Compile Include="Model\ServerEvents\TestDictEvent.cs" />
     <Compile Include="Persistence\IDatabaseAccess.cs" />
     <Compile Include="Persistence\PlayerRestoreAccess.cs" />
     <Compile Include="Persistence\PlayerStoreAccess.cs" />
@@ -163,8 +176,8 @@
     <Compile Include="Handlers\ItemEquipHandler.cs" />
     <Compile Include="Handlers\ItemDequipHandler.cs" />
     <Compile Include="Model\Interfaces\IFight.cs" />
-    <Compile Include="Model\FightManager.cs" />
-    <Compile Include="Model\Fight.cs" />
+    <Compile Include="Model\Fighting\FightManager.cs" />
+    <Compile Include="Model\Fighting\Fight.cs" />
     <Compile Include="Operations\ItemDequipOperation.cs" />
     <Compile Include="Operations\ItemEquipOperation.cs" />
     <Compile Include="Operations\CreateQueueOperation.cs" />
@@ -182,11 +195,11 @@
     <Compile Include="Model\ServerEvents\LoadIngameScene.cs" />
     <Compile Include="Model\ServerEvents\UserFightInfoUpdate.cs" />
     <Compile Include="Model\ServerEvents\FightUpdate.cs" />
-    <Compile Include="Model\Move.cs" />
+    <Compile Include="Model\Fighting\Move.cs" />
     <Compile Include="Handlers\Fighting\SendMoveHandler.cs" />
     <Compile Include="Model\ServerEvents\PulledQueues.cs" />
     <Compile Include="Model\ServerEvents\FinishFight.cs" />
-    <Compile Include="Model\CurrentFightCharData.cs" />
+    <Compile Include="Model\Fighting\CurrentFightCharData.cs" />
     <Compile Include="Model\ServerEvents\HP5.cs" />
     <Compile Include="BackgroundThreads\RegenerationBackgroundThread.cs" />
     <Compile Include="BackgroundThreads\PlayerBackupBackgroundThread.cs" />

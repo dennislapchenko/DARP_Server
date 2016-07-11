@@ -3,11 +3,11 @@ using RegionServer.Model.Interfaces;
 using System.Collections.Generic;
 using RegionServer.Calculators.Functions;
 using RegionServer.Calculators.Lambdas;
-using ExitGames.Logging;
 
 namespace RegionServer.Model.Stats
 {
-	public class MinDamage : IDerivedStat
+    [Serializable]
+    public class MinDamage : IDerivedStat
 	{
 		public string Name { get { return "Min Damage"; } }
 		public bool IsForCombat { get { return true;} }

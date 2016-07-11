@@ -37,11 +37,11 @@ namespace RegionServer.Model.ServerEvents
 		{
 			if(Parameters.ContainsKey((byte)code))
 			{
-				Parameters[(byte)code] = Xml.Serialize(obj);
+				Parameters[(byte)code] = SerializeUtil.Serialize(obj);
 			}
 			else
 			{
-				Parameters.Add((byte)code, Xml.Serialize(obj));
+				Parameters.Add((byte)code, SerializeUtil.Serialize(obj));
 			}
 		}
 	}

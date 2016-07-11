@@ -1,7 +1,6 @@
 
 using System;
 using System.Linq;
-using System.Collections;
 using RegionServer.Model.KnownList;
 using RegionServer.Model.Interfaces;
 using System.Collections.Generic;
@@ -9,17 +8,17 @@ using ComplexServerCommon.Enums;
 using RegionServer.Model.ServerEvents;
 using ComplexServerCommon.MessageObjects;
 using ExitGames.Logging;
-using log4net.Repository.Hierarchy;
+using RegionServer.Model.Fighting;
 using RegionServer.Model.Stats;
 
 
 namespace RegionServer.Model
 {
-	public class CCharacter : CObject, ICharacter
+	public abstract class CCharacter : CObject, ICharacter
 	{
 		protected readonly ILogger Log = LogManager.GetCurrentClassLogger();
 
-		public CCharacter(Region region, CharacterKnownList objectKnownList, IStatHolder stats, IItemHolder items, GeneralStats genStats) : base(region, objectKnownList)
+		protected CCharacter(Region region, CharacterKnownList objectKnownList, IStatHolder stats, IItemHolder items, GeneralStats genStats) : base(region, objectKnownList)
 		{
 			Stats = stats;
 			Stats.Character = this;
@@ -29,7 +28,7 @@ namespace RegionServer.Model
 			StatusListeners = new List<ICharacter>();
 		}
 
-		public CCharacter()
+		protected CCharacter()
 		{
 			
 		}
@@ -72,15 +71,12 @@ namespace RegionServer.Model
 
 		public void SwitchCurrentFightTarget()
 		{
-			var hostileTeam = CurrentFight.CharFightData[this].Team == FightTeam.Red ? CurrentFight.TeamBlue : CurrentFight.TeamRed;
+			var hostileTeam = CurrentFight.getPlayerTeam(this) == FightTeam.Red ? CurrentFight.TeamBlue : CurrentFight.TeamRed;
 			var aliveTargets = hostileTeam.Values.Where(p => !p.IsDead).ToList();
-
-			Log.DebugFormat("found hostile team: {0}. {1}/{2} players alive", hostileTeam, aliveTargets.Count, hostileTeam.Values.Count);
 
 			if(!CurrentFight.Moves.Any())
 			{
 				Target = aliveTargets.FirstOrDefault();
-				Log.DebugFormat("{0} has targeted ({1}){2} - (Moves were empty)", ToString(), Target.ObjectId, Target.Name);
 				return;
 			}
 
@@ -91,16 +87,13 @@ namespace RegionServer.Model
 				if(matchingMove == null)
 				{
 					Target = enemy;
-					Log.DebugFormat("{0} has targeted ({1}){2}", ToString(), Target.ObjectId, Target.Name);
+				    Log.DebugFormat("{0} has targeted {1}", ToString(), Target.ToString());
 					return;
-				}
-				else
-				{
-					Log.DebugFormat(ToString() +" found existing move in a foreach enemy list - " + matchingMove.ToString());
 				}
 			}
 		}
 
+        public bool isNPC { get; }
 		public bool IsDead {get; set;}
 		public Position Destination {get; set;}
 
@@ -205,7 +198,7 @@ namespace RegionServer.Model
 		public void BroadcastStatusUpdate()
 		{
 			//foreach (var statusListener in StatusListeners)
-			foreach(var player in CurrentFight.Players)
+			foreach(var player in CurrentFight.getPlayers)
 			{
 				player.Value.BroadcastMessage(new StatusUpdate(this));
 			}

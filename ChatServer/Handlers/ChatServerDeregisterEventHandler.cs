@@ -27,8 +27,12 @@ namespace ChatServer.Handlers
 		public override int? SubCode
 		{
 			get { return null; }
-		
 		}
+
+        /** Receives players id to disconnect from chat server, builds Guid from that and removes this character from Clients dictionary
+         * 
+         *  Possibly other chat server character logout clean-up tasks here
+         */
 
 		protected override bool OnHandleMessage(IMessage message, PhotonServerPeer serverPeer)
 		{

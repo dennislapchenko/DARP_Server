@@ -5,6 +5,8 @@ using ComplexServerCommon;
 using RegionServer.Model;
 using System.Collections.Generic;
 using Photon.SocketServer;
+using RegionServer.Model.Fighting;
+using RegionServer.Model.ServerEvents;
 
 namespace RegionServer.Handlers
 {
@@ -26,10 +28,13 @@ namespace RegionServer.Handlers
 			{
 				{(byte)ClientParameterCode.PeerId, message.Parameters[(byte)ClientParameterCode.PeerId]},
 				{(byte)ClientParameterCode.SubOperationCode, message.Parameters[(byte)ClientParameterCode.SubOperationCode]},
-				{(byte)ClientParameterCode.Object, Xml.Serialize(_fightManager.GetAllQueues())},
+				{(byte)ClientParameterCode.Object, ComplexServerCommon.SerializeUtil.Serialize(_fightManager.GetAllQueues())},
 			};
 
 			serverPeer.SendEvent(new EventData(message.Code) {Parameters = para}, new SendParameters());
+		    var instance = Util.GetCPlayerInstance(Server, message);
+            instance.SendPacket(new TestDictEvent(instance));
+
 			return true;
 		}
 	}

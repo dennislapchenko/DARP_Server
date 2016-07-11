@@ -13,7 +13,8 @@ namespace RegionServer.Model.Interfaces
 		float GetStat<T, C>(T stat, C target) where T : class, IStat where C : ICharacter;
 		float GetStatBase<T>() where T :class, IStat;
 		void SetStat<T>(float value) where T : class, IStat;
-		int ApplyDamage(int damage);
+	    void AddToStat<T>(float value) where T : class, IStat;
+        int ApplyDamage(int damage);
 		void RegenHealth();
 		bool Dirty {get;set;}
 		//Dictionary<string, float> GetAllStats();

@@ -30,6 +30,9 @@
     <ConsolePause>False</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
@@ -41,13 +44,14 @@
     <Compile Include="ClientParameterCode.cs" />
     <Compile Include="Enums\LocationType.cs" />
     <Compile Include="ErrorCode.cs" />
+    <Compile Include="MessageObjects\TestDictObj.cs" />
     <Compile Include="MessageSubCode.cs" />
     <Compile Include="ClientReturnCode.cs" />
     <Compile Include="MessageObjects\CharacterListItem.cs" />
     <Compile Include="MessageObjects\CharacterCreateDetails.cs" />
     <Compile Include="MessageObjects\ChatItem.cs" />
     <Compile Include="SystemMessageId.cs" />
-    <Compile Include="Xml.cs" />
+    <Compile Include="SerializeUtil.cs" />
     <Compile Include="MessageObjects\MoveTo.cs" />
     <Compile Include="MessageObjects\PositionData.cs" />
     <Compile Include="MessageObjects\CharInfo.cs" />
@@ -77,5 +81,7 @@
     <Compile Include="Enums\FightWinLossTie.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
 </Project>

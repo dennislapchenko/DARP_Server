@@ -1,8 +1,10 @@
+using System;
 using RegionServer.Model.Interfaces;
 
 namespace RegionServer.Model.Stats
 {
-	public class Level : IStat
+    [Serializable]
+    public class Level : IStat
 	{
 		public Level()
 		{

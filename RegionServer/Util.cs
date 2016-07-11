@@ -24,7 +24,7 @@ namespace RegionServer
 			Server = application;
 		}
 
-		public static bool IsInShortRange(int distanceToForgetObject, IObject obj1, IObject obj2, bool includeZAxis)
+        public static bool IsInShortRange(int distanceToForgetObject, IObject obj1, IObject obj2, bool includeZAxis)
 		{
 			if(obj1 == null || obj2 == null)
 			{
@@ -77,17 +77,7 @@ namespace RegionServer
 			return result;
 		}
 
-		public static MoveOutcome CheckAhitB(FightMove A, FightMove B)
-		{
-			if(A.AttackSpot != B.BlockSpots[0] && A.AttackSpot != B.BlockSpots[1])
-			{ 
-				return MoveOutcome.Hit; 
-			} 
-			else 
-			{
-				return MoveOutcome.Block; 
-			}
-		}
+
 
 //		public static void NullDebug(object obj, string debugName)
 //		{

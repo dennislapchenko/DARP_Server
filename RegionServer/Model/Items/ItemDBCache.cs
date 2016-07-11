@@ -15,12 +15,15 @@ namespace RegionServer.Model.Items
 	{
 		public static Dictionary<int, IItem> Items;
 
+		public static ItemDBCache instance;
+
 		private List<IStat> _allStatsList;
 
 		protected ILogger Log = LogManager.GetCurrentClassLogger();
 
 		public ItemDBCache(IEnumerable<IStat> stats)
 		{
+			instance = this;
 			Log.DebugFormat("ItemDBCache constructor called");
 			Items = new Dictionary<int, IItem>();
 			_allStatsList = stats.ToList();
