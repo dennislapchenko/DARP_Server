@@ -5,7 +5,6 @@ using RegionServer.Model.Interfaces;
 
 namespace RegionServer.Model.Stats
 {
-    [Serializable]
     public class MoveSpeed : IStat
 	{
 		public MoveSpeed()
@@ -55,7 +54,8 @@ namespace RegionServer.Model.Stats
 
 		#region IStat implementation
 		public string Name { get { return "Move Speed"; } }
-		public bool IsBaseStat { get { return true; } }
+        public int StatId { get; }
+        public bool IsBaseStat { get { return true; } }
 		public bool IsNonZero { get { return false; } }
 		public float BaseValue {get { return 25f; } set {} }
 		#endregion

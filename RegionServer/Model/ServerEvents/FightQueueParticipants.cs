@@ -45,6 +45,7 @@ namespace RegionServer.Model.ServerEvents
 				var stats = player.Stats.GetMainStatsForEnemy();
 				TeamRedInfos.Add(new CharInfo()
 											{
+                                                ObjectId = player.ObjectId,
 												Name = player.Name,
 												GenStats = player.GenStats,
 												Stats = player.Stats.GetMainStatsForEnemy(),
@@ -55,6 +56,7 @@ namespace RegionServer.Model.ServerEvents
 			{
 				TeamBlueInfos.Add(new CharInfo()
 											{
+                                                ObjectId = player.ObjectId,
 												Name = player.Name,
 												GenStats = player.GenStats,
 												Stats = player.Stats.GetMainStatsForEnemy(),
@@ -70,7 +72,8 @@ namespace RegionServer.Model.ServerEvents
 			{
 				TeamRedInfos.Add(new CharInfo()
 											{
-												Name = player.Name,
+                                                ObjectId = player.ObjectId,
+                                                Name = player.Name,
 												Stats = player.Stats.GetHealthLevel(),
 											});
 				Log.DebugFormat("FQP {0} added to team red (client packet)", player.Name);
@@ -79,6 +82,7 @@ namespace RegionServer.Model.ServerEvents
 			{
 				TeamBlueInfos.Add(new CharInfo()
 											{
+                                                ObjectId = player.ObjectId,
 												Name = player.Name,
 												Stats = player.Stats.GetHealthLevel(),
 											});

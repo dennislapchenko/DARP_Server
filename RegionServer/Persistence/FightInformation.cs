@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Globalization;
+using ComplexServerCommon;
 using ComplexServerCommon.Enums;
 using NHibernate.Exceptions;
 using RegionServer.Model.Fighting;
@@ -43,12 +44,12 @@ namespace RegionServer.Model.DataKeepers
 		    TeamRedNames = "";
 		    TeamBlueNames = "";
 
-            QueueCreatedTime = DateTime.Now;
+		    QueueCreatedTime = DateTime.Now.UpToSeconds();
 		}
 
 		public void FightStarted()
 		{
-			FightStartedTime = DateTime.Now;
+		    FightStartedTime = DateTime.Now.UpToSeconds();
 			fightTimer = new Stopwatch();
 			fightTimer.Start();
 
@@ -70,8 +71,8 @@ namespace RegionServer.Model.DataKeepers
         }
 
         public void FightEnded()
-		{
-			FightEndedTime = DateTime.Now;
+        {
+            FightEndedTime = DateTime.Now.UpToSeconds();
             FightDuration = TimeSpan.FromMilliseconds(fightTimer.ElapsedMilliseconds);
 			fightTimer.Stop();
 
@@ -131,9 +132,9 @@ namespace RegionServer.Model.DataKeepers
 
                         FightHistory newFightEntry = new FightHistory()
                                                                 {
-                                                                    QueueCreatedTime = QueueCreatedTime,
-                                                                    FightStartedTime = FightStartedTime,
-                                                                    FightEndedTime = FightEndedTime,
+                                                                    QueueCreatedTime = QueueCreatedTime.UpToSeconds(),
+                                                                    FightStartedTime = FightStartedTime.UpToSeconds(),
+                                                                    FightEndedTime = FightEndedTime.UpToSeconds(),
                                                                     FightId = FightId,
                                                                     FightType = FightType.ToString(),
                                                                     TeamSize = TeamSize,

@@ -1,11 +1,9 @@
-using System;
-using System.Runtime.Serialization;
-
 namespace RegionServer.Model.Interfaces
 {
 	public interface IStat
 	{
 		string Name {get;}
+        int StatId { get; }
 
 		bool IsBaseStat {get;}
 		bool IsNonZero {get;}

@@ -6,12 +6,12 @@ using RegionServer.Calculators.Lambdas;
 
 namespace RegionServer.Model.Stats
 {
-    [Serializable]
     public class Damage : IStat
 	{
 		public string Name { get { return "Damage"; } }
+        public int StatId { get; }
 
-		public void ConvertToIsOnItem(float value)
+        public void ConvertToIsOnItem(float value)
 		{
 			throw new NotImplementedException();
 		}

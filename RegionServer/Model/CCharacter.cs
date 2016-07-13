@@ -8,6 +8,7 @@ using ComplexServerCommon.Enums;
 using RegionServer.Model.ServerEvents;
 using ComplexServerCommon.MessageObjects;
 using ExitGames.Logging;
+using FluentNHibernate.Conventions;
 using RegionServer.Model.Fighting;
 using RegionServer.Model.Stats;
 
@@ -76,22 +77,18 @@ namespace RegionServer.Model
 
 			if(!CurrentFight.Moves.Any())
 			{
-				Target = aliveTargets.FirstOrDefault();
+			    Target = aliveTargets[RngUtil.intRange(0, aliveTargets.Count - 1)];
 				return;
 			}
 
-			foreach(var enemy in aliveTargets)
-			{
-				var matchingMove = CurrentFight.Moves.FirstOrDefault(n => n.PeerObjectId == ObjectId && n.TargetObjectId == enemy.ObjectId);
-
-				if(matchingMove == null)
-				{
-					Target = enemy;
-				    Log.DebugFormat("{0} has targeted {1}", ToString(), Target.ToString());
-					return;
-				}
-			}
-		}
+		    var enemiesWithoutAttacks = (from enemy 
+                                         in aliveTargets
+                                         let matchingMove = CurrentFight.Moves.Values.FirstOrDefault(n => n.PeerObjectId == ObjectId && n.TargetObjectId == enemy.ObjectId)
+                                         where matchingMove == null select enemy).ToList();
+		    if (enemiesWithoutAttacks.IsEmpty()) return;
+		    Target = enemiesWithoutAttacks[RngUtil.intRange(0, enemiesWithoutAttacks.Count - 1)];
+		    Log.DebugFormat("{0} has targeted {1}", ToString(), Target.ToString());
+        }
 
         public bool isNPC { get; }
 		public bool IsDead {get; set;}

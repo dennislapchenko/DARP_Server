@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using ComplexServerCommon.MessageObjects;
 using RegionServer.Model.Fighting;
 using RegionServer.Model.Interfaces;
-using RegionServer.Model.Items;
 using RegionServer.Model.KnownList;
 using RegionServer.Model.Stats;
 
@@ -14,9 +12,12 @@ namespace RegionServer.Model
 	{
 		private static readonly string CLASSNAME = "CBotInstance";
 
-	    private static readonly List<string> botNames = new List<string>() {"Alberto", "Gandolfini", "ISIS BOI", "CHEGRILLA", "1337 BOY", "EBLAN"};
-
-	    private static readonly long moveReplyMaxDelayInMs = 0000;
+	    private static readonly List<string> botNames = new List<string>()
+	    {
+	        "Alberto", "Gandolfini", "ISIS BOI", "CHEGRILLA", "1337 BOY", "EBLAN",
+            "DANILO", "DANIELA", "ARTEMON", "PETROSYAN", "KOTUK", "LANDYSH",
+            "GERYCH", "KOKYCH", "MRAZJ", "GUCCI", "ARMANI", "LEONTYEV",
+        };
 
 	    public delegate CBotInstance Factory(byte level);
 
@@ -55,10 +56,10 @@ namespace RegionServer.Model
 
 		public void makeAMove(int targetId)
 		{
-            var timer = new Stopwatch();
-            timer.Start();
-            var delayInMs = RngUtil.intRange(0, (int)moveReplyMaxDelayInMs);
-		    while (timer.ElapsedMilliseconds < delayInMs) continue;
+//            var timer = new Stopwatch();
+//            timer.Start();
+//            var delayInMs = RngUtil.intRange(0, (int)moveReplyMaxDelayInMs);
+//		    while (timer.ElapsedMilliseconds < delayInMs) continue;
 
             var newMove = new FightMove
 									{
@@ -70,8 +71,22 @@ namespace RegionServer.Model
 
 			CurrentFight.AddMoveSendPkg(this, newMove);
 		}
+        public void makeAMove()
+        {
+            if (CurrentFight.hasMovesAgainstAll(this)) return;
+            var newMove = new FightMove
+                        {
+                            PeerObjectId = this.ObjectId,
+                            AttackSpot = FightUtils.getRandomHit(),
+                            BlockSpots = FightUtils.getRandomBlock(),
+                            TargetObjectId = Target.ObjectId
+                        };
+            DebugUtils.Logp(DebugUtils.Level.WARNING, CLASSNAME, "makeAMove", "bot submitting a move");
+            CurrentFight.AddMoveSendPkg(this, newMove);
+        }
 
-	    public void configureBot(byte level)
+
+        public void configureBot(byte level)
 	    {
 	        throw new NotImplementedException();
 	    }

@@ -67,9 +67,12 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="BackgroundThreads\BotQueenBackgroundThread.cs" />
+    <Compile Include="BackgroundThreads\BotQueenMoveDeployBackgroundThread.cs" />
     <Compile Include="DebugUtils.cs" />
+    <Compile Include="Handlers\Character\StatPointAllocationHandler.cs" />
     <Compile Include="Model\Fighting\FightUtils.cs" />
     <Compile Include="Model\CBotInstance.cs" />
+    <Compile Include="Model\Stats\StatPoints.cs" />
     <Compile Include="Persistence\FightInformation.cs" />
     <Compile Include="Model\Fighting\MoveProcessor.cs" />
     <Compile Include="Model\NPC\NPCFactory.cs" />
@@ -154,8 +157,8 @@
     <Compile Include="Model\Stats\MaxHealth.cs" />
     <Compile Include="Model\Stats\CurrHealth.cs" />
     <Compile Include="Model\Stats\Damage.cs" />
-    <Compile Include="Handlers\ItemEquipHandler.cs" />
-    <Compile Include="Handlers\ItemDequipHandler.cs" />
+    <Compile Include="Handlers\Character\ItemEquipHandler.cs" />
+    <Compile Include="Handlers\Character\ItemDequipHandler.cs" />
     <Compile Include="Model\Interfaces\IFight.cs" />
     <Compile Include="Model\Fighting\FightManager.cs" />
     <Compile Include="Model\Fighting\Fight.cs" />
@@ -176,7 +179,6 @@
     <Compile Include="Model\ServerEvents\LoadIngameScene.cs" />
     <Compile Include="Model\ServerEvents\UserFightInfoUpdate.cs" />
     <Compile Include="Model\ServerEvents\FightUpdate.cs" />
-    <Compile Include="Model\Fighting\Move.cs" />
     <Compile Include="Handlers\Fighting\SendMoveHandler.cs" />
     <Compile Include="Model\ServerEvents\PulledQueues.cs" />
     <Compile Include="Model\ServerEvents\FinishFight.cs" />

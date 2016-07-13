@@ -7,10 +7,11 @@ using RegionServer.Calculators.Lambdas;
 
 namespace RegionServer.Model.Stats
 {
-    [Serializable]
     public class HealthRegen : IDerivedStat
 	{
-		public string Name { get { return "Health Regen"; } } //hp5
+		public string Name { get { return "Health Regen"; } }
+        public int StatId { get; }
+//hp5
 
 		public bool IsNonNegative { get { return true;} } 
 		public bool IsForCombat { get { return true;} }

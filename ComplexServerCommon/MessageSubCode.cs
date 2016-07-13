@@ -52,6 +52,9 @@ namespace ComplexServerCommon
 		MoveToLocation,
 		PlayerMovement,
 		TeleportToLocation,
+
+        //character
+        StatAllocation,
 	}
 }
 

@@ -1,5 +1,4 @@
-﻿using System;
-using RegionServer.Model.Interfaces;
+﻿using RegionServer.Model.Interfaces;
 using System.Collections.Generic;
 using RegionServer.Calculators.Functions;
 using RegionServer.Calculators.Lambdas;
@@ -7,12 +6,12 @@ using RegionServer.Calculators.Lambdas;
 
 namespace RegionServer.Model.Stats
 {
-    [Serializable]
     public class CriticalDamage : IDerivedStat
 	{
 		public string Name { get { return "Critical Damage"; } }
+        public int StatId { get; }
 
-		public bool IsNonNegative { get { return true;} } 
+        public bool IsNonNegative { get { return true;} } 
 		public bool IsForCombat { get { return true;} }
 		public bool IsBaseStat { get { return false;} }
 		public bool IsNonZero { get { return false;} }

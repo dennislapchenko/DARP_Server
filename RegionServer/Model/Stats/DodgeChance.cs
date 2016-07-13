@@ -7,12 +7,12 @@ using RegionServer.Calculators.Lambdas;
 
 namespace RegionServer.Model.Stats
 {
-    [Serializable]
     public class DodgeChance : IDerivedStat
 	{
 		public string Name { get { return "Dodge Chance"; } }
+        public int StatId { get; }
 
-		public bool IsNonNegative { get { return true;} } 
+        public bool IsNonNegative { get { return true;} } 
 		public bool IsForCombat { get { return true;} }
 		public bool IsBaseStat { get { return false;} }
 		public bool IsNonZero { get { return false;} }

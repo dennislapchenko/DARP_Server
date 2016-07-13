@@ -178,6 +178,16 @@ namespace RegionServer.Model.Stats
 			}
 		}
 
+	    public void SetStatByID(int id, float value)
+	    {
+	        IStat result = _stats.Values.FirstOrDefault(x => x.StatId == id);
+
+	        if (result != null)
+	        {
+	            result.BaseValue += value;
+	        }
+	    }
+
 		public float CalcStat(IStat stat)
 		{
 			return CalcStat(stat, null);
@@ -266,12 +276,12 @@ namespace RegionServer.Model.Stats
 				StatValues.Add(new SerializedStat(){StatType = stat.Name, StatValue = stat.BaseValue});
 			}
 
-			return ComplexServerCommon.SerializeUtil.Serialize(StatValues);
+			return SerializeUtil.Serialize(StatValues);
 		}
 
 		public void DeserializeStats(string stats)
 		{
-			foreach (var stat in ComplexServerCommon.SerializeUtil.Deserialize<List<SerializedStat>>(stats))
+			foreach (var stat in SerializeUtil.Deserialize<List<SerializedStat>>(stats))
 			{
 				var result = _stats.Values.FirstOrDefault(s => s.Name == stat.StatType);
 				if(result != null)

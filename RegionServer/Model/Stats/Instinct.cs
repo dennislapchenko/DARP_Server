@@ -7,13 +7,13 @@ using RegionServer.Calculators.Lambdas;
 
 namespace RegionServer.Model.Stats
 {
-    [Serializable]
     //Buffs DODGE, PARRY & COUNTER-ATTACK CHANCE
     public class Instinct : IDerivedStat
 	{
 		public string Name { get { return "Instinct"; } }
+        public int StatId { get { return 2; } }
 
-		public bool IsNonNegative { get { return true;} } 
+        public bool IsNonNegative { get { return true;} } 
 		public bool IsForCombat { get { return true;} }
 		public bool IsBaseStat { get { return true;} }
 		public bool IsNonZero { get { return false;} }

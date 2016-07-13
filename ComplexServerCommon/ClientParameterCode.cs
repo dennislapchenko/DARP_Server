@@ -18,6 +18,7 @@ namespace ComplexServerCommon
 		InventorySlot,
 		FightID,
 		CurrentHealth,
+	    StatsToAllocate
 	}
 }
 

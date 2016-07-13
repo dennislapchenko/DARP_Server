@@ -1,6 +1,4 @@
-﻿using System;
-using ComplexServerCommon;
-using ComplexServerCommon.Enums;
+﻿using ComplexServerCommon.Enums;
 using ComplexServerCommon.MessageObjects;
 
 namespace RegionServer.Model.Stats
@@ -19,6 +17,8 @@ namespace RegionServer.Model.Stats
 		public int Skulls {get; set;}
 
 		public int InventorySlots {get; set;}
+
+        public int TotalAllocatedStats { get; set; }
 
 		public GeneralStats()
 		{
@@ -50,7 +50,7 @@ namespace RegionServer.Model.Stats
 
         public string SerializeStats()
 		{
-			return ComplexServerCommon.SerializeUtil.Serialize<GeneralStats>(this);
+			return ComplexServerCommon.SerializeUtil.Serialize(this);
 		}
 
 		public void DeserializeStats(string genStats)

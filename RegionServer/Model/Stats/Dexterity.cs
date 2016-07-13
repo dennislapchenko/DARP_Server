@@ -12,8 +12,9 @@ namespace RegionServer.Model.Stats
     public class Dexterity : IDerivedStat
 	{
 		public string Name { get { return "Dexterity"; } }
+        public int StatId { get { return 1;} }
 
-		public bool IsNonNegative { get { return true; } } 
+        public bool IsNonNegative { get { return true; } } 
 		public bool IsForCombat { get { return true; } }
 		public bool IsBaseStat { get { return true; } }
 		public bool IsNonZero { get { return false;} }

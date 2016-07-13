@@ -43,7 +43,7 @@ namespace RegionServer.Model.Fighting
 		public Fight AddFight(FightQueueListItem newFightInfo)
 		{
 			var newFightId = Guid.NewGuid();
-			var newFight = new Fight(newFightId, newFightInfo.Creator, newFightInfo.Type, newFightInfo.TeamSize, newFightInfo.Timeout, newFightInfo.Sanguinary);
+			var newFight = new Fight(this, newFightId, newFightInfo.Creator, newFightInfo.Type, newFightInfo.TeamSize, newFightInfo.Timeout, newFightInfo.Sanguinary);
 
 			var success = Fights.TryAdd(newFight.FightId, newFight);
 			if(success)
@@ -60,7 +60,7 @@ namespace RegionServer.Model.Fighting
 	    public Fight AddFight(int teamSize, FightType fightType = FightType.SINGLE)
 	    {
             var newFightId = Guid.NewGuid();
-            var newFight = new Fight(newFightId, "Mock", fightType, teamSize, 15, true);
+            var newFight = new Fight(this, newFightId, "Mock", fightType, teamSize, 15, true);
 
             var success = Fights.TryAdd(newFight.FightId, newFight);
             if (success)
@@ -155,6 +155,12 @@ namespace RegionServer.Model.Fighting
 		{
 			return Fights.Count;
 		}
+
+	    public List<Fight> getAllBotFights()
+	    {
+            var result = Fights.Values.Where(x => x.getNumBots() > 0).ToList();
+	        return (result != null) ? result : new List<Fight>();
+	    } 
 	}
 }
 

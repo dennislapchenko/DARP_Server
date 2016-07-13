@@ -2,10 +2,9 @@
 using MMO.Framework;
 using MMO.Photon.Application;
 using ComplexServerCommon;
-using RegionServer.Model;
 using RegionServer.Operations;
 
-namespace RegionServer.Handlers
+namespace RegionServer.Handlers.Character
 {
 	public class ItemEquipHandler : PhotonServerHandler
 	{

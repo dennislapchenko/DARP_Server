@@ -9,9 +9,9 @@ namespace RegionServer.Model.NPC
 {
     public class NPCFactory
     {
-        private readonly CBotInstance.Factory _fightBotFactory;
-
         protected static ILogger Log = LogManager.GetCurrentClassLogger();
+
+        private readonly CBotInstance.Factory _fightBotFactory;
 
         public NPCFactory(CBotInstance.Factory fightBotFactory)
         {

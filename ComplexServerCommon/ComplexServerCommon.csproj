@@ -43,6 +43,7 @@
     <Compile Include="ClientParameterCode.cs" />
     <Compile Include="Enums\LocationType.cs" />
     <Compile Include="ErrorCode.cs" />
+    <Compile Include="MessageObjects\StatAllocationData.cs" />
     <Compile Include="MessageSubCode.cs" />
     <Compile Include="ClientReturnCode.cs" />
     <Compile Include="MessageObjects\CharacterListItem.cs" />

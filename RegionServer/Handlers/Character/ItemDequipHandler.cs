@@ -1,14 +1,11 @@
-﻿using System;
-using MMO.Photon.Server;
+﻿using MMO.Photon.Server;
 using MMO.Framework;
 using MMO.Photon.Application;
 using ComplexServerCommon;
-using RegionServer.Model;
-using RegionServer.Model.Items;
 using RegionServer.Operations;
 using ComplexServerCommon.MessageObjects;
 
-namespace RegionServer.Handlers
+namespace RegionServer.Handlers.Character
 {
 	public class ItemDequipHandler : PhotonServerHandler
 	{

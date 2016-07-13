@@ -3,7 +3,6 @@ using RegionServer.Model.Interfaces;
 
 namespace RegionServer.Model.Stats
 {
-    [Serializable]
     public class Level : IStat
 	{
 		public Level()
@@ -28,8 +27,9 @@ namespace RegionServer.Model.Stats
 		}
 
 		public string Name {get { return "Level"; } }
+        public int StatId { get; }
 
-		public bool IsBaseStat { get { return true; } }
+        public bool IsBaseStat { get { return true; } }
 		public bool IsNonZero { get { return true; } }
 		public bool IsNonNegative {get;}
 		public bool IsForCombat {get;}

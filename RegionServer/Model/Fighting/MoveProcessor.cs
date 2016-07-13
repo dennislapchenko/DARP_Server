@@ -39,8 +39,9 @@ namespace RegionServer.Model.Fighting
             fight.updateTotalTeamHealth(fight.getPlayerTeam(opponent), -opponentTeamDamage);
             fight.updateTotalTeamHealth(fight.getPlayerTeam(instance), -playerTeamDamage);
 
-            if (DEBUG) Log.DebugFormat("{0}({1}) hp: {2}/ {3}({4}) hp: {5}", fight.getPlayerTeam(instance), instance.ToString(), playerTeamDamage, 
-                fight.getPlayerTeam(opponent), opponent.ToString(), opponentTeamDamage);
+            if (DEBUG) Log.DebugFormat("{0}({1})<-dmg: {2}(team total left {3}/ {4}({5})<-dmg: {6} (team total left {7}", 
+                fight.getPlayerTeam(instance), instance.ToString(), playerTeamDamage, fight.getTotalTeamHealth(fight.getPlayerTeam(instance)),
+                fight.getPlayerTeam(opponent), opponent.ToString(), opponentTeamDamage, fight.getTotalTeamHealth(fight.getPlayerTeam(opponent)));
 
             return resultForClient;
         }
@@ -76,12 +77,6 @@ namespace RegionServer.Model.Fighting
                         attacker.Stats.GetStat(new CriticalHitChance(), target) * 0.2f > RngUtil.hundredRoll() ? MoveOutcome.BlockCrit : MoveOutcome.Block,
                         damage);
                     break;
-            }
-
-
-            foreach (var result in resultForClient)
-            {
-                DebugUtils.Logp(DebugUtils.Level.INFO, CLASSNAME, METHODNAME, string.Format("results obj:: {0} - has done {1} (Total: {2}", result.Value.objectId, result.Value.damage, result.Value.totalDamage));
             }
 
             return damage;

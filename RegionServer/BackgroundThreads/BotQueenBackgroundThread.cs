@@ -24,7 +24,7 @@ namespace RegionServer.BackgroundThreads
         protected static readonly ILogger Log = LogManager.GetCurrentClassLogger();
         private NPCFactory _NPCFactory { get; }
 
-		private ConcurrentDictionary<int, CCharacter> Bots { get; set; }
+		//private ConcurrentDictionary<int, CCharacter> Bots { get; set; }
 
 		public BotQueenBackgroundThread(FightManager fightManager, NPCFactory npcFactory)
 		{
@@ -34,7 +34,7 @@ namespace RegionServer.BackgroundThreads
 
 		public void Setup()
 		{
-			Bots = new ConcurrentDictionary<int, CCharacter>();
+			//Bots = new ConcurrentDictionary<int, CCharacter>();
 		}
 
 		public void Run(object threadContext)
@@ -74,7 +74,7 @@ namespace RegionServer.BackgroundThreads
 		void Update(TimeSpan elapsed)
 		{
 			Parallel.ForEach(FightManager.getAllFights().Where(f => f.fightState == FightState.QUEUE && f.BotsWelcome && !f.isFull), DeployBots);
-            Parallel.ForEach(FightManager.getAllFights().Where(f => f.fightState == FightState.ENGAGED && f.isBotsBothSides()), MoveBots);
+
 		}
 
 		private void DeployBots(Fight fight)
@@ -84,32 +84,19 @@ namespace RegionServer.BackgroundThreads
 		    try
 		    {
 		        byte level = (byte) RngUtil.intRange(fight.getLowestLevel(), fight.getHighestLevel());
-		        var bot = _NPCFactory.createFightBot(level);
-
-                bot.joinQueue(fight);
-
-		        Bots.TryAdd(bot.ObjectId, bot);
-		        Log.DebugFormat("{0} - {1} shoving {2} into a queue {3}", CLASSNAME, METHODNAME, bot, fight);
+//		        while (!fight.isFull)
+//		        {
+                    var bot = _NPCFactory.createFightBot(level);
+                    bot.joinQueue(fight);
+                    //Bots.TryAdd(bot.ObjectId, bot);
+                    Log.DebugFormat("{0} - {1} shoving {2} into a queue {3}", CLASSNAME, METHODNAME, bot, fight);
+//                }
 		    }
 		    catch (Exception e)
 		    {
 		        DebugUtils.Logp(DebugUtils.Level.ERROR, CLASSNAME, METHODNAME, String.Format("e.MSG: {0}\n e.Stack: {1}", e.Message, e.StackTrace));
 		    }
 		}
-
-	    private void MoveBots(Fight fight)
-	    {
-	        const string METHODNAME = "MoveBots";
-
-	        foreach (var bot in fight.getBots)
-	        {
-	            var botAsTarget = bot.Value.Target as CBotInstance;
-	            if (botAsTarget != null)
-	            {
-	                bot.Value.makeAMove(botAsTarget.ObjectId);
-	            }
-	        }
-	    }
 
 		public void Stop()
 		{

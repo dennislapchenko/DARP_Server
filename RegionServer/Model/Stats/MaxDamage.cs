@@ -6,11 +6,11 @@ using RegionServer.Calculators.Lambdas;
 
 namespace RegionServer.Model.Stats
 {
-    [Serializable]
     public class MaxDamage : IDerivedStat
 	{
 		public string Name { get { return "Max Damage"; } }
-		public bool IsForCombat { get { return true;} }
+        public int StatId { get; }
+        public bool IsForCombat { get { return true;} }
 		public bool IsBaseStat { get { return false;} }
 		public bool IsNonNegative { get {return false; } }
 		public bool IsNonZero { get { return true;} }

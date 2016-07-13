@@ -120,11 +120,17 @@ namespace RegionServer.Model.Items
 		//for initial loading
 		public void EquipItemOnRestore(int itemId)
 		{
-			if(ItemDBCache.Items.ContainsKey(itemId))
-			{
-				var item = ItemDBCache.GetItem(itemId);
-				_equipment.Add(item.Slot, item);
-			}
+		    if (!ItemDBCache.Items.ContainsKey(itemId)) return;
+
+		    var item = ItemDBCache.GetItem(itemId);
+		    if (_equipment.ContainsKey(item.Slot))
+		    {
+		        _equipment[item.Slot] = item;
+		    }
+		    else
+		    {
+		        _equipment.Add(item.Slot, item);
+		    }
 		}
 
 		public bool DequipItem(ItemSlot slot)

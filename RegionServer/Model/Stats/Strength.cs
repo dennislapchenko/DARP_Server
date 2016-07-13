@@ -1,4 +1,3 @@
-using System;
 using RegionServer.Model.Interfaces;
 using System.Collections.Generic;
 using RegionServer.Calculators.Functions;
@@ -7,13 +6,13 @@ using RegionServer.Calculators.Lambdas;
 
 namespace RegionServer.Model.Stats
 {
-    [Serializable]
     //Buffs MINDAMAGE, MAXDAMAGE, 
     public class Strength : IDerivedStat
 	{
 		public string Name { get { return "Strength"; } }
+        public int StatId { get { return 0; } }
 
-		public bool IsOnItem {get; set;}
+        public bool IsOnItem {get; set;}
 
 		public bool IsNonNegative { get { return true; } } 
 		public bool IsForCombat { get { return true; } }

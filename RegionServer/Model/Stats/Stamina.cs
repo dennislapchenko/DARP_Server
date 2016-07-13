@@ -7,13 +7,13 @@ using RegionServer.Calculators.Lambdas;
 
 namespace RegionServer.Model.Stats
 {
-    [Serializable]
     //BUFFS MAXHEALTH,CURRHEALTH, RESISTANCE
     public class Stamina : IDerivedStat
 	{
 		public string Name { get { return "Stamina"; } }
+        public int StatId { get { return 3; } }
 
-		public bool IsNonNegative { get { return true;} } 
+        public bool IsNonNegative { get { return true;} } 
 		public bool IsForCombat { get { return true;} }
 		public bool IsBaseStat { get { return true;} }
 		public bool IsNonZero { get { return false;} }
