@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ComplexServerCommon;
 using ComplexServerCommon.MessageObjects;
 using MMO.Framework;
@@ -36,7 +35,7 @@ namespace RegionServer.Handlers.Character
 
             var statAllocData = SerializeUtil.Deserialize<StatAllocationData>(message.Parameters[(byte) ClientParameterCode.Object]);
 
-            if (statAllocData.ResetAllPoints)
+            if (statAllocData.ResetPoints)
             {
                 resetAllAllocatedStatPoints(instance);
             }
@@ -50,25 +49,15 @@ namespace RegionServer.Handlers.Character
                 }
             }
 
-            String debugMessage = "";
-            if (!statAllocData.ResetAllPoints)
-            {
-                debugMessage = "Stats successfully added!";
-                para.Add((byte)ClientParameterCode.Object, SerializeUtil.Serialize(instance.Stats.GetMainStatsForEnemy()));
-            }
-            else
-            {
-                debugMessage = "Stats successfully reset!";
-                para.Add((byte)ClientParameterCode.StatsToAllocate, instance.Stats.GetStat<StatPoints>());
-            }
+            var debugMessage = statAllocData.ResetPoints ? "Stats successfully reset!" : "Stats successfully added!";
+            para.Add((byte)ClientParameterCode.Object, SerializeUtil.Serialize(instance.Stats.GetMainStatsForEnemy()));
+            para.Add((byte)ClientParameterCode.StatsToAllocate, instance.Stats.GetStat<StatPoints>());
 
             serverPeer.SendOperationResponse(new OperationResponse(message.Code)
                                                                 {    ReturnCode = (int)ErrorCode.OK,
                                                                      DebugMessage = debugMessage,
                                                                      Parameters = para
                                                                 }, new SendParameters());
-
-
             return true;
         }
 
