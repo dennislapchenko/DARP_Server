@@ -20,9 +20,14 @@ namespace RegionServer.Model
         /// <returns></returns>
         public static int intRange(int min, int max)
         {
+            if (min > max) return 0;
             return rng.Next(min, max+1);
         }
 
+        /// <summary>
+        /// Returns a random integer in the range from 0 to max INCLUSIVE.
+        /// </summary>
+        /// <returns></returns>
         public static int intMax(int max)
         {
             return rng.Next(0, max+1);

@@ -57,7 +57,7 @@ namespace RegionServer.BackgroundThreads
                     }
                     var updateTime = timer.Elapsed;
                     timer.Restart();
-                    Update(updateTime); //process
+                   Update(updateTime); //process
                 }
                 catch (Exception e)
                 {
@@ -86,7 +86,7 @@ namespace RegionServer.BackgroundThreads
             }
             catch (Exception e)
             {
-                DebugUtils.Logp(DebugUtils.Level.WARNING, CLASSNAME, METHODNAME, e.Message);
+                DebugUtils.Logp(DebugUtils.Level.WARNING, CLASSNAME, METHODNAME, e.Message + e.StackTrace);
             }
    
         }

@@ -64,6 +64,7 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Data\Mapping\FightHistoryMap.cs" />
     <Compile Include="Data\NHibernate\FightHistory.cs" />
+    <Compile Include="Math\DictionaryExtensions.cs" />
     <Compile Include="MethodExtensions\DateTimeMethodExtensions.cs" />
     <Compile Include="ServerEventCode.cs" />
     <Compile Include="ServerOperationCode.cs" />

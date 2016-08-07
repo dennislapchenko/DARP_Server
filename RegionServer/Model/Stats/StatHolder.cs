@@ -6,17 +6,19 @@ using RegionServer.Calculators;
 using ComplexServerCommon;
 using System.Linq;
 using Environment = RegionServer.Calculators.Environment;
-using ComplexServerCommon.MessageObjects;
 using ComplexServerCommon.Enums;
+using RegionServer.Model.Stats.BaseStats;
+using RegionServer.Model.Stats.PrimaryStats;
+using RegionServer.Model.Stats.SecondaryStats;
 
 namespace RegionServer.Model.Stats
 {
 	public class StatHolder : IStatHolder
 	{
-		public ICharacter Character {get; set;}
+		public CCharacter Character {get; set;}
 		private Dictionary<Type, IStat> _stats;
 		public Dictionary<Type, IStat> Stats {get { return _stats; } }
-		protected Dictionary<IStat, Calculator> Calculators = new Dictionary<IStat, Calculator>();
+		public Dictionary<IStat, Calculator> Calculators = new Dictionary<IStat, Calculator>();
 		private bool _dirty;
 
 		protected ILogger Log = LogManager.GetCurrentClassLogger();
@@ -40,27 +42,16 @@ namespace RegionServer.Model.Stats
 		{
 			get 
 			{
-				if(GetStat<CurrHealth>() < GetStat<MaxHealth>())
+				if(_dirty && Character.CurrentFight != null && Character.CurrentFight.fightState != FightState.ENGAGED)
 				{
-					if(Character.CurrentFight != null)
-					{
-						if(Character.CurrentFight.fightState != FightState.ENGAGED)
-						{
-							_dirty = true;
-							return _dirty;
-						}
-						else
-						{
-							_dirty = false;
-							return _dirty;
-						}
-					}
-					_dirty = true;
+					return _dirty;
 				}
-				return _dirty;
-				
+				else
+				{
+					return _dirty = false;
+                }
 			}
-			set { _dirty = value;}
+            set { _dirty = value; }
 		}
 
 		public float GetStat<T>() where T : class, IStat
@@ -105,7 +96,7 @@ namespace RegionServer.Model.Stats
 			return 0;
 		}
 
-		public float GetStatBase<T>() where T :class, IStat
+		public float GetStatBase<T>(T stat) where T :class, IStat
 		{
 			IStat result;
 			_stats.TryGetValue(typeof(T), out result);
@@ -126,16 +117,18 @@ namespace RegionServer.Model.Stats
             }
         }
 
-	    public int ApplyDamage(int damage)
-		{
+	    public int ApplyDamage(int damage, CCharacter attacker)
+	    {
+	        float finalDamage = 0;
+
 			IStat health;
 			_stats.TryGetValue(typeof(CurrHealth), out health);
-			int currentHealth = (int)health.BaseValue;
 			if(health != null)
 			{
+			    int currentHealth = (int)health.BaseValue;
 				//Log.DebugFormat("currHp: {0}, newHP: {1}, dmg: {2}, killdmg: {3}, overkill: {4}", currentHealth, -99, damage, -99, -99);
 				var newHealth = currentHealth - damage;
-				if(newHealth <= 0)
+				if(newHealth <= 0) //OVERKILL
 				{
 					health.BaseValue = 0; //Dead
 					Character.Die();
@@ -145,21 +138,56 @@ namespace RegionServer.Model.Stats
 					var overkill = damage - Math.Abs(currentHealth);
 					//Log.DebugFormat("currHp: {0}, newHP: {1}, dmg: {2}, killdmg: {3}, overkill: {4}", currentHealth, newHealth, damage, killDamage, overkill);
 					Log.DebugFormat("OVER-KILL. DMG TOTAL: {0} . ACTUAL DEALT: {1}({2})", damage, killDamage, overkill);
-					return killDamage;
+					finalDamage = killDamage;
 				}
-				else
+				else //NORMAL DAMAGE
 				{
 					health.BaseValue = newHealth;
-					return damage;
+					finalDamage = damage;
 				}
+	            _dirty = true;
 			}
-			return -9999999; //invalid result
-		}
+	        Character.Effects.OnDamageTaken(damage, attacker);
+	        return (int)finalDamage;
+	    }
 
-		public void RegenHealth()
+		public int RegenHealth()
 		{
-			SetStat<CurrHealth>(GetStat<CurrHealth>() + GetStat<HealthRegen>());
-		}
+		    var HP5 = Convert.ToInt32(GetStat<HealthRegen>());
+		    return ApplyHeal(HP5);
+        }
+
+	    public int ApplyHeal(int healAmount)
+	    {
+            float finalHeal = 0;
+
+            IStat health;
+            _stats.TryGetValue(typeof(CurrHealth), out health);
+            if (health != null)
+            {
+                int currentHealth = (int)health.BaseValue;
+                int maxHealth = (int) GetStat<MaxHealth>();
+                //Log.DebugFormat("currHp: {0}, newHP: {1}, dmg: {2}, killdmg: {3}, overkill: {4}", currentHealth, -99, damage, -99, -99);
+                var newHealth = currentHealth + healAmount;
+                if (newHealth > maxHealth) //OVERHEAL
+                {
+                    //Log.DebugFormat("currHp: {0}, newHP: {1}, dmg: {2}, killdmg: {3}, overkill: {4}", currentHealth, newHealth, damage, -99, -99);
+                    var realHeal = maxHealth = currentHealth;
+                    //Log.DebugFormat("currHp: {0}, newHP: {1}, dmg: {2}, killdmg: {3}, overkill: {4}", currentHealth, newHealth, damage, killDamage, -99);
+                    var overHeal = newHealth - maxHealth;
+                    //Log.DebugFormat("currHp: {0}, newHP: {1}, dmg: {2}, killdmg: {3}, overkill: {4}", currentHealth, newHealth, damage, killDamage, overkill);
+                    Log.DebugFormat("OVER-HEALL. HEAL TOTAL: {0} . ACTUAL HEALED: {1}({2})", healAmount, realHeal, overHeal);
+                    _dirty = false;
+                    finalHeal = realHeal;
+                }
+                else //NORMAL HEAL
+                {
+                    health.BaseValue = newHealth;
+                    finalHeal = healAmount;
+                }
+            }
+	        return (int) finalHeal;
+	    }
 
 		public void SetStat<T>(float value) where T : class, IStat
 		{
@@ -198,7 +226,7 @@ namespace RegionServer.Model.Stats
 			float returnValue = stat.BaseValue;
 
 			var calculator = Calculators[stat];
-			var env = new Environment() { Value = returnValue, Character = Character, Target = target};
+			var env = new Environment() { Value = returnValue, Character = Character, Target = (CCharacter)target};
 
 			calculator.Calculate(env);
 
@@ -217,6 +245,11 @@ namespace RegionServer.Model.Stats
 		{
 			return _stats.ToDictionary(k => k.Value.Name, k => GetStat(k.Value));
         }
+
+	    public Dictionary<string, float> GetNonNullStats()
+	    {
+	        return _stats.Where(s => CalcStat(s.Value) > 0f).ToDictionary(k => k.Value.Name, v => CalcStat(v.Value));
+	    } 
 
 		public Dictionary<string, float> GetMainStatsForEnemy()
 		{
@@ -255,11 +288,25 @@ namespace RegionServer.Model.Stats
 
 		public void RefreshCurrentHealth()
 		{
-			if(GetStat<CurrHealth>() > GetStat<MaxHealth>())
+		    var maxHealth = GetStat<MaxHealth>();
+			if(GetStat<CurrHealth>() < maxHealth)
 			{
-				SetStat<CurrHealth>(GetStat<MaxHealth>());
+			    _dirty = true;
+			}
+			else
+			{
+				SetStat<CurrHealth>(maxHealth);
 			}
 		}
+
+	    public int GetAttackDamage()
+	    {
+            var minDamage = (int)GetStat(new MinDamage());
+            var maxDamage = (int)GetStat(new MaxDamage());
+            return RngUtil.intRange(minDamage, maxDamage);
+        }
+
+        /**************************SERIALIZATION**************************/
 
 		[Serializable]
 		public class SerializedStat

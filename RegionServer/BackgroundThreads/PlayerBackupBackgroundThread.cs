@@ -38,7 +38,7 @@ namespace RegionServer.BackgroundThreads
 			{
 				try
 				{
-					if(timer.Elapsed < TimeSpan.FromMilliseconds((double)UPDATE_SPEED))
+					if(timer.Elapsed < TimeSpan.FromMilliseconds(UPDATE_SPEED))
 					{
 						if(Region.NumPlayers <= 0)
 						{

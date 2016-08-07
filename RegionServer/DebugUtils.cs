@@ -45,5 +45,11 @@ namespace RegionServer
                     break;
 	        }
 	    }
+
+	    public static void Logp(string location, string message)
+	    {
+	        Logp(Level.INFO, "", location, message);
+	    }
+
 	}
 }

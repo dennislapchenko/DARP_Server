@@ -60,10 +60,10 @@ namespace RegionServer.Handlers
 
 			if(wasAllowedNewFight)
 			{
-				instance.SendPacket(new PulledQueues(_fightManager));
+				instance.SendPacket(new PulledQueuesPacket(_fightManager));
 				foreach(var player in newFight.getPlayers.Values)
 				{
-					player.SendPacket(new FightQueueParticipants(newFight));
+					player.SendPacket(new FightQueueParticipantsPacket(newFight));
 					Log.Debug(CLASSNAME + " - OnHandleMessage:: sending queue info back to client");
 				}
 			}

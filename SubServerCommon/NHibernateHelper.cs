@@ -18,7 +18,6 @@ namespace SubServerCommon
 		public static List<string> sqlsetup = new List<string>();
 
 		private static ISessionFactory _sessionFactory;
-
 		private static ISessionFactory SessionFactory
 		{
 			get

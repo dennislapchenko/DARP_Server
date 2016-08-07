@@ -121,7 +121,7 @@ namespace RegionServer.Model.Fighting
 						foreach(var p in targetFight.getPlayers.Values)
 						{
 							p.CurrentFight = null;
-							p.SendPacket(new LoadIngameScene());
+							p.SendPacket(new LoadIngameScenePacket());
 						}
 						targetFight.RemovePlayer(instance);
 						break;

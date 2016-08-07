@@ -1,9 +1,10 @@
 
+using System;
 using System.Collections.Generic;
+using FluentNHibernate.Mapping;
 using RegionServer.Model.ServerEvents;
-using ComplexServerCommon.MessageObjects;
+using RegionServer.Model.CharacterDatas;
 using RegionServer.Model.Fighting;
-using RegionServer.Model.Stats;
 
 namespace RegionServer.Model.Interfaces
 {
@@ -21,8 +22,9 @@ namespace RegionServer.Model.Interfaces
 
 		IStatHolder Stats {get;}
 		IItemHolder Items {get;}
-		GeneralStats GenStats {get; }
-		Fight CurrentFight {get;}
+		Dictionary<Type, ICharacterData> CharacterData {get;}
+	    T GetCharData<T>() where T : class, ICharacterData;
+        Fight CurrentFight {get;}
 
 		void BroadcastMessage(ServerPacket packet); //take and send a message to everything that can receive inside character known list (HP updates)
 		void SendMessage(string text); //message to THIS class (Will wrap a packet and send it using SendPacket());

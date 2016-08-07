@@ -16,6 +16,6 @@ namespace RegionServer.Model.Interfaces
 		int Equippable {get; set;}
 		int LevelReq { get; set; }
 
-		StatHolder Stats {get; set;}
+		IStatHolder Stats {get; set;}
 	}
 }

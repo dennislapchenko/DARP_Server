@@ -9,8 +9,12 @@ using RegionServer.Model.ServerEvents;
 using ComplexServerCommon.MessageObjects;
 using ExitGames.Logging;
 using FluentNHibernate.Conventions;
+using RegionServer.Model.CharacterDatas;
+using RegionServer.Model.Constants;
+using RegionServer.Model.Effects;
 using RegionServer.Model.Fighting;
 using RegionServer.Model.Stats;
+using RegionServer.Model.Stats.BaseStats;
 
 
 namespace RegionServer.Model
@@ -19,14 +23,25 @@ namespace RegionServer.Model
 	{
 		protected readonly ILogger Log = LogManager.GetCurrentClassLogger();
 
-		protected CCharacter(Region region, CharacterKnownList objectKnownList, IStatHolder stats, IItemHolder items, GeneralStats genStats) : base(region, objectKnownList)
+        private readonly Dictionary<Type, ICharacterData> _characterData;
+        public Dictionary<Type, ICharacterData> CharacterData { get { return _characterData; } }
+
+        protected CCharacter(Region region, CharacterKnownList objectKnownList, IStatHolder stats, IItemHolder items, EffectHolder effects, IEnumerable<ICharacterData> characterDatas) 
+            : base(region, objectKnownList)
 		{
 			Stats = stats;
 			Stats.Character = this;
 			Items = items;
 			Items.Character = this;
-			GenStats = genStats;
-			StatusListeners = new List<ICharacter>();
+            _characterData = new Dictionary<Type, ICharacterData>();
+            foreach (var charData in characterDatas)
+            {
+                charData.Owner = this;
+                _characterData.Add(charData.GetType(), charData);
+            }
+            Effects = effects;
+            Effects.Owner = this;
+            StatusListeners = new List<ICharacter>();
 		}
 
 		protected CCharacter()
@@ -72,6 +87,7 @@ namespace RegionServer.Model
 
 		public void SwitchCurrentFightTarget()
 		{
+		    if (CurrentFight.fightState == FightState.FINISHED) return;
 			var hostileTeam = CurrentFight.getPlayerTeam(this) == FightTeam.Red ? CurrentFight.TeamBlue : CurrentFight.TeamRed;
 			var aliveTargets = hostileTeam.Values.Where(p => !p.IsDead).ToList();
 
@@ -101,12 +117,39 @@ namespace RegionServer.Model
 
 		public IStatHolder Stats {get; set;}
 		public IItemHolder Items {get; protected set;}
-		public GeneralStats GenStats { get; set; }
-		public Fight CurrentFight {get; set;}
 
-		
+	    public T GetCharData<T>() where T : class, ICharacterData
+	    {
+            ICharacterData outData;
+            CharacterData.TryGetValue(typeof(T), out outData);
+            return (T)outData;
+        }
 
-		public DeathListener DeathListeners; //so spawner can remove it from its list and respawn the NPC after timer
+	    public Fight CurrentFight {get; set;}
+	    public EffectHolder Effects { get; set; }
+
+	    public void LevelUp()
+	    {
+	        int newLevel = (int) Stats.GetStat<Level>() + 1;
+	        if (newLevel > ExperienceConstants.MAX_LEVEL) return; //send event congratulating with max level
+
+            Stats.SetStat<Level>(newLevel);
+
+            GetCharData<GeneralStats>().NextLevelExperience = ExperienceConstants.getExpForLevel(newLevel);
+            GetCharData<GeneralStats>().Gold += GoldPerLevelConstants.getGoldForLevel(newLevel); //TODO: rewrite to Currency.AddGold(gold);
+            Stats.SetStat<StatPoints>(StatPointsPerLevelConstants.getStatPointsForLevel(newLevel));
+	        Stats.AddToStat<MaxHealth>(Stats.GetStatBase(new MaxHealth())*0.15f);
+	        Stats.Dirty = true;
+            
+	        var cplayer = this as CPlayerInstance;
+	        if (cplayer != null)
+	        {
+	            cplayer.Store();
+                cplayer.SendPacket(new LevelUpPacket(this));
+	        }
+	    }
+
+	    public DeathListener DeathListeners; //so spawner can remove it from its list and respawn the NPC after timer
 		
 		public virtual void BroadcastMessage(ServerPacket packet)
 		{
@@ -130,7 +173,7 @@ namespace RegionServer.Model
 		{
 			Target = null;
 
-			BroadcastMessage(new TeleportToLocation(this, high, low));
+			BroadcastMessage(new TeleportToLocationPacket(this, high, low));
 
 			Decay();
 			Position.setPosition(high, low);
@@ -197,7 +240,7 @@ namespace RegionServer.Model
 			//foreach (var statusListener in StatusListeners)
 			foreach(var player in CurrentFight.getPlayers)
 			{
-				player.Value.BroadcastMessage(new StatusUpdate(this));
+				player.Value.BroadcastMessage(new StatusUpdatePacket(this));
 			}
 		}
 		public virtual void UpdateAndBroadcastStatus(int broadcastType)
@@ -206,17 +249,16 @@ namespace RegionServer.Model
 
 		public virtual void SendStateToPlayer(IObject owner)
 		{
-			owner.SendPacket(new MoveToLocation(this));
+			owner.SendPacket(new MoveToLocationPacket(this));
 		}
 
 		public virtual void DeleteMe() //deregister
 		{
-
 		}
 
 		public override string ToString()
 		{
-			return String.Format("[{0}]{1}", ObjectId, Name);
+			return $"[{ObjectId}]{Name}";
 		}
 	}
 }

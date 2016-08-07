@@ -26,8 +26,8 @@ namespace RegionServer.Handlers
 			var instance = Util.GetCPlayerInstance(Server, message);
 
 			//send battleinfo to player for UI update
-			instance.SendPacket(new UserFightInfoUpdate(instance));
-			instance.SendPacket(new FightParticipants(instance, false));
+			instance.SendPacket(new UserFightInfoUpdatePacket(instance));
+			instance.SendPacket(new FightParticipantsPacket(instance, false));
 			return true;
 		}
 

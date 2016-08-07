@@ -3,6 +3,7 @@ using RegionServer.Model.Interfaces;
 using System.Collections.Generic;
 using RegionServer.Calculators.Functions;
 using RegionServer.Calculators.Lambdas;
+using RegionServer.Model.Stats.PrimaryStats;
 
 namespace RegionServer.Model.Stats
 {
@@ -31,6 +32,7 @@ namespace RegionServer.Model.Stats
 				new FunctionAdd(this, 0, null, new LambdaConstant(value)),
 			};
 		}
+
 		public MinDamage()
 		{
 			_functions = new List<IFunction>() 
@@ -40,8 +42,9 @@ namespace RegionServer.Model.Stats
 				new FunctionAdd(this, 0, null, new LambdaStat(new Strength())),
 				new FunctionMultiply(this, 1, null, new LambdaConstant(0.09f)),
 				new FunctionAdd(this, 2, null, new LambdaConstant(10f)),
-				new FunctionAdd(this, 2, null, new LambdaEquipment(this)),
-			};
+                new FunctionAdd(this, 3, null, new LambdaEffect(this)),
+				new FunctionAdd(this, 4, null, new LambdaEquipment(this)),
+            };
 		}
 	}
 }

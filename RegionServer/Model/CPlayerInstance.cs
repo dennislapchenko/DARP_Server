@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using RegionServer.Model.Interfaces;
 using MMO.Photon.Client;
 using MMO.Photon.Server;
@@ -6,6 +8,8 @@ using ComplexServerCommon;
 using Photon.SocketServer;
 using RegionServer.Model.KnownList;
 using MMO.Framework;
+using RegionServer.Model.CharacterDatas;
+using RegionServer.Model.Effects;
 using RegionServer.Model.Fighting;
 using RegionServer.Model.Stats;
 using RegionServer.Persistence;
@@ -14,11 +18,15 @@ namespace RegionServer.Model
 {
 	public class CPlayerInstance : CPlayable, IPlayer, IClientData
 	{
-		public CPlayerInstance(FightManager fightManager, Region region, PlayerKnownList objectKnownList, IStatHolder stats, IItemHolder items, GeneralStats gStats) 
-			: base (region, objectKnownList, stats, items, gStats)
+
+
+		public CPlayerInstance(FightManager fightManager, Region region, PlayerKnownList objectKnownList, 
+            StatHolder stats, IItemHolder items, EffectHolder effects, IEnumerable<ICharacterData> characterDatas) 
+			: base (region, objectKnownList, stats, items, effects, characterDatas)
 		{
 			Destination = new Position();
 			FightManager = fightManager;
+
 		}
 
 		public SubServerClientPeer Client {get; set;}
@@ -84,13 +92,13 @@ namespace RegionServer.Model
 
 		public override void SendInfo(IObject obj)
 		{
-			obj.SendPacket(new CharInfoUpdate(this));
+			obj.SendPacket(new CharInfoUpdatePacket(this));
 		}
 
 		public void BroadcastUserInfo()
 		{
-			SendPacket(new UserInfoUpdate(this));
-			BroadcastMessage(new CharInfoUpdate(this));
+			SendPacket(new UserInfoUpdatePacket(this));
+			BroadcastMessage(new CharInfoUpdatePacket(this));
 		}
 
 		public override void DeleteMe()

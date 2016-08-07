@@ -16,6 +16,7 @@ namespace SubServerCommon.Data.Mapping
 			Map(x => x.Stats).Column("stats"); //VARCHAR(2048) (if binary use a BLOB)
 			Map(x => x.Position).Column("position");//VARCHAR(1024)
 			Map(x => x.Items).Column("items");
+			Map(x => x.Elo).Column("elo");
 			References(x => x.UserId).Column ("user_id");
 			Table ("characters");
 		}

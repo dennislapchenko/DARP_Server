@@ -32,7 +32,7 @@ namespace RegionServer.Model.KnownList
 				return false;
 			}
 
-			Owner.SendPacket(new DeleteObject(obj));
+			Owner.SendPacket(new DeleteObjectPacket(obj));
 			return true;
 		}
 

@@ -14,18 +14,7 @@ namespace SubServerCommon.Data.Mapping
 			Map(x => x.Value).Column("value");
 			Map(x => x.Equippable).Column("equippable");
 			Map(x => x.LevelReq).Column("level_req");
-			Map(x => x.AddedStats).Column("added_stats");
-			Map(x => x.minDamageValue).Column("min_damage");
-			Map(x => x.maxDamageValue).Column("max_damage");
-			Map(x => x.strengthValue).Column("strength");
-			Map(x => x.dexterityValue).Column("dexterity");
-			Map(x => x.instinctValue).Column("instinct");
-			Map(x => x.staminaValue).Column("stamina");
-			Map(x => x.criticalHitChanceValue).Column("critical_chance");
-			Map(x => x.criticalDamageValue).Column("critical_damage");
-			Map(x => x.dodgeChanceValue).Column("dodge_chance");
-			Map(x => x.counterAttackChanceValue).Column("counter_attack_chance");
-			Map(x => x.healthRegenValue).Column("health_regen");
+		    Map(x => x.Stats).Column("Stats");
 			Table("items");
 		}
 	}

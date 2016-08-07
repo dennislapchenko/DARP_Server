@@ -3,6 +3,7 @@ using RegionServer.Model.Interfaces;
 using System.Collections.Generic;
 using RegionServer.Calculators.Functions;
 using RegionServer.Calculators.Lambdas;
+using RegionServer.Model.Stats.PrimaryStats;
 
 
 namespace RegionServer.Model.Stats
@@ -18,7 +19,14 @@ namespace RegionServer.Model.Stats
 		public bool IsBaseStat { get { return false;} }
 		public bool IsNonZero { get { return false;} }
 		public bool IsItemStat { get { return true; } }
-		public float BaseValue { get { return 0;} set{} }
+
+        public float BaseValue
+        {
+            get { return baseValue; }
+            set { baseValue = value; }
+        }
+        
+        private float baseValue = 100;
 		public bool IsOnItem {get; set;}
 
 		private List<IFunction> _functions;
@@ -36,7 +44,8 @@ namespace RegionServer.Model.Stats
 				// 1(stam) * 5f;
 				new FunctionAdd(this, 0, null, new LambdaStat(new Stamina())),
 				new FunctionMultiply(this, 2, null, new LambdaConstant(5)),
-			};
+                new FunctionAdd(this, 1, null, new LambdaEffect(this))
+            };
 
 		}
 	}

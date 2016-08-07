@@ -80,7 +80,22 @@ namespace RegionServer.Model.DataKeepers
             setHighestDamage();
 		    MovesExchanged = _fight.ExchangeCount;
 		    Winner = _fight.Winner;
-		}
+
+            UpdateElo();
+        }
+
+	    private void UpdateElo()
+	    {
+	        switch (_fight.Type)
+	        {
+                case (FightType.SINGLE):
+	                break;
+                case (FightType.GROUP):
+	                break;
+                default:
+	                break;
+	        }
+	    }
 
 	    private void setHighestDamage()
 	    {

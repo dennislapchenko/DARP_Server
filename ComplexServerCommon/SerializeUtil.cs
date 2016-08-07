@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using System;
 
 namespace ComplexServerCommon
 {
@@ -6,15 +7,29 @@ namespace ComplexServerCommon
 	{
 		public static string Serialize<T>(T obj)
 		{
-            return JsonConvert.SerializeObject(obj);
+		    return JsonConvert.SerializeObject(obj);
 
 //          XmlSerializer mySerializer = new XmlSerializer(typeof(T));
 //			StringWriter outStream = new StringWriter();
 //			mySerializer.Serialize(outStream, obj);
 //			return outStream.ToString();
 		}
-		
-		public static T Deserialize<T>(object obj) where T : class, new()
+
+	    public static string SerializeWithIgnore<T>(T obj)
+	    {
+	        try
+	        {
+	            return JsonConvert.SerializeObject(obj, Formatting.Indented,
+	                new JsonSerializerSettings {ReferenceLoopHandling = ReferenceLoopHandling.Ignore});
+	        }
+	        catch (JsonException e)
+	        {
+	            
+	        }
+            return JsonConvert.SerializeObject(obj);
+        }
+
+        public static T Deserialize<T>(object obj) where T : class, new()
 		{
             return JsonConvert.DeserializeObject<T>(obj.ToString());
 

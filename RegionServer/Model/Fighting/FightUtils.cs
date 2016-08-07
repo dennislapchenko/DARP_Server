@@ -3,29 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using ComplexServerCommon.Enums;
 using ComplexServerCommon.MessageObjects;
-using ComplexServerCommon.MessageObjects.Enums;
+using RegionServer.Model.CharacterDatas;
 using RegionServer.Model.Interfaces;
 using RegionServer.Model.Items;
 using RegionServer.Model.Stats;
+using RegionServer.Model.Stats.PrimaryStats;
 
 namespace RegionServer.Model.Fighting
 {
 	public class FightUtils
 	{
 		private static List<string> blockOptions = new List<string>() {"01", "12", "23", "34", "40"};
-
-		public static MoveOutcome CheckAhitB(FightMove A, FightMove B)
-		{
-			if (A.AttackSpot != B.BlockSpots[0] && A.AttackSpot != B.BlockSpots[1])
-			{
-				return MoveOutcome.Hit;
-			}
-			else
-			{
-				return MoveOutcome.Block;
-			}
-		}
-
 
 		public static HitSpot getRandomHit()
 		{

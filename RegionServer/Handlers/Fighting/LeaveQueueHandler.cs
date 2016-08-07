@@ -38,13 +38,13 @@ namespace RegionServer.Handlers
 
 			if(success)
 			{
-				instance.SendPacket(new PulledQueues(_fightManager));
+				instance.SendPacket(new PulledQueuesPacket(_fightManager));
 				if(fight != null)
 				{
-					var fightParticipants = new FightQueueParticipants(fight);
+					var fightParticipants = new FightQueueParticipantsPacket(fight);
 					foreach(var player in fight.getPlayers.Values)
 					{
-						player.SendPacket(new PulledQueues(_fightManager));
+						player.SendPacket(new PulledQueuesPacket(_fightManager));
 						player.SendPacket(fightParticipants);
 					}
 				}

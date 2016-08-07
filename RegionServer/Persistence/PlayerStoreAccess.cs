@@ -1,6 +1,8 @@
 ﻿using System;
 using RegionServer.Model;
+using RegionServer.Model.CharacterDatas;
 using RegionServer.Model.Stats;
+using RegionServer.Model.Stats.BaseStats;
 using SubServerCommon;
 using SubServerCommon.Data.NHibernate;
 
@@ -32,13 +34,13 @@ namespace RegionServer.Persistence
 						//player.CharacterID = character.Id;
 
 						character.Level = (int)player.Stats.GetStat<Level>();
-
+                        //Log.Debugformat(CLASSNAME+"post char l")
 						string position = player.Position.Serialize();
 						character.Position = position;
-
 						// Store stats
-						character.GenStats = player.GenStats.SerializeStats();
+						character.GenStats = player.GetCharData<GeneralStats>().SerializeStats();
 						character.Stats = player.Stats.SerializeStats();
+					    character.Elo = Convert.ToInt32(player.GetCharData<EloKeeper>().GetElo());
 
 						//Store items
 						character.Items = player.Items.SerializeItems();

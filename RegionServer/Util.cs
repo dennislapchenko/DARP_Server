@@ -10,6 +10,7 @@ using ComplexServerCommon;
 using MMO.Photon.Application;
 using MMO.Photon.Server;
 using ComplexServerCommon.MessageObjects.Enums;
+using RegionServer.Model.CharacterDatas;
 using SubServerCommon.Data.ClientData;
 
 

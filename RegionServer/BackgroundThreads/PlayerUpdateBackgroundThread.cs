@@ -72,9 +72,9 @@ namespace RegionServer.BackgroundThreads
 		{
 //			if( instance != null && instance.Physics.Dirty)
 //			{
-//				instance.BroadcastMessage(new MoveToLocation(instance));
+//				instance.BroadcastMessage(new MoveToLocationPacket(instance));
 //				instance.Physics.Dirty = false;
-//				//Log.DebugFormat("Sending MoveToLocation to {0}", instance.Name);
+//				//Log.DebugFormat("Sending MoveToLocationPacket to {0}", instance.Name);
 //			}
 		}
 

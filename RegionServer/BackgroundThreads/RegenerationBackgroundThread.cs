@@ -71,10 +71,9 @@ namespace RegionServer.BackgroundThreads
 		{
 			if(instance != null && instance.Stats.Dirty) //Stats.Dirty becomes true when current health is below maximum health
 			{
-				instance.Stats.RegenHealth(); //adds HP5 value to players current health
-				instance.SendPacket(new HP5(instance)); //sends new health values to client
-				instance.Stats.Dirty = false;
-				Log.DebugFormat("Sending HP5 update to {0} ({1}/{2})", instance.Name, instance.Stats.GetStat<CurrHealth>(), instance.Stats.GetStat<MaxHealth>());
+				var newHealth = instance.Stats.RegenHealth(); //adds HP5Packet value to players current health
+				instance.SendPacket(new HP5Packet(instance, newHealth)); //sends new health values to client
+				//Log.DebugFormat("Sending HP5Packet update to {0} ({1}/{2})", instance.Name, instance.Stats.GetStat<CurrHealth>(), instance.Stats.GetStat<MaxHealth>());
 			}
 		}
 

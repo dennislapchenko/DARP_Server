@@ -9,10 +9,11 @@ namespace ComplexServerCommon.MessageObjects
 		//public Guid? PeerId {get;set;}
         public int PeerObjectId;
         public HitSpot AttackSpot;
+        public List<HitSpot> AttackSpots; 
         public List<HitSpot> BlockSpots;
         public int TargetObjectId;
 
-        public int? SkillId;
+        public byte SkillId = 0;
         //public int FriendlyTargetObjectId;
 
         public override string ToString()

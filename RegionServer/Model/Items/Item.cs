@@ -1,7 +1,6 @@
 ﻿using RegionServer.Model.Interfaces;
-using RegionServer.Model.Stats;
-using System.Collections.Generic;
 using ComplexServerCommon.MessageObjects;
+using RegionServer.Model.Stats.ItemStats;
 
 namespace RegionServer.Model.Items
 {
@@ -14,13 +13,19 @@ namespace RegionServer.Model.Items
 		public int Value {get; set;}
 		public int Equippable {get; set;}
 		public int LevelReq {get;set;}
-		public Dictionary<int, int> AddedStats {get; set;}
-		public StatHolder Stats {get; set;}
+		public IStatHolder Stats {get; set;}
+
+	    public delegate Item Factory();
+
+	    public Item(IItemStatHolder stats)
+	    {
+	        Stats = stats as IStatHolder;
+	    }
 
 		public static implicit operator ItemData(Item item)
 		{
 			//StatHolder stats = Stats;
-			return new ItemData(item.Name, item.ItemId, (int)item.Type, (int)item.Slot, item.Value, item.Equippable, item.LevelReq, item.Stats.GetAllStats());
+			return new ItemData(item.Name, item.ItemId, (int)item.Type, (int)item.Slot, item.Value, item.Equippable, item.LevelReq, ((ItemStatHolder)item.Stats).GetNonNullStats());
 		}
 	}
 }

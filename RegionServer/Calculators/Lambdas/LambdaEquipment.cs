@@ -4,11 +4,11 @@ namespace RegionServer.Calculators.Lambdas
 {
 	public class LambdaEquipment : ILambda
 	{
-		private IStat _stat;
+		private readonly IStat _stat;
 
 		public LambdaEquipment(IStat stat)
 		{
-			_stat = stat;
+			this._stat = stat;
 		}
 
 
@@ -20,12 +20,12 @@ namespace RegionServer.Calculators.Lambdas
 
 			if(env.Character != null)
 			{
-				foreach(var item in env.Character.Items.Equipment)
+				foreach(var item in env.Character.Items.Equipment.Values)
 				{
-					if(item.Value != null)
-					{
-						env.Value += item.Value.Stats.GetStat(_stat);
-					}
+				    if (item.Stats.Stats.ContainsKey(_stat.GetType()))
+				    {
+				        env.Value += item.Stats.GetStatBase(_stat);
+				    }
 				}
 			}
 			returnValue = env.Value;

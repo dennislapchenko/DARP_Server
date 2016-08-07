@@ -34,7 +34,7 @@ namespace RegionServer.BackgroundThreads
 
 		public void Setup()
 		{
-			//Bots = new ConcurrentDictionary<int, CCharacter>();
+		    //FightManager.AddFight(1);
 		}
 
 		public void Run(object threadContext)

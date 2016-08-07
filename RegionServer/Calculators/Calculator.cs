@@ -36,6 +36,12 @@ namespace RegionServer.Calculators
 			}
 		}
 
+	    public void ReplaceAllFunctions(List<IFunction> newFunctions)
+	    {
+	        Functions = newFunctions;
+            Functions.Sort((x, y) => x.Order.CompareTo(y.Order));
+        }
+
 		public List<IStat> RemoveOwner(CObject owner)
 		{
 			var modifiedStats = new List<IStat>();

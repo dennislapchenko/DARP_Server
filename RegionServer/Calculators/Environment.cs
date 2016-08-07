@@ -1,13 +1,12 @@
-using RegionServer.Model.Interfaces;
+using RegionServer.Model;
 
 namespace RegionServer.Calculators
 {
 	public class Environment
 	{
-		public ICharacter Character {get; set;}
-		public ICharacter Target {get; set;}
+		public CCharacter Character {get; set;}
+		public CCharacter Target {get; set;}
 		public float Value {get; set;}
-
 	}
 }
 

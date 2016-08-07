@@ -9,11 +9,10 @@ using SubServerCommon.Operations;
 using SubServerCommon.Data;
 using System.Reflection;
 using MMO.Photon.Client;
-using MMO.Framework;
 using SubServerCommon.Handlers;
 using RegionServer.Model;
+using RegionServer.Model.Effects;
 using RegionServer.Model.KnownList;
-using RegionServer.BackgroundThreads;
 using RegionServer.Model.Fighting;
 using RegionServer.Model.Items;
 using RegionServer.Model.NPC;
@@ -37,17 +36,20 @@ namespace RegionServer
 			builder.RegisterType<SubServerClientPeer>();
 			builder.RegisterType<CPlayerInstance>();
 		    builder.RegisterType<CBotInstance>();
+		    builder.RegisterType<Item>();
 			builder.RegisterType<Region>().SingleInstance();
 			builder.RegisterType<PlayerKnownList>();
 		    builder.RegisterType<CharacterKnownList>();
+		    builder.RegisterType<StatHolder>().AsImplementedInterfaces().AsSelf();
+		    builder.RegisterType<EffectHolder>().AsSelf();
 		    builder.RegisterType<NPCFactory>();
 			builder.RegisterType<ItemDBCache>().SingleInstance();
-			builder.RegisterType<GeneralStats>();
+		    builder.RegisterType<EffectCache>().SingleInstance();
 			builder.RegisterType<FightManager>().SingleInstance();
 			
 			//Registering Assemblies
 			builder.RegisterAssemblyTypes(Assembly.GetAssembly(GetType())).Where(t => t.Name.EndsWith("Handler")).As<PhotonServerHandler>().SingleInstance();
-			builder.RegisterAssemblyTypes(Assembly.GetAssembly(GetType())).AsImplementedInterfaces(); //BGThreads, BulletPhysics, CPlayerInstance + others
+			builder.RegisterAssemblyTypes(Assembly.GetAssembly(GetType())).AsImplementedInterfaces(); //BGThreads, CPlayerInstance + others
 			
 		}
 		

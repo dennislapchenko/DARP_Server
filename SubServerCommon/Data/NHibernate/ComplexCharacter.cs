@@ -15,6 +15,8 @@ namespace SubServerCommon.Data.NHibernate
 		public virtual string Stats {get; set;}
 		public virtual string Position {get; set;}
 		public virtual string Items {get; set;}
+		public virtual int Elo {get; set;}
+
 
 		public virtual CharacterListItem BuilderCharacterListItem()
 		{

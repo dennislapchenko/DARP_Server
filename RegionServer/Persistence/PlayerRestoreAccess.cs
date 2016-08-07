@@ -1,5 +1,7 @@
 ﻿using System.Linq;
 using RegionServer.Model;
+using RegionServer.Model.CharacterDatas;
+using RegionServer.Model.Constants;
 using RegionServer.Model.Items;
 using RegionServer.Model.Stats;
 using SubServerCommon;
@@ -33,8 +35,8 @@ namespace RegionServer.Persistence
 						//Appearance
 
 						//Level
-						player.Stats.SetStat<Level>(character.Level);
-
+						//player.Stats.SetStat<Level>(character.Level); is set in Stats
+                        
 						//Position
 						if (!string.IsNullOrEmpty(character.Position))
 						{
@@ -45,35 +47,36 @@ namespace RegionServer.Persistence
 							player.Position = new Position();
 						}
 
-						//Guild
-						//Titles
-						//Timers
+                        //Guild
+                        //Titles
+                        //Timers
 
-						if (!string.IsNullOrEmpty(character.GenStats))
+					    var GenStats = player.GetCharData<GeneralStats>();
+                        if (!string.IsNullOrEmpty(character.GenStats))
 						{
-							player.GenStats.DeserializeStats(character.GenStats);
-							player.GenStats.Name = character.Name;
-							((ItemHolder) player.Items).SetInventorySlots(player.GenStats.InventorySlots);
+							GenStats.DeserializeStats(character.GenStats);
+							((ItemHolder) player.Items).SetInventorySlots(GenStats.InventorySlots);
 						}
 						else
 						{
-							player.GenStats.Name = character.Name;
-							player.GenStats.Experience = 0;
-							player.GenStats.Battles = 0;
-							player.GenStats.Win = 0;
-							player.GenStats.Loss = 0;
-							player.GenStats.Tie = 0;
-							player.GenStats.Gold = 0;
-							player.GenStats.Skulls = 0;
-							player.GenStats.InventorySlots = 20;
-							((ItemHolder)player.Items).SetInventorySlots(player.GenStats.InventorySlots);
+						    GenStats.Experience = ExperienceConstants.LEVEL_0;
+						    GenStats.NextLevelExperience = ExperienceConstants.LEVEL_1;
+							GenStats.Battles = 0;
+							GenStats.Win = 0;
+							GenStats.Loss = 0;
+							GenStats.Tie = 0;
+							GenStats.Gold = 0;
+							GenStats.Skulls = 0;
+							GenStats.InventorySlots = 20;
+							((ItemHolder)player.Items).SetInventorySlots(GenStats.InventorySlots);
 						}
+
+                        player.GetCharData<EloKeeper>().UpdateElo(character.Elo);
 
 						if (!string.IsNullOrEmpty(character.Stats))
 						{
 							player.Stats.DeserializeStats(character.Stats);
 						}
-
 
 						//equipment
 						if (!string.IsNullOrEmpty(character.Items))

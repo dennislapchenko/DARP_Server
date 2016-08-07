@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using ComplexServerCommon.MessageObjects;
+using RegionServer.Model.CharacterDatas;
+using RegionServer.Model.Effects;
 using RegionServer.Model.Fighting;
 using RegionServer.Model.Interfaces;
 using RegionServer.Model.KnownList;
 using RegionServer.Model.Stats;
+using RegionServer.Model.Stats.BaseStats;
 
 namespace RegionServer.Model
 {
@@ -21,19 +24,19 @@ namespace RegionServer.Model
 
 	    public delegate CBotInstance Factory(byte level);
 
-		public CBotInstance(byte level, Region region, CharacterKnownList objectKnownList, IStatHolder stats, IItemHolder items, GeneralStats genStats) 
-			: base(region, objectKnownList, stats, items, genStats)
+		public CBotInstance(byte level, Region region, CharacterKnownList objectKnownList, StatHolder stats, IItemHolder items, EffectHolder effects,
+            IEnumerable<ICharacterData> charData) 
+			: base(region, objectKnownList, stats, items,effects, charData)
         {
             Stats.SetStat<Level>(level);
             ObjectId = Math.Abs(Guid.NewGuid().GetHashCode());
             Name = botNames[new Random().Next(0, botNames.Count)];
-            GenStats.Name = Name;
         }
 
 		public void configureBot()
 		{
 		    var level = (byte)Stats.GetStat<Level>();
-			GenStats = FightUtils.getRandomGenStats(GenStats, level);
+			CharacterData[typeof(GeneralStats)] = FightUtils.getRandomGenStats(GetCharData<GeneralStats>(), level);
             Items = FightUtils.getRandomItemsByLevel(Items, level);
             Stats = FightUtils.getRandomStatsByLevel(Stats, level);
 		}
@@ -79,9 +82,10 @@ namespace RegionServer.Model
                             PeerObjectId = this.ObjectId,
                             AttackSpot = FightUtils.getRandomHit(),
                             BlockSpots = FightUtils.getRandomBlock(),
+                            SkillId = 0,
                             TargetObjectId = Target.ObjectId
                         };
-            DebugUtils.Logp(DebugUtils.Level.WARNING, CLASSNAME, "makeAMove", "bot submitting a move");
+            DebugUtils.Logp(DebugUtils.Level.INFO, CLASSNAME, "makeAMove", "bot submitting a move");
             CurrentFight.AddMoveSendPkg(this, newMove);
         }
 
