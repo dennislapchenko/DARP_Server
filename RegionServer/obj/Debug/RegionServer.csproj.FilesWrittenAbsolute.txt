@@ -1,5 +1,0 @@
-/Users/DennisL/Desktop/PC/PHOTONSDK/deploy/ComplexServer/RegionServer/obj/Debug/.NETFramework,Version=v4.0.AssemblyAttribute.cs
-/Users/DennisL/Desktop/PC/PHOTONSDK/deploy/ComplexServer/bin/Debug/RegionServer.dll.mdb
-/Users/DennisL/Desktop/PC/PHOTONSDK/deploy/ComplexServer/bin/Debug/RegionServer.dll
-/Users/DennisL/Desktop/PC/PHOTONSDK/deploy/ComplexServer/RegionServer/obj/Debug/RegionServer.dll
-/Users/DennisL/Desktop/PC/PHOTONSDK/deploy/ComplexServer/RegionServer/obj/Debug/RegionServer.dll.mdb

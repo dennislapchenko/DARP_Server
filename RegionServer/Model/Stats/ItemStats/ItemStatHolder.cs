@@ -31,7 +31,7 @@ namespace RegionServer.Model.Stats.ItemStats
 
         public Dictionary<string, float> GetNonNullStats()
         {
-            return _stats.Where(s => GetStatBase(s.Value) > 0f).ToDictionary(k => k.Value.Name, v => GetStatBase(v.Value));
+            return _stats.ToDictionary(k => k.Value.Name, v => GetStatBase(v.Value));
         }
 
         public float GetStatBase<T>(T stat) where T : class, IStat
@@ -111,7 +111,7 @@ namespace RegionServer.Model.Stats.ItemStats
             return 0;
         }
 
-        public int RegenHealth()
+        public int HP5Regen()
         {
             return 0;
         }

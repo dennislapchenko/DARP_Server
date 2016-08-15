@@ -4,6 +4,7 @@ using System.Linq;
 using ComplexServerCommon.Enums;
 using ComplexServerCommon.MessageObjects;
 using RegionServer.Model.CharacterDatas;
+using RegionServer.Model.Constants;
 using RegionServer.Model.Interfaces;
 using RegionServer.Model.Items;
 using RegionServer.Model.Stats;
@@ -28,8 +29,11 @@ namespace RegionServer.Model.Fighting
 
 		public static StatHolder getRandomStatsByLevel(IStatHolder statsToFill, byte level)
 		{
-			var statPointsPerLevel = 5;
-			var statsToAccrue = level*statPointsPerLevel;
+		    var statsToAccrue = 0;
+		    for(byte i = 0; i++<=level;)
+		    {
+                statsToAccrue += RegionConstants.GetConstants(ConstantType.STAT_POINTS_PER_LEVEL)[i];
+		    }
 
 			while (statsToAccrue > 0)
 			{
@@ -57,7 +61,7 @@ namespace RegionServer.Model.Fighting
 		public static ItemHolder getRandomItemsByLevel(IItemHolder itemsToFill, byte level)
 		{
 			//gets all items matching by level
-			var itemsThatCanBeEquipped = ItemDBCache.Items.Values.Where(x => x.LevelReq == level || x.LevelReq == level-1);
+		    var itemsThatCanBeEquipped = ItemDBCache.Items.Values.Where(x => x.LevelReq <= level);
 			//loops through all item slots and picks a random item from the above variable, that match the slot
 			foreach (var slot in Enum.GetValues(typeof(ItemSlot)).Cast<ItemSlot>())
 			{

@@ -42,8 +42,8 @@ namespace RegionServer.Model.Stats
 				new FunctionAdd(this, 0, null, new LambdaStat(new Strength())),
 				new FunctionMultiply(this, 1, null, new LambdaConstant(0.09f)),
 				new FunctionAdd(this, 2, null, new LambdaConstant(10f)),
+				new FunctionAdd(this, 0, null, new LambdaEquipment(this)),
                 new FunctionAdd(this, 3, null, new LambdaEffect(this)),
-				new FunctionAdd(this, 4, null, new LambdaEquipment(this)),
             };
 		}
 	}

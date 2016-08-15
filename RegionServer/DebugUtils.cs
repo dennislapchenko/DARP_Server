@@ -27,6 +27,11 @@ namespace RegionServer
 			}
 		}
 
+	    public static void nullLog(object obj, String description)
+	    {
+	        nullLog("", "", obj, description);
+	    }
+
 	    public static void Logp(Level severity, string classname, string methodname, string message)
 	    {
 	        switch (severity)
@@ -51,5 +56,10 @@ namespace RegionServer
 	        Logp(Level.INFO, "", location, message);
 	    }
 
-	}
+        public static void Logp(string message)
+        {
+            Logp(Level.INFO, "", "", message);
+        }
+
+    }
 }

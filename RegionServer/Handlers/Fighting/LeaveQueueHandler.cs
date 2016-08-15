@@ -8,6 +8,7 @@ using MMO.Framework;
 using ComplexServerCommon.Enums;
 using RegionServer.Model.Fighting;
 using RegionServer.Model.ServerEvents;
+using RegionServer.Model.ServerEvents.FightEvents;
 
 namespace RegionServer.Handlers
 {

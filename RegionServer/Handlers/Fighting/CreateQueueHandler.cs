@@ -8,8 +8,11 @@ using Photon.SocketServer;
 using System.Collections.Generic;
 using ComplexServerCommon.MessageObjects;
 using System;
+using RegionServer.Model.Effects;
+using RegionServer.Model.Effects.Definitions;
 using RegionServer.Model.Fighting;
 using RegionServer.Model.ServerEvents;
+using RegionServer.Model.ServerEvents.FightEvents;
 
 namespace RegionServer.Handlers
 {
@@ -18,7 +21,7 @@ namespace RegionServer.Handlers
 		private static readonly string CLASSNAME = "CreateQueueHandler";
 
 		private FightManager _fightManager;
-		public CreateQueueHandler(PhotonApplication application, FightManager fightManager)
+		public CreateQueueHandler(PhotonApplication application, FightManager fightManager, EffectCache effectCache)
 			: base (application)
 		{
 			_fightManager = fightManager;
@@ -45,7 +48,7 @@ namespace RegionServer.Handlers
 
 			var instance = Util.GetCPlayerInstance(Server, message);
 
-			var queueItemRequest = ComplexServerCommon.SerializeUtil.Deserialize<FightQueueListItem>(operation.fightInit);
+			var queueItemRequest = SerializeUtil.Deserialize<FightQueueListItem>(operation.fightInit);
 			queueItemRequest.Creator = instance.Name;
 
 			Fight newFight = instance.CurrentFight;
@@ -54,6 +57,9 @@ namespace RegionServer.Handlers
 			{
 				newFight = _fightManager.AddFight(queueItemRequest);
 				wasAllowedNewFight = newFight.addPlayer(1, instance); //1 - red, 2 - blue teams
+//			    IEffect effect = EffectCache.GetEffect(EffectEnum.INJURY);
+//                Log.DebugFormat("Fetched effect of type: {0}", effect.GetType());
+//                instance.Effects.Apply(effect);
 			}
 
 			//send response with refreshed queue list

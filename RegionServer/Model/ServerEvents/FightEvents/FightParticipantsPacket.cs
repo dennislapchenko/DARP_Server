@@ -1,10 +1,11 @@
-﻿using ComplexServerCommon;
-using System.Collections.Generic;
-using ComplexServerCommon.MessageObjects;
+﻿using System.Collections.Generic;
 using System.Linq;
+using ComplexServerCommon;
+using ComplexServerCommon.MessageObjects;
 using RegionServer.Model.Fighting;
+using RegionServer.Model.Items;
 
-namespace RegionServer.Model.ServerEvents
+namespace RegionServer.Model.ServerEvents.FightEvents
 {
 	public class FightParticipantsPacket : ServerPacket
 	{
@@ -45,7 +46,7 @@ namespace RegionServer.Model.ServerEvents
 												Name = player.Name,
 												Team = fight.CharFightData[player].Team,
 												stats = player.Stats.GetHealthLevel(),
-												equipment = player.Items.Equipment.ToDictionary(k => (int)k.Key, v => (ItemData)v.Value)
+												equipment = player.Items.Equipment.ToDictionary(k => (int)k.Key, v => (ItemData)(Item)v.Value)
 											};
 				charsInfo.Add(player.ObjectId, info);
 				//cplayer.Client.Log.DebugFormat("FP {0} added to team {1} (client packet)", cplayer.Name, fight.CharFightData[cplayer.ObjectId].Team);

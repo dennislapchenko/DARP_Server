@@ -1,8 +1,7 @@
 using ComplexServerCommon;
 using ComplexServerCommon.Enums;
 
-
-namespace RegionServer.Model.ServerEvents
+namespace RegionServer.Model.ServerEvents.CharacterEvents
 {
 	public class TeleportToLocationPacket : ServerPacket
 	{

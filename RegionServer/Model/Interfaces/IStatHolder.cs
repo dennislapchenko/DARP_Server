@@ -16,7 +16,7 @@ namespace RegionServer.Model.Interfaces
 	    void AddToStat<T>(float value) where T : class, IStat;
         int ApplyDamage(int damage, CCharacter attacker);
 	    int ApplyHeal(int healAmount);
-        int RegenHealth();
+        int HP5Regen();
 		bool Dirty {get;set;}
 		//Dictionary<string, float> GetAllStats();
 		Dictionary<string, float> GetAllStats();

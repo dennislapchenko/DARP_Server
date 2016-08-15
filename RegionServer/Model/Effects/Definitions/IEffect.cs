@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using NHibernate.SqlCommand;
-using RegionServer.Model.Interfaces;
 
 namespace RegionServer.Model.Effects.Definitions
 {
     public interface IEffect
     {
-
+        string Name { get; }
+        string Description { get; }
         byte Duration { get; set; }
         byte Rank { get; set; } 
-        Dictionary<Type, float> statAdd { get; set; }
-        Dictionary<Type, float> statMultiply { get; set; }
+        Dictionary<Type, StatBonus> StatBonuses { get; set; }
         void AddStats();
         EffectType Type { get; }
         EffectEnum EnumId { get; }
+        IEffect SecondaryEffect { get; }
+
+        IEffect Clone();
 
         void OnApply(CCharacter owner);
         void OnUpdate();

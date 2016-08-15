@@ -28,21 +28,25 @@ namespace RegionServer
 		
 		protected override void RegisterContainerObjects (ContainerBuilder builder)
 		{
+			builder.RegisterInstance(this).As<PhotonApplication>().SingleInstance();
+
 			builder.RegisterType<ErrorEventForwardHandler>().As<DefaultEventHandler>().SingleInstance();
 			builder.RegisterType<ErrorRequestForwardHandler>().As<DefaultRequestHandler>().SingleInstance();
 			builder.RegisterType<ErrorResponseForwardHandler>().As<DefaultResponseHandler>().SingleInstance();
 			builder.RegisterType<SubServerConnectionCollection >().As<PhotonConnectionCollection>().SingleInstance();
-			builder.RegisterInstance(this).As<PhotonApplication>().SingleInstance();
 			builder.RegisterType<SubServerClientPeer>();
-			builder.RegisterType<CPlayerInstance>();
-		    builder.RegisterType<CBotInstance>();
-		    builder.RegisterType<Item>();
+
+			builder.RegisterType<CPlayerInstance>();        
+		    builder.RegisterType<CBotInstance>();           //why implementing just interface doesn't resolve Factory delegates?
+		    builder.RegisterType<Item>();         //why implementing just interface doesn't resolve Factory delegates?
+		    builder.RegisterType<EquipmentItem>(); //why implementing just interface doesn't resolve Factory delegates?
 			builder.RegisterType<Region>().SingleInstance();
 			builder.RegisterType<PlayerKnownList>();
 		    builder.RegisterType<CharacterKnownList>();
 		    builder.RegisterType<StatHolder>().AsImplementedInterfaces().AsSelf();
 		    builder.RegisterType<EffectHolder>().AsSelf();
-		    builder.RegisterType<NPCFactory>();
+		    builder.RegisterType<NPCFactory>().SingleInstance();
+		    builder.RegisterType<ItemFactory>().SingleInstance();
 			builder.RegisterType<ItemDBCache>().SingleInstance();
 		    builder.RegisterType<EffectCache>().SingleInstance();
 			builder.RegisterType<FightManager>().SingleInstance();

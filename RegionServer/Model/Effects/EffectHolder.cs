@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using FluentNHibernate.Conventions;
 using NHibernate.Util;
 using RegionServer.Calculators;
 using RegionServer.Model.Effects.Definitions;
+using RegionServer.Model.ServerEvents.CharacterEvents;
 using RegionServer.Model.Stats.BaseStats;
-using SubServerCommon.Math;
 
 namespace RegionServer.Model.Effects
 {
@@ -28,24 +29,52 @@ namespace RegionServer.Model.Effects
             SpellList = new Dictionary<EffectEnum, IEffectSpell>();
             foreach (var spell in effectSpells)
             {
+                spell.AddStats();
                 SpellList.Add(spell.EnumId, spell);
             }
         }
 
-        public void OnApply(SpellEnvironment env)
+        private List<IEffect> getMainAndSubEffects(IEffect effect, List<IEffect> mainAndSubEffects)
         {
-            var effect = GetSpell(env.CharacterSpell);
-            OnApply(effect);
-        }  
+            DebugUtils.nullLog(effect?.SecondaryEffect, "secondary effect");
 
-        public void OnApply(IEffect effect)
-        {
-            if (!GetAllEffects(false).ContainsKey(effect.EnumId))
+            if (effect != null && mainAndSubEffects.Count < 3)
             {
-                effect.AddStats();
+                mainAndSubEffects.Add(effect);
+                DebugUtils.Logp(String.Format("Recursively gained effect {0} (total fX now: {1})", effect.EnumId, mainAndSubEffects.Count));
+                getMainAndSubEffects(effect.SecondaryEffect, mainAndSubEffects);
+            }
+   
+            return mainAndSubEffects;
+        }
+
+        public void Apply(IEffect effect)
+        {
+            if (!EffectLists[effect.Type].ContainsKey(effect.EnumId))
+            {
+                OnApply(effect);
+            }
+        }
+
+        private void OnApply(IEffect mainEffect)
+        {
+            if (mainEffect == null) return;
+
+            List<IEffect> mainAndSubEffects = new List<IEffect>();
+            mainAndSubEffects = getMainAndSubEffects(mainEffect, mainAndSubEffects);
+            foreach (var effect in mainAndSubEffects)
+            {
+                if (EffectLists[effect.Type].ContainsKey(effect.EnumId)) continue;
                 effect.OnApply(Owner);
                 EffectLists[effect.Type].Add(effect.EnumId, effect);
-                if(effect.Duration <= 0) effect.OnFinish();
+                DebugUtils.Logp(String.Format("Char {0} gained effect {1}", Owner.Name, effect.EnumId));
+                if(effect.Duration <= 0) OnFinish(effect);
+            }
+
+            var owner = Owner as CPlayerInstance;
+            if (owner != null)
+            {
+                owner.SendPacket(new UserInfoUpdatePacket(owner));
             }
         }
 
@@ -54,20 +83,26 @@ namespace RegionServer.Model.Effects
             foreach(var effect in GetAllEffects(false).Values)
             {
                 effect.OnUpdate();
-                effect.Duration--;
-                if (effect.Duration <= 0)
-                    effect.OnFinish();
+                if (--effect.Duration <= 0)
+                {
+                    DebugUtils.Logp(String.Format("{0}:: {1} is fading away", Owner.Name, effect.EnumId));
+                    OnFinish(effect);
+                }
             }
+        }
+
+        public void OnFinish(IEffect effect)
+        {
+            Debug.Assert(effect.Duration <= 0);
+            effect.OnFinish();
+            GetAllEffects(false).Remove(effect.EnumId);
         }
 
         public void OnFinish()
         {
-            var origEffects = GetAllEffects(false);
-            var allEffects = new Dictionary<EffectEnum, IEffect>(origEffects);
-            foreach (var effect in allEffects.Values)
+            foreach (var effect in GetAllEffects(false).Values)
             {
-                effect.OnFinish();
-                origEffects.Remove(effect.EnumId);
+                OnFinish(effect);
             }
         }
 
@@ -83,13 +118,14 @@ namespace RegionServer.Model.Effects
 
         public void UseSpell(SpellEnvironment env)
         {
-            OnApply(env);
+            UseSpell(env.CharacterSpell);
         }
 
-        public void UseSpell(int id)
+        public void UseSpell(byte id)
         {
             if (id == 0) return;
             var effect = GetSpell(id);
+            DebugUtils.Logp(String.Format("(UseSpell(byteId)Using spell {0} (gaining:{1}) to character: {2}", effect.Name, 1, Owner.Name));
             OnApply(effect);
         }
 
@@ -98,11 +134,12 @@ namespace RegionServer.Model.Effects
             var enumId = (EffectEnum) id;
             IEffectSpell result;
             SpellList.TryGetValue(enumId, out result);
-
             if(result != null && isUnlocked(result))
             {
+                DebugUtils.Logp(String.Format("Found an unlocked spell {0}-{1} on char {2}. using it!", result.Name, result.EnumId, Owner.Name));
                 return result;
             }
+            DebugUtils.Logp(String.Format("NO SPELL WAS FOUND by enumID {0} on char {1}. ERROR!", result.EnumId, Owner.Name));
             return null;
         }
 
@@ -114,30 +151,24 @@ namespace RegionServer.Model.Effects
             {
                 result = effectList.Value.Union(result).ToDictionary(k => k.Key, v => v.Value);
             }
-            if (withSpells) result = result.Union(SpellList.ToDictionary(x=>x.Key, x => (IEffect)x.Value)).ToDictionary(x=>x.Key, x=>x.Value);
             return result;
         }
 
         private bool isUnlocked(IEffectSpell effect)
         {
             var level = Owner.Stats.GetStatBase(new Level());
-            return (level >= effect.UnlockLevel) ? true : false;
+            return (level >= effect.UnlockLevel);
         }
 
 
-        public List<IEffect> GetEffectsFor(Type statType)
+        public List<IEffect> GetEffectsForStat(Type statType)
         {
             var result = new List<IEffect>();
             foreach (var effect in GetAllEffects(false).Where(v => v.Value.Type == EffectType.STATONLY))
             {
-                if (effect.Value.statAdd.ContainsKey(statType))
+                if (effect.Value.StatBonuses.ContainsKey(statType))
                 {
                     result.Add(effect.Value);
-                }
-                if (effect.Value.statMultiply.ContainsKey(statType))
-                {
-                    result.Add(effect.Value);
-                    //DebugUtils.Logp("GetEffectsFor", String.Format("adding mult value of {0} to IEffect with type {1}", effect.Value.statAdd.Count, statType));
                 }
             }
             return result;

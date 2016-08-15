@@ -14,9 +14,7 @@ namespace RegionServer.Model.Stats.BaseStats
         public bool IsOnItem { get { return false; } set {} }
         public float BaseValue { get { return _baseValue; } set { _baseValue = value; } }
 
-        private float _baseValue = StatPointsPerLevelConstants.LEVEL_0;
-
-
+        private float _baseValue = RegionConstants.GetConstants(ConstantType.STAT_POINTS_PER_LEVEL)[0];
 
         public void ConvertToIsOnItem(float value)
         {

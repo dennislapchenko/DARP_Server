@@ -2,9 +2,9 @@
 using ComplexServerCommon;
 using RegionServer.Model.Fighting;
 
-namespace RegionServer.Model.ServerEvents
+namespace RegionServer.Model.ServerEvents.FightEvents
 {
-	public class PulledQueuesPacket : ServerPacket
+    public class PulledQueuesPacket : ServerPacket
 	{
 		public PulledQueuesPacket(FightManager fightManager) : base(ClientEventCode.ServerPacket, MessageSubCode.PullQueue)
 		{

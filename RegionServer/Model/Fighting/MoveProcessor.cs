@@ -11,7 +11,7 @@ namespace RegionServer.Model.Fighting
 {
     public class MoveProcessor
     {
-        private const bool DEBUG = true;
+        private const bool DEBUG = false;
         private static readonly string CLASSNAME = "MoveProcessor";
         protected static ILogger Log = LogManager.GetCurrentClassLogger();
 
@@ -21,41 +21,32 @@ namespace RegionServer.Model.Fighting
 
         public MoveProcessor(Fight fight)
         {
-            this.fight = fight;
+            this.fight      = fight;
             resultForClient = new Dictionary<int, ExchangeProfile>();
         }
 
         public Dictionary<int, ExchangeProfile> ProcessMoves(FightMove playerMove, FightMove opponentMove)
         {
-            playerMove.SkillId = (byte) EffectEnum.DAMAGE;
+//            playerMove.SkillId   = (byte) EffectEnum.DAMAGE;
+//            opponentMove.SkillId = (byte) EffectEnum.DAMAGE;
 
             var instance = fight.getParticipant(playerMove.PeerObjectId);
             var opponent = fight.getParticipant(opponentMove.PeerObjectId);
 
             if (instance == null || opponent == null) DebugUtils.Logp(DebugUtils.Level.FATAL, CLASSNAME, "ProcessMoves", "instance or opponent in fight.getParticipant is null");
         
-            var playerOutcome = CheckAhitB(playerMove, opponentMove); //check if player A's attack has succeeded(Hit) or was blocked(Block)
+            var playerOutcome   = CheckAhitB(playerMove, opponentMove); //check if player A's attack has succeeded(Hit) or was blocked(Block)
             var opponentOutcome = CheckAhitB(opponentMove, playerMove); // -- || --
 
-            var playerEnv = new SpellEnvironment()
-                                            {
-                                                Character = instance,
-                                                CharacterSpell = playerMove.SkillId,
-                                                Target = opponent,
-                                                TargetSpell = opponentMove.SkillId,
-                                            };
-            var opponentEnv = new SpellEnvironment()
-                                            {
-                                                Character = opponent,
-                                                CharacterSpell = opponentMove.SkillId,
-                                                Target = instance,
-                                                TargetSpell = playerMove.SkillId,
-                                            };
+            var playerEnv   = new SpellEnvironment(instance, playerMove.SkillId, opponent, opponentMove.SkillId);
+            var opponentEnv = new SpellEnvironment(opponent, opponentMove.SkillId, instance,playerMove.SkillId);
 
             sendOnApplyToSpells(playerEnv);
 
             var opponentTeamDamage = ProcessOutcome(playerEnv, playerOutcome); //do the actual hit/block, with all the stats
-            var playerTeamDamage = ProcessOutcome(opponentEnv, opponentOutcome);//do the actual hit/block, with all the stats
+            var playerTeamDamage   = ProcessOutcome(opponentEnv, opponentOutcome);//do the actual hit/block, with all the stats
+
+            sendOnUpdateToSpells(playerEnv);
 
             fight.updateTotalTeamHealth(fight.getPlayerTeam(opponent), -opponentTeamDamage);
             fight.updateTotalTeamHealth(fight.getPlayerTeam(instance), -playerTeamDamage);
@@ -73,19 +64,25 @@ namespace RegionServer.Model.Fighting
             env.Target.Effects.UseSpell(env.TargetSpell);
         }
 
+        private void sendOnUpdateToSpells(SpellEnvironment env)
+        {
+            env.Character.Effects.OnUpdate();
+            env.Target.Effects.OnUpdate();
+        }
+
         public int ProcessOutcome(SpellEnvironment env, MoveOutcome outcome)
         {
             const string METHODNAME = "ProcessOutcome";
             var attacker = env.Character;
-            var target = env.Target;
+            var target   = env.Target;
 
             var attackerStats = attacker.Stats;
-            var damage = ((StatHolder) attackerStats).GetAttackDamage();
+            var damage = (int)attackerStats.GetStat(new Damage(), target); //calculates rng damage (minDmg <= dmg <= maxDmg) and applies target negation
 
             switch (outcome)
             {
                 case (MoveOutcome.Hit):
-                    //HIT CHANCE VS TARGET'S DODGE CHANCE
+                       //HIT CHANCE VS TARGET'S DODGE CHANCE
                     if (attackerStats.GetStat(new HitChance(), target) > RngUtil.hundredRoll()) 
                     {
                         //CRIT CHANCE VS TARGET'S ANTI-CRIT CHANCE, if fails then HIT
@@ -142,12 +139,9 @@ namespace RegionServer.Model.Fighting
 
             //All time stats: damage++, crit++, critdamage++, hit++, dodge++, blockcrit++, block++
             attacker.Effects.OnDamageGiven(damage, attacker);
-            var result = target.Stats.ApplyDamage(damage, attacker); //clamps to actual damage dealt on overkill then inflicts and returns its value
 
-            attacker.Effects.OnUpdate();
-            target.Effects.OnUpdate();
-
-            return result;
+            //target.Effects.OnDamageReceived is called inside Stats.ApplyDamage
+            return target.Stats.ApplyDamage(damage, attacker); //clamps to actual damage dealt on overkill then inflicts and returns its value
         }
 
         public static MoveOutcome CheckAhitB(FightMove A, FightMove B)

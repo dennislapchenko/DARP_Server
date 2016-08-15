@@ -62,9 +62,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Data\Mapping\ConstantsMap.cs" />
     <Compile Include="Data\Mapping\FightHistoryMap.cs" />
+    <Compile Include="Data\NHibernate\Constants.cs" />
     <Compile Include="Data\NHibernate\FightHistory.cs" />
-    <Compile Include="Math\DictionaryExtensions.cs" />
+    <Compile Include="MethodExtensions\DictionaryExtensions.cs" />
     <Compile Include="MethodExtensions\DateTimeMethodExtensions.cs" />
     <Compile Include="ServerEventCode.cs" />
     <Compile Include="ServerOperationCode.cs" />

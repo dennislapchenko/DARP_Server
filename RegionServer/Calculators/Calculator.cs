@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using RegionServer.Model.Interfaces;
 using RegionServer.Model;
@@ -61,8 +62,10 @@ namespace RegionServer.Calculators
 		{
 			foreach (var function in Functions)
 			{
+                //DebugUtils.Logp(String.Format("Calculating... Func:{0} pre-calc value:", function.GetType()), env.Value + " " + function.Stat.Name);
 				function.Calc(env);
-			}
+                //DebugUtils.Logp(String.Format("Calculating... Func:{0} post-calc value:", function.GetType()), env.Value + " " + function.Stat.Name);
+            }
 		}
 	}
 }

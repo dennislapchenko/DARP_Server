@@ -1,5 +1,8 @@
-﻿namespace RegionServer.Model.Items
+﻿using System;
+
+namespace RegionServer.Model.Items
 {
+    [Flags]
 	public enum ItemType : byte
 	{
 		Weapon = 0,

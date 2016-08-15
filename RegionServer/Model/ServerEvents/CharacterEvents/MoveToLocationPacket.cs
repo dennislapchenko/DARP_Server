@@ -1,8 +1,7 @@
 using ComplexServerCommon;
 using ComplexServerCommon.MessageObjects;
-using RegionServer.Model.Stats;
 
-namespace RegionServer.Model.ServerEvents
+namespace RegionServer.Model.ServerEvents.CharacterEvents
 {
 	public class MoveToLocationPacket : ServerPacket
 	{

@@ -55,7 +55,8 @@ namespace ComplexServerCommon
 
         //character
         StatAllocation,
-	    LevelUp
+	    LevelUp,
+	    UserStatInfo
 	}
 }
 

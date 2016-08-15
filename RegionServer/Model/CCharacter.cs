@@ -13,6 +13,7 @@ using RegionServer.Model.CharacterDatas;
 using RegionServer.Model.Constants;
 using RegionServer.Model.Effects;
 using RegionServer.Model.Fighting;
+using RegionServer.Model.ServerEvents.CharacterEvents;
 using RegionServer.Model.Stats;
 using RegionServer.Model.Stats.BaseStats;
 
@@ -87,7 +88,7 @@ namespace RegionServer.Model
 
 		public void SwitchCurrentFightTarget()
 		{
-		    if (CurrentFight.fightState == FightState.FINISHED) return;
+		    if (CurrentFight == null || CurrentFight.fightState == FightState.FINISHED) return;
 			var hostileTeam = CurrentFight.getPlayerTeam(this) == FightTeam.Red ? CurrentFight.TeamBlue : CurrentFight.TeamRed;
 			var aliveTargets = hostileTeam.Values.Where(p => !p.IsDead).ToList();
 
@@ -131,14 +132,14 @@ namespace RegionServer.Model
 	    public void LevelUp()
 	    {
 	        int newLevel = (int) Stats.GetStat<Level>() + 1;
-	        if (newLevel > ExperienceConstants.MAX_LEVEL) return; //send event congratulating with max level
+	        if (newLevel > RegionConstants.GetConstants(ConstantType.EXPERIENCE_FOR_LEVEL).Count-1) return; //send event congratulating with max level
 
             Stats.SetStat<Level>(newLevel);
 
-            GetCharData<GeneralStats>().NextLevelExperience = ExperienceConstants.getExpForLevel(newLevel);
-            GetCharData<GeneralStats>().Gold += GoldPerLevelConstants.getGoldForLevel(newLevel); //TODO: rewrite to Currency.AddGold(gold);
-            Stats.SetStat<StatPoints>(StatPointsPerLevelConstants.getStatPointsForLevel(newLevel));
-	        Stats.AddToStat<MaxHealth>(Stats.GetStatBase(new MaxHealth())*0.15f);
+            GetCharData<GeneralStats>().NextLevelExperience = RegionConstants.GetConstants(ConstantType.EXPERIENCE_FOR_LEVEL)[(byte)newLevel];
+            GetCharData<GeneralStats>().Gold += RegionConstants.GetConstants(ConstantType.CURRENCY_PER_LEVEL)[(byte)newLevel]; ; //TODO: rewrite to Currency.AddGold(gold);
+            Stats.SetStat<StatPoints>(RegionConstants.GetConstants(ConstantType.STAT_POINTS_PER_LEVEL)[(byte)newLevel]);
+	        //Stats.AddToStat<MaxHealth>(Stats.GetStatBase(new MaxHealth())*0.15f);
 	        Stats.Dirty = true;
             
 	        var cplayer = this as CPlayerInstance;

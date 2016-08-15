@@ -1,11 +1,10 @@
-using System;
+using System.Linq;
 using ComplexServerCommon;
 using ComplexServerCommon.MessageObjects;
-using System.Linq;
 using RegionServer.Model.CharacterDatas;
+using RegionServer.Model.Items;
 
-
-namespace RegionServer.Model.ServerEvents
+namespace RegionServer.Model.ServerEvents.CharacterEvents
 {
 	public class CharInfoUpdatePacket : ServerPacket
 	{
@@ -25,7 +24,7 @@ namespace RegionServer.Model.ServerEvents
 				//stats
 				GenStats = player.GetCharData<GeneralStats>(),
 				Stats = player.Stats.GetMainStatsForEnemy(),
-				Equipment = player.Items.Equipment.ToDictionary(item => (int)item.Key, item => (ItemData)item.Value),
+				Equipment = player.Items.Equipment.ToDictionary(item => (int)item.Key, item => (ItemData)(Item)item.Value),
 
             //race, sex, class, title, guild
             //effects - pvp flag, debuffs, buffs

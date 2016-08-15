@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
 using RegionServer.Model.ServerEvents;
+using RegionServer.Model.ServerEvents.CharacterEvents;
 using RegionServer.Model.Stats;
 
 namespace RegionServer.BackgroundThreads
@@ -69,11 +70,11 @@ namespace RegionServer.BackgroundThreads
 
 		public void SendUpdate(CPlayerInstance instance)
 		{
-			if(instance != null && instance.Stats.Dirty) //Stats.Dirty becomes true when current health is below maximum health
+			if(instance != null) //Stats.Dirty becomes true when current health is below maximum health
 			{
-				var newHealth = instance.Stats.RegenHealth(); //adds HP5Packet value to players current health
-				instance.SendPacket(new HP5Packet(instance, newHealth)); //sends new health values to client
-				//Log.DebugFormat("Sending HP5Packet update to {0} ({1}/{2})", instance.Name, instance.Stats.GetStat<CurrHealth>(), instance.Stats.GetStat<MaxHealth>());
+				var newHealth = instance.Stats.HP5Regen(); //adds HP5Packet value to players current health
+				instance.SendPacket(new HP5Packet(newHealth)); //sends new health values to client
+				Log.DebugFormat("Sending HP5Packet update to {0} ({1}/{2})", instance.Name, instance.Stats.GetStat<CurrHealth>(), instance.Stats.GetStat<MaxHealth>());
 			}
 		}
 

@@ -2,9 +2,9 @@
 using ComplexServerCommon.MessageObjects;
 using System.Collections.Generic;
 
-namespace RegionServer.Model.ServerEvents
+namespace RegionServer.Model.ServerEvents.FightEvents
 {
-	public class FightUpdatePacket : ServerPacket
+    public class FightUpdatePacket : ServerPacket
 	{
 		Dictionary<int, CharFightInfo> charsInfo;
 

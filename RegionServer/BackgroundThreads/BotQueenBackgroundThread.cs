@@ -17,7 +17,7 @@ namespace RegionServer.BackgroundThreads
 	{
 		public static readonly string CLASSNAME = "BotQueenBackgroundThread";
 
-		private static readonly int UPDATE_SPEED = 5000; //15000sec
+		private static readonly int UPDATE_SPEED = 2000; //15000sec
 
 		public FightManager FightManager { get; set; }
 		private bool isRunning { get; set; }

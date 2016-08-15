@@ -42,14 +42,15 @@ namespace RegionServer.Model.Stats
 		{
 			get 
 			{
-				if(_dirty && Character.CurrentFight != null && Character.CurrentFight.fightState != FightState.ENGAGED)
+				if(_dirty && (Character.CurrentFight?.fightState != FightState.ENGAGED))
 				{
 					return _dirty;
 				}
 				else
 				{
-					return _dirty = false;
-                }
+				    _dirty = false;
+				    return _dirty;
+				}
 			}
             set { _dirty = value; }
 		}
@@ -151,7 +152,7 @@ namespace RegionServer.Model.Stats
 	        return (int)finalDamage;
 	    }
 
-		public int RegenHealth()
+		public int HP5Regen()
 		{
 		    var HP5 = Convert.ToInt32(GetStat<HealthRegen>());
 		    return ApplyHeal(HP5);
@@ -172,11 +173,12 @@ namespace RegionServer.Model.Stats
                 if (newHealth > maxHealth) //OVERHEAL
                 {
                     //Log.DebugFormat("currHp: {0}, newHP: {1}, dmg: {2}, killdmg: {3}, overkill: {4}", currentHealth, newHealth, damage, -99, -99);
-                    var realHeal = maxHealth = currentHealth;
+                    var realHeal = maxHealth - currentHealth;
                     //Log.DebugFormat("currHp: {0}, newHP: {1}, dmg: {2}, killdmg: {3}, overkill: {4}", currentHealth, newHealth, damage, killDamage, -99);
                     var overHeal = newHealth - maxHealth;
                     //Log.DebugFormat("currHp: {0}, newHP: {1}, dmg: {2}, killdmg: {3}, overkill: {4}", currentHealth, newHealth, damage, killDamage, overkill);
                     Log.DebugFormat("OVER-HEALL. HEAL TOTAL: {0} . ACTUAL HEALED: {1}({2})", healAmount, realHeal, overHeal);
+                    health.BaseValue = maxHealth;
                     _dirty = false;
                     finalHeal = realHeal;
                 }
@@ -228,7 +230,11 @@ namespace RegionServer.Model.Stats
 			var calculator = Calculators[stat];
 			var env = new Environment() { Value = returnValue, Character = Character, Target = (CCharacter)target};
 
-			calculator.Calculate(env);
+		    //DebugUtils.Logp("StatHolder::CalcStat", String.Format("Retrieving stat {0}...", stat.Name));
+
+            calculator.Calculate(env);
+
+            //DebugUtils.Logp("StatHolder::CalcStat", String.Format("Retrieved stat {0}: {1}(+{2})", stat.Name, returnValue, env.Value));
 
 			if (env.Value <= 0 && stat.IsNonZero && !stat.IsNonNegative)
 			{

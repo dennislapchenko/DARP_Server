@@ -5,9 +5,9 @@ using ComplexServerCommon.Enums;
 using RegionServer.Model.CharacterDatas;
 using RegionServer.Model.Fighting;
 
-namespace RegionServer.Model.ServerEvents
+namespace RegionServer.Model.ServerEvents.FightEvents
 {
-	public class FightQueueParticipantsPacket : ServerPacket
+    public class FightQueueParticipantsPacket : ServerPacket
 	{
 		List<CharInfo> TeamRedInfos = new List<CharInfo>();
 		List<CharInfo> TeamBlueInfos = new List<CharInfo>();

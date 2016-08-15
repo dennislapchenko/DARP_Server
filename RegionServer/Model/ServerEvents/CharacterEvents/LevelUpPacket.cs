@@ -1,10 +1,9 @@
 ﻿using ComplexServerCommon;
 using ComplexServerCommon.MessageObjects;
 using RegionServer.Model.CharacterDatas;
-using RegionServer.Model.Stats;
 using RegionServer.Model.Stats.BaseStats;
 
-namespace RegionServer.Model.ServerEvents
+namespace RegionServer.Model.ServerEvents.CharacterEvents
 {
     public class LevelUpPacket : ServerPacket
     {

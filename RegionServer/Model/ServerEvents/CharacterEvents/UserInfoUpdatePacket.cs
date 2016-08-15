@@ -2,18 +2,19 @@ using ComplexServerCommon;
 using ComplexServerCommon.MessageObjects;
 using System.Linq;
 using RegionServer.Model.CharacterDatas;
+using RegionServer.Model.Items;
 
-namespace RegionServer.Model.ServerEvents
+namespace RegionServer.Model.ServerEvents.CharacterEvents
 {
-	public class UserInfoUpdatePacket : ServerPacket
+    public class UserInfoUpdatePacket : ServerPacket
 	{
-		public UserInfoUpdatePacket(CPlayerInstance player) : base(ClientEventCode.ServerPacket, MessageSubCode.UserInfo) 
+		public UserInfoUpdatePacket(CCharacter player) : base(ClientEventCode.ServerPacket, MessageSubCode.UserInfo) 
 		{
 			AddParameter(player.ObjectId, ClientParameterCode.ObjectId);
 			AddUserInfo(player);
 		} 
 
-		private void AddUserInfo(CPlayerInstance player)
+		private void AddUserInfo(CCharacter player)
 		{
 			UserInfo info = new UserInfo() 
 			{
@@ -25,8 +26,8 @@ namespace RegionServer.Model.ServerEvents
                 Stats = player.Stats.GetAllStats(),
 
 				//inventory - all equiped items
-				Equipment = player.Items.Equipment.ToDictionary(item => (int)item.Key, item => (ItemData)item.Value),
-                Inventory = player.Items.Inventory.ToDictionary(item => item.Key, item => (ItemData)item.Value),
+				Equipment = player.Items.Equipment.ToDictionary(item => (int)item.Key, item => (ItemData)(Item)item.Value),
+                Inventory = player.Items.Inventory.ToDictionary(item => item.Key, item => (ItemData)(Item)item.Value),
 
             //Talents - skills
 

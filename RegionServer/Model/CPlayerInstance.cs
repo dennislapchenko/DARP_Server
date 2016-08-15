@@ -11,6 +11,7 @@ using MMO.Framework;
 using RegionServer.Model.CharacterDatas;
 using RegionServer.Model.Effects;
 using RegionServer.Model.Fighting;
+using RegionServer.Model.ServerEvents.CharacterEvents;
 using RegionServer.Model.Stats;
 using RegionServer.Persistence;
 

@@ -1,19 +1,16 @@
 using System.Collections.Generic;
-using System;
-using RegionServer.Model.Items;
 using ComplexServerCommon.MessageObjects;
 
 namespace RegionServer.Model.Interfaces
 {
 	public interface IItemHolder
 	{
-		ICharacter Character {get; set;}
-		Dictionary<int, Item> Inventory {get; }
-		Dictionary<ItemSlot, Item> Equipment {get;}
-//		IItem GetItem<T>() where T : class, IItem;
-//		IItem GetItem<T>(T item) where T : class, IItem;
-		Item GetInventoryItem(int itemId);
-		Item GetEquipmentItem(ItemSlot slot);
+		CCharacter Character {get; set;}
+		Dictionary<int, IItem> Inventory {get; }
+		Dictionary<ItemSlot, IItem> Equipment {get;}
+        IItem GetInventoryItem(int invSlot);
+        IItem GetEquipmentItem(ItemSlot slot);
+        IItem GetEquipmentItemById(int itemId);
 		string AddItem(int itemId);
 		bool RemoveItemFromInv(int invSlot);
 		void RemoveAllItems();
@@ -22,5 +19,7 @@ namespace RegionServer.Model.Interfaces
 		bool DequipItem(ItemSlot slot);
 		string SerializeItems();
 		void DeserializeItems(string items);
+	    IItem UseItem(int itemSlotNum);
+	    IItem UseItem(IItem item);
 	}
 }

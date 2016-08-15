@@ -7,6 +7,7 @@ using RegionServer.Model;
 using System.Collections.Generic;
 using Photon.SocketServer;
 using RegionServer.Model.ServerEvents;
+using RegionServer.Model.ServerEvents.FightEvents;
 
 
 namespace RegionServer.Handlers

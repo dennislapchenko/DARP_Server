@@ -59,9 +59,9 @@ namespace RegionServer.Persistence
 						}
 						else
 						{
-						    GenStats.Experience = ExperienceConstants.LEVEL_0;
-						    GenStats.NextLevelExperience = ExperienceConstants.LEVEL_1;
-							GenStats.Battles = 0;
+						    GenStats.Experience = RegionConstants.GetConstants(ConstantType.EXPERIENCE_FOR_LEVEL)[0];
+						    GenStats.NextLevelExperience = RegionConstants.GetConstants(ConstantType.EXPERIENCE_FOR_LEVEL)[1];
+                            GenStats.Battles = 0;
 							GenStats.Win = 0;
 							GenStats.Loss = 0;
 							GenStats.Tie = 0;

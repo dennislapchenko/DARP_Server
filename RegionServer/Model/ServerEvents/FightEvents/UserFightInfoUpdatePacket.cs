@@ -2,10 +2,11 @@
 using System.Linq;
 using ComplexServerCommon;
 using ComplexServerCommon.MessageObjects;
+using RegionServer.Model.Items;
 
-namespace RegionServer.Model.ServerEvents
+namespace RegionServer.Model.ServerEvents.FightEvents
 {
-	public class UserFightInfoUpdatePacket : ServerPacket
+    public class UserFightInfoUpdatePacket : ServerPacket
 	{
 		public UserFightInfoUpdatePacket(CPlayerInstance instance) : base(ClientEventCode.ServerPacket, MessageSubCode.UserFightInfo)
 		{
@@ -22,7 +23,7 @@ namespace RegionServer.Model.ServerEvents
 													TargetId = player.Target.ObjectId,
 													Team = player.CurrentFight.CharFightData[player].Team,
 													stats = player.Stats.GetHealthLevel(), //add more later
-													equipment = player.Items.Equipment.ToDictionary(k => k.Key, v => (ItemData)v.Value)
+													equipment = player.Items.Equipment.ToDictionary(k => k.Key, v => (ItemData)(Item)v.Value)
 												};
 			AddSerializedParameter(info, ClientParameterCode.Object, false);
 		}

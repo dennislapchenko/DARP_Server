@@ -7,22 +7,25 @@ namespace RegionServer.Model.Effects.Definitions
 {
     public class ExtraDamageEffect : IEffectSpell
     {
+        string IEffect.Name { get { return "Extra Damage"; } }
+        string IEffect.Description { get { return String.Format("Increases damage of next attack!"); }}
         public byte Duration { get; set; }
         public byte Rank { get; set; }
-        public Dictionary<Type, float> statAdd { get; set; }
-        public Dictionary<Type, float> statMultiply { get; set; }
+        public Dictionary<Type, StatBonus> StatBonuses { get; set; }
         public EffectType Type { get {return EffectType.STATONLY;} }
         public EffectEnum EnumId { get {return EffectEnum.DAMAGE;} }
 
-        public ExtraDamageEffect()
+        public byte UnlockLevel { get { return 0; } }
+        public IEffect SecondaryEffect { get; }
+
+        public IEffect Clone()
         {
-            Duration = 1;
-            statAdd = new Dictionary<Type, float>();
-            statMultiply = new Dictionary<Type, float>();
+            return new ExtraDamageEffect() { StatBonuses = StatBonuses };
         }
 
         public void OnApply(CCharacter owner)
         {
+            Duration = 1;
         }
 
         public void OnUpdate()
@@ -31,12 +34,16 @@ namespace RegionServer.Model.Effects.Definitions
 
         public void OnFinish()
         {
+            DebugUtils.Logp(String.Format("Spell {0} is fading away", ((IEffect)this).Name));
         }
 
         public void AddStats()
         {
-            statMultiply.Add(new MinDamage().GetType(), 10.4f);
-            statMultiply.Add(new MaxDamage().GetType(), 10.4f);
+            StatBonuses = new Dictionary<Type, StatBonus>()
+                 {
+                    {typeof(MinDamage), StatBonus.New(0, 0.4f)},
+                    {typeof(MaxDamage), StatBonus.New(0, 0.4f)}
+                };
         }
 
         public void OnDamageTaken(int damage, CCharacter attaker)
@@ -46,9 +53,5 @@ namespace RegionServer.Model.Effects.Definitions
         public void OnDamageGiven(int damage, CCharacter target)
         {
         }
-
-        public string Name { get { return "Extra Damage"; } }
-        public string Description { get { return String.Format("Increases damage of next attack by {0}", statMultiply.FirstOrDefault().Value); }}
-        public byte UnlockLevel { get { return 0; } }
     }
 }

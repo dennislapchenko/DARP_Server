@@ -1,16 +1,9 @@
 using System;
 using RegionServer.Model.Interfaces;
-using System.Collections.Generic;
-using ComplexServerCommon.MessageObjects;
-using RegionServer.Model.Items;
-using System.Linq;
 using RegionServer.Model;
 using MMO.Framework;
 using ComplexServerCommon;
 using MMO.Photon.Application;
-using MMO.Photon.Server;
-using ComplexServerCommon.MessageObjects.Enums;
-using RegionServer.Model.CharacterDatas;
 using SubServerCommon.Data.ClientData;
 
 
@@ -24,6 +17,12 @@ namespace RegionServer
 		{
 			Server = application;
 		}
+
+        public static double MapToRange(float input, float input_start, float input_end, float output_start, float output_end)
+        {
+            var slope = (output_end - output_start) / (input_end - input_start);
+            return output_start + slope * (input - input_start);
+        }
 
         public static bool IsInShortRange(int distanceToForgetObject, IObject obj1, IObject obj2, bool includeZAxis)
 		{
@@ -67,30 +66,6 @@ namespace RegionServer
 			}
 			return null;
 		}
-
-		public static List<KeyValuePairS<ItemSlot, ItemData>> ConvertEquipmentForXml(Dictionary<ItemSlot, Item> items)
-		{
-			var result = new List<KeyValuePairS<ItemSlot, ItemData>>();
-			foreach(var item in items)
-			{
-				result.Add(new KeyValuePairS<ItemSlot, ItemData>(item.Key, (ItemData)item.Value));
-			}
-			return result;
-		}
-
-
-
-//		public static void NullDebug(object obj, string debugName)
-//		{
-//			if(obj == null)
-//			{
-//				Server.Log.DebugFormat("{0} == NULL", debugName);
-//			}
-//			else
-//			{
-//				Server.Log.DebugFormat("{0} != NULL", debugName);
-//			}
-//		}
 	}
 }
 

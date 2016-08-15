@@ -1,4 +1,6 @@
-﻿using RegionServer.Model.Interfaces;
+﻿using System.Linq;
+using RegionServer.Model.Interfaces;
+using RegionServer.Model.Items;
 
 namespace RegionServer.Calculators.Lambdas
 {
@@ -20,7 +22,7 @@ namespace RegionServer.Calculators.Lambdas
 
 			if(env.Character != null)
 			{
-				foreach(var item in env.Character.Items.Equipment.Values)
+				foreach(var item in env.Character.Items.Equipment.Values.Cast<EquipmentItem>())
 				{
 				    if (item.Stats.Stats.ContainsKey(_stat.GetType()))
 				    {
